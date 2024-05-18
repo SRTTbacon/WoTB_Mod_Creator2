@@ -32,6 +32,10 @@ namespace WoTB_Mod_Creator2.All_Page
 
             Sub_Code.IsUseSelectPage = UseSelectPage_C.IsChecked;
 
+            GitHubClient client = new(new ProductHeaderValue("WoTB_Mod_Creator2"));
+            Task<Release> releases = client.Repository.Release.GetLatest("SRTTbacon", "Scripts_for_VRChat");
+            releases.Wait();
+            Message_T.Text = releases.Result.Assets[0].BrowserDownloadUrl;
         }
 
         private void Voice_Create_B_Clicked(object? sender, EventArgs e)
