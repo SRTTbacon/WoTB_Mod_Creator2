@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WoTB_Mod_Creator2.All_Page.MainPage"
+             Shell.BackgroundColor="Black"
+             Title="ホーム"
+             Shell.TitleColor="White"
+             BackgroundColor="{StaticResource BackGround}"
+             Appearing="ContentPage_Appearing">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ScrollView Grid.Row="1">
+            <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <Label Text="WoTB_Mod_Creator2" FontSize="Title" HorizontalOptions="Center" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.025,0.7,0.08"/>
+                <Label Text="重要 : サウンドModのビルドはDiscordのBotを通じて行う必要があります。" FontSize="14" HorizontalOptions="Center" TextColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.1,0.8,0.08"/>
+                <Button x:Name="Voice_Create_B" Text="音声Modを作成" FontSize="13" BackgroundColor="{StaticResource Primary}" TextColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.2,0.65,0.076"/>
+                <Button x:Name="Other_Sound_B" Text="その他のサウンドMod" FontSize="13" BackgroundColor="{StaticResource Primary}" TextColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.3,0.65,0.075"/>
+                <Button x:Name="Music_Player_B" Text="音楽プレイヤー" FontSize="13" BackgroundColor="{StaticResource Primary}" TextColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.4,0.65,0.075"/>
+                <Button x:Name="Tools_B" Text="その他ツール" FontSize="13" BackgroundColor="{StaticResource Primary}" TextColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.5,0.65,0.075"/>
+                <Label x:Name="Update_T" Text="アプリのアップデートがあります。" FontSize="15" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.625,0.9,0.1"/>
+                <Button x:Name="Update_B" Text="アップデート" FontSize="13" BackgroundColor="{StaticResource Primary}" TextColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.7,0.65,0.075"/>
+                <Label x:Name="Message_T" Text="" FontSize="15" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.975,0.8,0.1"/>
+                <CheckBox x:Name="UseSelectPage_C" IsChecked="True" Color="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.2,0.825,0.07,0.03"/>
+                <Label x:Name="UseSelectPage_T" Text="オリジナルのファイル選択画面" FontSize="13" HorizontalOptions="Center" TextColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.55,0.875,0.8,0.08"/>
+                <Label Text="Developed by SRTTbacon - V0.1" FontSize="14" HorizontalTextAlignment="Center"  TextColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.82,0.8,0.08"/>
+            </AbsoluteLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

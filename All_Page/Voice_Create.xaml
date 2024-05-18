@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WoTB_Mod_Creator2.All_Page.Voice_Create"
+             Shell.BackgroundColor="Black"
+             Title="戦闘中の音声Modを作成"
+             Shell.TitleColor="White"
+             Appearing="ContentPage_Appearing"
+             BackgroundColor="{StaticResource BackGround}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ScrollView Grid.Row="1">
+            <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <Button x:Name="Load_B" Text="ロード" BackgroundColor="Transparent" FontSize="14" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.225,0.01,0.35,0.06"/>
+                <Button x:Name="Save_B" Text="セーブ" BackgroundColor="Transparent" FontSize="14" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.775,0.01,0.35,0.06"/>
+                <Button x:Name="Voice_Type_Back_B" Text="←" BackgroundColor="Transparent" FontSize="10" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.2,0.078,0.2,0.05"/>
+                <Button x:Name="Voice_Type_Next_B" Text="→" BackgroundColor="Transparent" FontSize="10" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.8275,0.078,0.2,0.05"/>
+                <Label x:Name="Voice_Type_Page_T" Text="イベントリスト1" TextColor="Aqua" FontSize="14" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.09,0.3,0.05"/>
+                <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.19,0.8,0.3">
+                    <ListView x:Name="Voice_Type_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell Tapped="VoiceTypeViewCell_Tapped">
+                                    <StackLayout Orientation="Horizontal">
+                                        <StackLayout>
+                                            <Label Text="{Binding Name_Text}" TextColor="{Binding Name_Color}"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Border>
+                <Button x:Name="Sound_Add_B" Text="サウンドを追加" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.72,0.47,0.3,0.06"/>
+                <Button x:Name="Sound_Delete_B" Text="サウンドを取消" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.27,0.47,0.3,0.06"/>
+                <Label Text="サウンドリスト" TextColor="Aqua" FontSize="16" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.525,0.65,0.325,0.05"/>
+                <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.82,0.8,0.2">
+                    <ListView x:Name="Sound_File_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell Tapped="Sound_List_Tapped">
+                                    <StackLayout Orientation="Horizontal">
+                                        <StackLayout>
+                                            <Label Text="{Binding Name_Text}" TextColor="Aqua"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Border>
+                <Button x:Name="Create_B" Text="設定画面へ" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="16" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.95,0.999,0.7,0.07"/>
+                <Button x:Name="Clear_B" Text="クリア" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="16" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0.999,0.25,0.07"/>
+                <Label x:Name="Message_T" Text="" FontSize="14" TextColor="Aqua" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.95,0.8,0.08"/>
+            </AbsoluteLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

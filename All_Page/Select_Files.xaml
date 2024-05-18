@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WoTB_Mod_Creator2.All_Page.Select_Files"
+             Shell.BackgroundColor="Black"
+             Title="戦闘中の音声Modを作成"
+             Shell.TitleColor="White"
+             BackgroundColor="{StaticResource BackGround}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ScrollView Grid.Row="1">
+            <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <Label Text="ファイルを選択してください。" FontSize="14" HorizontalTextAlignment="Center" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.025,0.65,0.06"/>
+                <Label x:Name="Dir_T" Text="" FontSize="12" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.065,1,0.075"/>
+                <Button x:Name="Dir_Back_B" Text="←" FontSize="13" TextColor="White" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.0775,0.15,0.2,0.06"/>
+                <Grid BackgroundColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.215,0.865,0.0025"/>
+                <Grid BackgroundColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.82,0.865,0.0025"/>
+                <Grid BackgroundColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.065,0.544,0.0025,0.605"/>
+                <Grid BackgroundColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.934,0.544,0.0025,0.605"/>
+                <ListView x:Name="Files_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.55,0.85,0.6">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox IsChecked="{Binding IsChecked}" IsVisible="{Binding IsVisible}" Color="Aqua" Grid.Column="0"/>
+                                    <Label Text="{Binding Name}" TextColor="{Binding Name_Color}" Grid.Column="1" VerticalOptions="Center"/>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Button x:Name="Cancel_B" Text="キャンセル" FontSize="14" BackgroundColor="Transparent" BorderWidth="1" TextColor="Pink" BorderColor="Pink" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.1,0.89,0.35,0.065"/>
+                <Button x:Name="OK_B" Text="選択" FontSize="14" BackgroundColor="Transparent" BorderWidth="1" TextColor="GreenYellow" BorderColor="GreenYellow" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.9,0.89,0.35,0.065"/>
+                <Label x:Name="Message_T" Text="" FontSize="14" TextColor="Aqua" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,1,0.8,0.08"/>
+            </AbsoluteLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
