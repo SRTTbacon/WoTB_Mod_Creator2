@@ -43,7 +43,7 @@ namespace WoTB_Mod_Creator2
             using Intent install = new(Intent.ActionView);
             if (context.ApplicationContext != null)
             {
-                Android.Net.Uri? apkURI = AndroidX.Core.Content.FileProvider.GetUriForFile(context, context.ApplicationContext.PackageName + ".provider", file);
+                Android.Net.Uri? apkURI = AndroidX.Core.Content.FileProvider.GetUriForFile(context, context.ApplicationContext.PackageName + ".fileProvider", file);
                 install.SetDataAndType(apkURI, "application/vnd.android.package-archive");
                 install.AddFlags(ActivityFlags.NewTask);
                 install.AddFlags(ActivityFlags.GrantReadUriPermission);

@@ -3,7 +3,6 @@ using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Flac;
 using Un4seen.Bass.AddOn.Fx;
 using WoTB_Mod_Creator2.Class;
-using static Android.Views.WindowInsetsAnimation;
 
 namespace WoTB_Mod_Creator2.All_Page;
 

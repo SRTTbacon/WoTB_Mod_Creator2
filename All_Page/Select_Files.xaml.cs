@@ -205,7 +205,7 @@ public partial class Select_Files : ContentPage
         if (!string.IsNullOrWhiteSpace(nextDir) && Directory.Exists(nextDir))
             dir = nextDir;
         else
-            dir = "/storage/emulated/0";
+            dir = Sub_Code.ANDROID_ROOT;
         Files_L.SelectedItem = null;
         Files_L.ItemsSource = null;
         fileDirList.Clear();
@@ -238,13 +238,13 @@ public partial class Select_Files : ContentPage
             Message_Feed_Out("このフォルダはアクセスできません。");
         }
 
-        Dir_T.Text = (dir + "/").Replace("/storage/emurated/0", "");
+        Dir_T.Text = (dir + "/").Replace(Sub_Code.ANDROID_ROOT, "");
     }
 
     //フォルダを1つ戻る
     private void Dir_Back_B_Clicked(object? sender, EventArgs e)
     {
-        if (dir != "/storage/emulated/0" && dir != bottomDir)
+        if (dir != Sub_Code.ANDROID_ROOT && dir != bottomDir)
         {
             DirectoryInfo? dirInfo = Directory.GetParent(dir);
             if (dirInfo != null)

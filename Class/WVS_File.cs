@@ -18,7 +18,7 @@ namespace WoTB_Mod_Creator2.Class
 
         //WVS_Fileは、.wvsファイルがロードされていない場合はnullを指定します。
         //ここでWVS_Fileを指定かつ、セーブファイルを上書きする場合はCreate()を実行する前に必ずWVS_File.Dispose()を実行する必要があります。
-        public void Add_Sound(List<List<All_Page.CVoiceTypeList>> blitzEvents, WVS_Load WVS_File)
+        public void Add_Sound(List<List<All_Page.CVoiceTypeList>> blitzEvents, WVS_Load wvsFile)
         {
             this.blitzEvents = blitzEvents;
             for (int i = 0; i < blitzEvents.Count; i++)
@@ -32,9 +32,9 @@ namespace WoTB_Mod_Creator2.Class
                         soundIndexes.Add(j);
                         listIndexes.Add((ushort)i);
                         //ロード済みの.wvsファイル内に同じサウンドがあれば配列にbyte[]を追加
-                        if (WVS_File != null && WVS_File.IsLoaded && !blitzEvents[i][j].TypeSetting.Sounds[k].FilePath.Contains('\\') || !blitzEvents[i][j].TypeSetting.Sounds[k].FilePath.Contains('/'))
+                        if (wvsFile != null && wvsFile.IsLoaded && (!blitzEvents[i][j].TypeSetting.Sounds[k].FilePath.Contains('\\') || !blitzEvents[i][j].TypeSetting.Sounds[k].FilePath.Contains('/')))
                         {
-                            byte[]? soundData = WVS_File.Load_Sound(blitzEvents[i][j].TypeSetting.Sounds[k].StreamPosition);
+                            byte[]? soundData = wvsFile.Load_Sound(blitzEvents[i][j].TypeSetting.Sounds[k].StreamPosition);
                             if (soundData != null)
                                 soundBinaryes.Add(soundData);
                             else

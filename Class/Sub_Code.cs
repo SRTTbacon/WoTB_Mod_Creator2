@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using WoTB_Mod_Creator2.All_Page;
 
@@ -15,14 +16,21 @@ namespace WoTB_Mod_Creator2.Class
         public static readonly Dictionary<int, int> HPFValues = [];
         public static readonly Dictionary<int, int> PitchValues = [];
 
-        public static Random RandomValue = new();
+        public const string APP_VERSION = "0.1";
+        public const string ANDROID_ROOT = "/storage/emulated/0";
+
+        public static readonly Random RandomValue = new();
 
         //アプリ固有のディレクトリを参照
         public static string ExDir
         {
             get
             {
+#if ANDROID
                 return AndroidClass.GetExDir();
+#else
+                return "";
+#endif
             }
         }
 
@@ -200,6 +208,26 @@ namespace WoTB_Mod_Creator2.Class
         public static double Get_Random_Double(double Minimum, double Maximum)
         {
             return RandomValue.NextDouble() * (Maximum - Minimum) + Minimum;
+        }
+
+        public static double Get_Version_To_Double(string version)
+        {
+            string onePoint = "";
+            foreach (char c in version)
+            {
+                if (onePoint == "")
+                    onePoint += c + ".";
+                else if (c != '.')
+                    onePoint += c;
+            }
+            try
+            {
+                return double.Parse(onePoint, CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                return 0.0;
+            }
         }
     }
 }

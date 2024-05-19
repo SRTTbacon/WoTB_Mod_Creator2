@@ -359,11 +359,13 @@ public partial class Voice_Create : ContentPage
         //ファイル閲覧の権限を持っているかつ、ホーム画面でオリジナルの選択画面を有効にした場合はその選択画面でファイルを選択
         if (Sub_Code.IsUseSelectPage)
         {
+#if ANDROID
             if (!AndroidClass.CheckExternalStoragePermission())
             {
                 Message_Feed_Out("アクセス許可を行ってください。");
                 return;
             }
+#endif
             bOtherPageOpened = true;
             string extension = ".aac|.mp3|.wav|.ogg|.aiff|.flac|.m4a|.mp4";             //対応している拡張子
             Sub_Code.Select_Files_Window.Window_Show("Voice_Create", "", extension);    //選択画面を初期化
