@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using CommunityToolkit.Maui;
 
 namespace WoTB_Mod_Creator2
 {
@@ -12,7 +11,7 @@ namespace WoTB_Mod_Creator2
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-            }).UseMauiCommunityToolkit();
+            });
 #if DEBUG
             builder.Logging.AddDebug();
 #endif

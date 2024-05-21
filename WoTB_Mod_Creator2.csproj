@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+		<TargetFrameworks>;net8.0-android</TargetFrameworks>
 		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
 		<!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
 
@@ -44,14 +43,159 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
 	  <AndroidPackageFormat>apk</AndroidPackageFormat>
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <AndroidKeyStore>False</AndroidKeyStore>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|x64'">
 	  <AndroidPackageFormat>apk</AndroidPackageFormat>
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <AndroidKeyStore>False</AndroidKeyStore>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|ARM64'">
 	  <AndroidPackageFormat>apk</AndroidPackageFormat>
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <AndroidKeyStore>False</AndroidKeyStore>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <AndroidKeyStore>False</AndroidKeyStore>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|AnyCPU'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|AnyCPU'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|x64'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <AndroidKeyStore>False</AndroidKeyStore>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|x64'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|x64'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|x64'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|ARM64'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <AndroidKeyStore>False</AndroidKeyStore>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|ARM64'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|ARM64'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|ARM64'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|AnyCPU'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|AnyCPU'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|AnyCPU'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|x64'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|x64'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|x64'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|ARM64'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|ARM64'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|ARM64'">
+	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
+	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	</PropertyGroup>
+
+	<PropertyGroup>
+	  <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -115,10 +259,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Maui" Version="9.0.0" />
-		<PackageReference Include="CommunityToolkit.Maui.Core" Version="9.0.0" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.14" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.14" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.40" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.40" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 		<PackageReference Include="Octokit" Version="11.0.1" />
 	</ItemGroup>

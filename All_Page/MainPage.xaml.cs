@@ -1,12 +1,12 @@
-﻿using Octokit;
-using Un4seen.Bass;
+﻿using Un4seen.Bass;
 using WoTB_Mod_Creator2.Class;
+using Octokit;
 
 namespace WoTB_Mod_Creator2.All_Page
 {
     public partial class MainPage : ContentPage
     {
-        //readonly Voice_Create voiceCreate_Page = new();
+        readonly Voice_Create voiceCreate_Page = new();
 
 #if ANDROID
         const string APK_FILEPATH = Sub_Code.ANDROID_ROOT + "/Download/Update_Mod_Creator2.apk";
@@ -22,15 +22,11 @@ namespace WoTB_Mod_Creator2.All_Page
         public MainPage()
         {
             InitializeComponent();
-            /*
+
             //サウンドエンジンを初期化
             Bass.BASS_Init(-1, 48000, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
 
             Sub_Code.Initialize();
-
-            //ボタン
-            Voice_Create_B.Clicked += Voice_Create_B_Clicked;
-            UseSelectPage_C.CheckedChanged += UseSelectPage_C_CheckedChanged;
 
             Sub_Code.Select_Files_Window.Selected += delegate (string pageName)
             {
@@ -38,6 +34,10 @@ namespace WoTB_Mod_Creator2.All_Page
                     voiceCreate_Page.Add_Sound(Sub_Code.Select_Files_Window.Get_Select_Files());
                 Sub_Code.Select_Files_Window.Dispose();
             };
+
+            //ボタン
+            Voice_Create_B.Clicked += Voice_Create_B_Clicked;
+            UseSelectPage_C.CheckedChanged += UseSelectPage_C_CheckedChanged;
 
             Sub_Code.IsUseSelectPage = UseSelectPage_C.IsChecked;
 
@@ -57,7 +57,6 @@ namespace WoTB_Mod_Creator2.All_Page
                 CheckUpdate();
             }
 #endif
-            */
         }
 
         //画面下部にメッセージを表示
@@ -96,7 +95,7 @@ namespace WoTB_Mod_Creator2.All_Page
 #endif
             if (bPageOpened)
                 return;
-            //Navigation.PushAsync(voiceCreate_Page);
+            Navigation.PushAsync(voiceCreate_Page);
             bPageOpened = true;
         }
 

@@ -77,6 +77,8 @@ public partial class Voice_Create_Sound_Setting : ContentPage
         Voice_Sound_L.SelectedItem = null;
         this.wvsFile = wvsFile;
         sounds = voiceSoundList;
+        Voice_Sound_L.SelectedItem = null;
+        Voice_Sound_L.ItemsSource = null;
         Voice_Sound_L.ItemsSource = voiceSoundList;
         bShowing = true;
         Position_Change();
@@ -447,6 +449,7 @@ public partial class Voice_Create_Sound_Setting : ContentPage
         //サウンドの長さを取得し、シークバーに反映
         PlayTime_S.Maximum = Bass.BASS_ChannelBytes2Seconds(streamHandle, Bass.BASS_ChannelGetLength(streamHandle, BASSMode.BASS_POS_BYTES));
         voiceSoundSetting.PlayTime.Max = PlayTime_S.Maximum;
+        PlayTime_T.Text = "00:00 / " + maxTime;
 
         //終了検知
         musicEndFunc = new SYNCPROC(EndSync);

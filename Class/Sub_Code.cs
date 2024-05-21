@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text.RegularExpressions;
 using WoTB_Mod_Creator2.All_Page;
 
@@ -10,6 +8,9 @@ namespace WoTB_Mod_Creator2.Class
     {
         [GeneratedRegex(@"(^|\\|/)(CON|PRN|AUX|NUL|CLOCK\$|COM[0-9]|LPT[0-9])(\.|\\|/|$)", RegexOptions.IgnoreCase, "ja-JP")]
         private static partial Regex MyRegex();
+
+        //読み取り専用のファイル選択ウィンドウ
+        public static readonly Select_Files Select_Files_Window = new();
 
         //エフェクトの値一覧
         public static readonly Dictionary<int, int> LPFValues = [];
@@ -33,9 +34,6 @@ namespace WoTB_Mod_Creator2.Class
 #endif
             }
         }
-
-        //読み取り専用のファイル選択ウィンドウ
-        public static Select_Files Select_Files_Window { get; } = new();
 
         //オリジナルのファイル選択画面を使用するかどうか
         public static bool IsUseSelectPage { get; set; } = false;
@@ -85,13 +83,6 @@ namespace WoTB_Mod_Creator2.Class
             PitchValues.Add(-600, -30);
             PitchValues.Add(-900, -40);
             PitchValues.Add(-1200, -50);
-        }
-
-        //画面下部にメッセージを表示
-        public static void Show_Message(string message, ToastDuration duration = ToastDuration.Short)
-        {
-            IToast toast = Toast.Make(message, duration);
-            toast.Show();
         }
 
         //ファイルとして扱えるパスかどうか調べる
@@ -201,7 +192,7 @@ namespace WoTB_Mod_Creator2.Class
             string text = value.ToString();
             if (!text.Contains('.'))
                 return 0;
-            string Decim = text.Substring(text.IndexOf('.') + 1);
+            string Decim = text[(text.IndexOf('.') + 1)..];
             return double.Parse("0." + Decim);
         }
 

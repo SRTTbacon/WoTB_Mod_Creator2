@@ -1,8 +1,8 @@
 ﻿<maui:MauiWinUIApplication
-    x:Class="WoTB_Mod_Creator2.WinUI.App"
+    x:Class="MAUI_Test.WinUI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:maui="using:Microsoft.Maui"
-    xmlns:local="using:WoTB_Mod_Creator2.WinUI">
+    xmlns:local="using:MAUI_Test.WinUI">
 
 </maui:MauiWinUIApplication>

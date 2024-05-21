@@ -286,22 +286,22 @@ public partial class Voice_Create : ContentPage
             WVS_Load.WVS_Result wvsResult = WVS_Load.IsBlitzWVSFile(filePath);
             if (wvsResult == WVS_Load.WVS_Result.No_Exist_File)
             {
-                Sub_Code.Show_Message("エラー:ファイルが存在しません。");
+                Message_Feed_Out("エラー:ファイルが存在しません。");
                 return;
             }
             else if (wvsResult == WVS_Load.WVS_Result.Wrong_Header)
             {
-                Sub_Code.Show_Message("エラー:ヘッダーが異なります。");
+                Message_Feed_Out("エラー:ヘッダーが異なります。");
                 return;
             }
             else if (wvsResult == WVS_Load.WVS_Result.Wrong_Version)
             {
-                Sub_Code.Show_Message("エラー:セーブファイルのバージョンが古すぎます。");
+                Message_Feed_Out("エラー:セーブファイルのバージョンが古すぎます。");
                 return;
             }
             else if (wvsResult == WVS_Load.WVS_Result.WoTMode)
             {
-                Sub_Code.Show_Message("エラー:WoT用のセーブファイルのためロードできません。");
+                Message_Feed_Out("エラー:WoT用のセーブファイルのためロードできません。");
                 return;
             }
             else
@@ -310,7 +310,7 @@ public partial class Voice_Create : ContentPage
                 if (wvsResult == WVS_Load.WVS_Result.OK)
                 {
                     projectName = wvsFile.ProjectName;
-                    Sub_Code.Show_Message(Path.GetFileName(filePath) + "をロードしました。");
+                    Message_Feed_Out(Path.GetFileName(filePath) + "をロードしました。");
                 }
                 else
                     throw new Exception(".wvsファイルが破損しています。");
@@ -319,7 +319,7 @@ public partial class Voice_Create : ContentPage
         }
         catch (Exception e)
         {
-            Sub_Code.Show_Message("エラー:" + e.Message);
+            Message_Feed_Out("エラー:" + e.Message);
             Init_Voice_Type();
             Set_Item_Type();
             wvsFile.Dispose();
@@ -443,12 +443,12 @@ public partial class Voice_Create : ContentPage
 
         if (Voice_Type_L.SelectedItem == null)
         {
-            Sub_Code.Show_Message("イベント名が選択されていません。");
+            Message_Feed_Out("イベント名が選択されていません。");
             return;
         }
         if (Sound_File_L.SelectedItem == null)
         {
-            Sub_Code.Show_Message("削除したいサウンドを選択してください。");
+            Message_Feed_Out("削除したいサウンドを選択してください。");
             return;
         }
         int typeIndex = ((CVoiceTypeList)Voice_Type_L.SelectedItem).Index;
@@ -456,7 +456,7 @@ public partial class Voice_Create : ContentPage
         int removeIndex = voiceSounds.IndexOf(Temp);
         if (removeIndex == -1)
         {
-            Sub_Code.Show_Message("不明なエラーが発生しました。");
+            Message_Feed_Out("不明なエラーが発生しました。");
             return;
         }
         voiceTypes[nowTypePage][typeIndex].TypeSetting.Sounds.RemoveAt(removeIndex);

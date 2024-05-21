@@ -255,7 +255,7 @@ public partial class Select_Files : ContentPage
             }
         }
         else
-            Sub_Code.Show_Message("‚±‚ê‚æ‚è‰º‚ÌŠK‘w‚Í‰{——‚Å‚«‚Ü‚¹‚ñB");
+            Message_Feed_Out("‚±‚ê‚æ‚è‰º‚ÌŠK‘w‚Í‰{——‚Å‚«‚Ü‚¹‚ñB");
     }
 
     //ƒLƒƒƒ“ƒZƒ‹ƒ{ƒ^ƒ“
