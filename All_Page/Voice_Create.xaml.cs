@@ -59,13 +59,12 @@ public partial class Voice_Create : ContentPage
         Clear_B.Clicked += Clear_B_Click;
         Init_Voice_Type();
         Set_Item_Type();
-        Voice_Type_L.ItemsSource = voiceTypes[0];
     }
     private void Init_Voice_Type()
     {
         voiceSounds.Clear();
         voiceTypes.Clear();
-        for (int i = 0; i  < 3; i++)
+        for (int i = 0; i < 3; i++)
             voiceTypes.Add([]);
 
         //1ƒy[ƒW–Ú
@@ -482,7 +481,11 @@ public partial class Voice_Create : ContentPage
     {
         if (bOtherPageOpened)
             return;
-        soundSettingWindow.Initialize(voiceSounds, wvsFile);
+        CVoiceTypeList typeList = (CVoiceTypeList)Voice_Type_L.SelectedItem;
+        if (typeList == null)
+            return;
+
+        soundSettingWindow.Initialize(typeList.TypeSetting, voiceSounds, wvsFile);
         Navigation.PushAsync(soundSettingWindow);
         bOtherPageOpened = true;
     }

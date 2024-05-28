@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>;net8.0-android</TargetFrameworks>
+		<TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
 		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
 		<!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
 
@@ -31,171 +32,11 @@
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">26.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 		<Platforms>AnyCPU;x64;ARM64</Platforms>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<AndroidLinkMode>None</AndroidLinkMode>
-		<NeutralLanguage>aa-DJ</NeutralLanguage>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
-	  <AndroidPackageFormat>apk</AndroidPackageFormat>
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	  <AndroidKeyStore>False</AndroidKeyStore>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|x64'">
-	  <AndroidPackageFormat>apk</AndroidPackageFormat>
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	  <AndroidKeyStore>False</AndroidKeyStore>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|ARM64'">
-	  <AndroidPackageFormat>apk</AndroidPackageFormat>
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	  <AndroidKeyStore>False</AndroidKeyStore>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	  <AndroidKeyStore>False</AndroidKeyStore>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|AnyCPU'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|AnyCPU'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|x64'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	  <AndroidKeyStore>False</AndroidKeyStore>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|x64'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|x64'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|x64'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|ARM64'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	  <AndroidKeyStore>False</AndroidKeyStore>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|ARM64'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|ARM64'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|ARM64'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|AnyCPU'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|AnyCPU'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|AnyCPU'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|x64'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|x64'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|x64'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|ARM64'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|ARM64'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|ARM64'">
-	  <ApplicationTitle>WoTB Mod Creator2</ApplicationTitle>
-	  <ApplicationId>jp.srttbacon.ModCreator2</ApplicationId>
-	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup>
-	  <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -220,34 +61,25 @@
 	  <None Remove="Platforms\Android\libs\arm64-v8a\libbass.so" />
 	  <None Remove="Platforms\Android\libs\arm64-v8a\libbassenc.so" />
 	  <None Remove="Platforms\Android\libs\arm64-v8a\libbassenc_ogg.so" />
-	  <None Remove="Platforms\Android\libs\arm64-v8a\libbassflac.so" />
 	  <None Remove="Platforms\Android\libs\arm64-v8a\libbass_fx.so" />
 	  <None Remove="Platforms\Android\libs\armeabi-v7a\libbass.so" />
 	  <None Remove="Platforms\Android\libs\armeabi-v7a\libbassenc.so" />
 	  <None Remove="Platforms\Android\libs\armeabi-v7a\libbassenc_ogg.so" />
-	  <None Remove="Platforms\Android\libs\armeabi-v7a\libbassflac.so" />
 	  <None Remove="Platforms\Android\libs\armeabi-v7a\libbass_fx.so" />
 	  <None Remove="Platforms\Android\libs\x86_64\libbass.so" />
 	  <None Remove="Platforms\Android\libs\x86_64\libbassenc.so" />
 	  <None Remove="Platforms\Android\libs\x86_64\libbassenc_ogg.so" />
-	  <None Remove="Platforms\Android\libs\x86_64\libbassflac.so" />
 	  <None Remove="Platforms\Android\libs\x86_64\libbass_fx.so" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <AndroidNativeLibrary Include="Platforms\Android\libs\armeabi-v7a\libbassflac.so" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <AndroidNativeLibrary Include="Platforms\Android\libs\arm64-v8a\libbass.so" />
 	  <AndroidNativeLibrary Include="Platforms\Android\libs\arm64-v8a\libbassenc.so" />
 	  <AndroidNativeLibrary Include="Platforms\Android\libs\arm64-v8a\libbassenc_ogg.so" />
-	  <AndroidNativeLibrary Include="Platforms\Android\libs\arm64-v8a\libbassflac.so" />
 	  <AndroidNativeLibrary Include="Platforms\Android\libs\arm64-v8a\libbass_fx.so" />
 	  <AndroidNativeLibrary Include="Platforms\Android\libs\x86_64\libbass.so" />
 	  <AndroidNativeLibrary Include="Platforms\Android\libs\x86_64\libbassenc.so" />
 	  <AndroidNativeLibrary Include="Platforms\Android\libs\x86_64\libbassenc_ogg.so" />
-	  <AndroidNativeLibrary Include="Platforms\Android\libs\x86_64\libbassflac.so" />
 	  <AndroidNativeLibrary Include="Platforms\Android\libs\x86_64\libbass_fx.so" />
 	</ItemGroup>
 
@@ -259,8 +91,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.40" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.40" />
+		<PackageReference Include="CommunityToolkit.Maui" Version="9.0.0" />
+		<PackageReference Include="CommunityToolkit.Maui.Core" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.14" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.14" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 		<PackageReference Include="Octokit" Version="11.0.1" />
 	</ItemGroup>
@@ -275,6 +109,9 @@
 	  <Compile Update="All_Page\Select_Files.xaml.cs">
 	    <DependentUpon>Select_Files.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="All_Page\Voice_Create_Sound_Setting.xaml.cs">
+	    <DependentUpon>Voice_Create_Sound_Setting.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -285,6 +122,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="All_Page\Voice_Create_Event_Setting.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="All_Page\Voice_Create_Sound_Setting.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

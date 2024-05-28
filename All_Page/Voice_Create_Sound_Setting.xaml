@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="WoTB_Mod_Creator2.All_Page.Voice_Create_Event_Setting"
+             x:Class="WoTB_Mod_Creator2.All_Page.Voice_Create_Sound_Setting"
              Shell.BackgroundColor="Black"
              Title="サウンド設定"
              Shell.TitleColor="White"
+             Disappearing="ContentPage_Disappearing"
              BackgroundColor="{StaticResource BackGround}">
     <Grid>
         <Grid.RowDefinitions>
@@ -13,7 +14,22 @@
         </Grid.RowDefinitions>
         <ScrollView Grid.Row="1">
             <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                <Label x:Name="All_Volume_T" Text="全体音量" TextColor="Aqua" FontSize="16" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.15,0.33,0.3,0.05"/>
+                <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.005,0.8,0.3">
+                    <ListView x:Name="Voice_Sound_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.005,0.8,0.35">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell Tapped="Sound_List_Tapped">
+                                    <StackLayout Orientation="Horizontal">
+                                        <StackLayout>
+                                            <Label Text="{Binding Name_Probability}" TextColor="Aqua"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Border>
+                <Label x:Name="All_Volume_T" Text="全体音量:100" TextColor="Aqua" FontSize="16" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.15,0.33,0.3,0.05"/>
                 <Slider x:Name="All_Volume_S" MaximumTrackColor="Gray" Maximum="100" Value="100" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.025,0.35,0.4,0.05"/>
                 <Label x:Name="PlayTime_T" Text="00:00 / 00:00" TextColor="Aqua" FontSize="16" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.78,0.33,0.25,0.05"/>
                 <Slider x:Name="PlayTime_S" MaximumTrackColor="Gray" Value="0"  Maximum="1" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.9,0.35,0.5,0.05"/>
@@ -37,6 +53,10 @@
                 <Slider x:Name="HPF_Start_S" Maximum="70" MaximumTrackColor="Gray" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.9,0.66,0.45,0.05"/>
                 <Label x:Name="HPF_End_T" Text="～:0" TextColor="Aqua" FontSize="16" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.825,0.71,0.25,0.05"/>
                 <Slider x:Name="HPF_End_S" Maximum="70" MaximumTrackColor="Gray" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.9,0.735,0.45,0.05"/>
+                <Button x:Name="Gain_Reset_B" Text="R" BackgroundColor="Transparent" TextColor="Aqua" BorderColor="Aqua" BorderWidth="1" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.42,0.465,0.12,0.045"/>
+                <Button x:Name="Pitch_Reset_B" Text="R" BackgroundColor="Transparent" TextColor="Aqua" BorderColor="Aqua" BorderWidth="1" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.135,0.47,0.05,0.05"/>
+                <Button x:Name="LPF_Reset_B" Text="R" BackgroundColor="Transparent" TextColor="Aqua" BorderColor="Aqua" BorderWidth="1" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.135,0.47,0.05,0.05"/>
+                <Button x:Name="HPF_Reset_B" Text="R" BackgroundColor="Transparent" TextColor="Aqua" BorderColor="Aqua" BorderWidth="1" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.135,0.47,0.05,0.05"/>
                 <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.59,0.9,0.003"/>
                 <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.76,0.9,0.003"/>
                 <Label x:Name="Priority_T" Text="優先度:50" TextColor="Aqua" FontSize="16" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.125,0.815,0.25,0.05"/>
@@ -48,6 +68,7 @@
                 <CheckBox x:Name="Fade_In_C" IsChecked="False" Color="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.06,0.938,0.07,0.03"/>
                 <Label x:Name="Fade_Out_T" Text="フェードアウト" TextColor="Aqua" FontSize="14" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.17,1.01,0.25,0.05"/>
                 <CheckBox x:Name="Fade_Out_C" IsChecked="False" Color="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.06,0.986,0.07,0.03"/>
+                <Button x:Name="EventSetting_B" Text="イベント設定へ" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="1,1,0.3,0.0575"/>
                 <Label x:Name="Message_T" Text="" FontSize="14" TextColor="Aqua" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.95,0.925,0.5,0.08"/>
             </AbsoluteLayout>
         </ScrollView>
