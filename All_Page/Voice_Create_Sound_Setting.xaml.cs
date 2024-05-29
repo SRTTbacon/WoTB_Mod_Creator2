@@ -81,6 +81,12 @@ public partial class Voice_Create_Sound_Setting : ContentPage
         Pitch_Reset_B.Clicked += Pitch_Reset_B_Clicked;
         LPF_Reset_B.Clicked += LPF_Reset_B_Clicked;
         HPF_Reset_B.Clicked += HPF_Reset_B_Clicked;
+
+        //範囲指定チェックボックス
+        Gain_Range_C.CheckedChanged += Gain_Range_C_CheckedChanged;
+        Pitch_Range_C.CheckedChanged += Pitch_Range_C_CheckedChanged;
+        LPF_Range_C.CheckedChanged += LPF_Range_C_CheckedChanged;
+        HPF_Range_C.CheckedChanged += HPF_Range_C_CheckedChanged;
     }
 
     //初期化(画面を表示させる度に呼び出す必要あり)
@@ -130,7 +136,7 @@ public partial class Voice_Create_Sound_Setting : ContentPage
     private async void Position_Change()
     {
         double nextFrame = Environment.TickCount;
-        float period = 1000f / 30f;
+        float period = 1000f / 10f;
         while (bShowing)
         {
             //一定時間経過するまで待機
@@ -660,12 +666,16 @@ public partial class Voice_Create_Sound_Setting : ContentPage
         if (Voice_Sound_L.SelectedItem != null)
         {
             CVoiceSoundSetting voiceSoundSetting = ((CVoiceSoundList)Voice_Sound_L.SelectedItem).VoiceSoundSetting;
+            Gain_Range_C.IsChecked = voiceSoundSetting.IsVolumeRange;
             Gain_End_T.IsVisible = voiceSoundSetting.IsVolumeRange;
             Gain_End_S.IsVisible = voiceSoundSetting.IsVolumeRange;
+            Pitch_Range_C.IsChecked = voiceSoundSetting.IsPitchRange;
             Pitch_End_T.IsVisible = voiceSoundSetting.IsPitchRange;
             Pitch_End_S.IsVisible = voiceSoundSetting.IsPitchRange;
+            LPF_Range_C.IsChecked = voiceSoundSetting.IsLPFRange;
             LPF_End_T.IsVisible = voiceSoundSetting.IsLPFRange;
             LPF_End_S.IsVisible = voiceSoundSetting.IsLPFRange;
+            HPF_Range_C.IsChecked = voiceSoundSetting.IsHPFRange;
             HPF_End_T.IsVisible = voiceSoundSetting.IsHPFRange;
             HPF_End_S.IsVisible = voiceSoundSetting.IsHPFRange;
             if (voiceSoundSetting.IsVolumeRange || voiceSoundSetting.IsPitchRange || voiceSoundSetting.IsLPFRange || voiceSoundSetting.IsHPFRange)
@@ -771,6 +781,55 @@ public partial class Voice_Create_Sound_Setting : ContentPage
     {
         HPF_Start_S.Value = 0.0;
         HPF_End_S.Value = 0.0;
+    }
+
+    //ゲインの範囲指定の有無
+    private void Gain_Range_C_CheckedChanged(object? sender, CheckedChangedEventArgs e)
+    {
+        if (Voice_Sound_L.SelectedItem == null)
+            return;
+
+        CVoiceSoundSetting voiceSoundSetting = ((CVoiceSoundList)Voice_Sound_L.SelectedItem).VoiceSoundSetting;
+        voiceSoundSetting.IsVolumeRange = e.Value;
+
+        Gain_End_T.IsVisible = e.Value;
+        Gain_End_S.IsVisible = e.Value;
+    }
+    //速度の範囲指定の有無
+    private void Pitch_Range_C_CheckedChanged(object? sender, CheckedChangedEventArgs e)
+    {
+        if (Voice_Sound_L.SelectedItem == null)
+            return;
+
+        CVoiceSoundSetting voiceSoundSetting = ((CVoiceSoundList)Voice_Sound_L.SelectedItem).VoiceSoundSetting;
+        voiceSoundSetting.IsPitchRange = e.Value;
+
+        Pitch_End_T.IsVisible = e.Value;
+        Pitch_End_S.IsVisible = e.Value;
+    }
+    //LPFの範囲指定の有無
+    private void LPF_Range_C_CheckedChanged(object? sender, CheckedChangedEventArgs e)
+    {
+        if (Voice_Sound_L.SelectedItem == null)
+            return;
+
+        CVoiceSoundSetting voiceSoundSetting = ((CVoiceSoundList)Voice_Sound_L.SelectedItem).VoiceSoundSetting;
+        voiceSoundSetting.IsLPFRange = e.Value;
+
+        LPF_End_T.IsVisible = e.Value;
+        LPF_End_S.IsVisible = e.Value;
+    }
+    //HPFの範囲指定の有無
+    private void HPF_Range_C_CheckedChanged(object? sender, CheckedChangedEventArgs e)
+    {
+        if (Voice_Sound_L.SelectedItem == null)
+            return;
+
+        CVoiceSoundSetting voiceSoundSetting = ((CVoiceSoundList)Voice_Sound_L.SelectedItem).VoiceSoundSetting;
+        voiceSoundSetting.IsHPFRange = e.Value;
+
+        HPF_End_T.IsVisible = e.Value;
+        HPF_End_S.IsVisible = e.Value;
     }
 
     //エフェクトを更新
