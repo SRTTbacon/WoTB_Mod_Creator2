@@ -1,2 +1,3 @@
 # WoTB_Mod_Creator2
- Android版Mod Creatorのリメイクです。
+ Android版Mod Creatorのリメイクです。\n
+ まだまともに動きません。
