@@ -13,11 +13,11 @@ namespace WoTB_Mod_Creator2.All_Page
         string apkURL = "";
         bool bDownloading = false;
         bool bUpdating = false;
+        bool bMessageShowing = false;
+        bool bCanUpdate = false;
 #endif
 
-        bool bMessageShowing = false;
         bool bPageOpened = false;
-        bool bCanUpdate = false;
 
         public MainPage()
         {
@@ -59,6 +59,7 @@ namespace WoTB_Mod_Creator2.All_Page
 #endif
         }
 
+#if ANDROID
         //画面下部にメッセージを表示
         private async void Message_Feed_Out(string Message)
         {
@@ -83,6 +84,7 @@ namespace WoTB_Mod_Creator2.All_Page
             Message_T.Text = "";
             Message_T.Opacity = 1;
         }
+#endif
 
         private void Voice_Create_B_Clicked(object? sender, EventArgs e)
         {
