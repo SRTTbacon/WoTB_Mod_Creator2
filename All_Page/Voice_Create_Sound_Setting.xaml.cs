@@ -101,7 +101,7 @@ public partial class Voice_Create_Sound_Setting : ContentPage
         Voice_Sound_L.ItemsSource = voiceSoundList;
         bShowing = true;
         //イベント設定画面を初期化
-        eventSettingWindow.Initialize(voiceEvent);
+        eventSettingWindow.Initialize(wvsFile, voiceEvent);
         //シークバー用のループ処理を開始
         Position_Change();
         Change_Range_Mode();

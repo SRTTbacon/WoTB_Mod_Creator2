@@ -1,3 +1,4 @@
+using Android.Text;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -5,6 +6,7 @@ using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Flac;
 using Un4seen.Bass.AddOn.Fx;
 using WoTB_Mod_Creator2.Class;
+using static Android.Icu.Text.Transliterator;
 
 namespace WoTB_Mod_Creator2.All_Page;
 
@@ -17,17 +19,18 @@ public partial class Voice_Create_Event_Setting : ContentPage
     readonly BASS_BFX_BQF soundVoiceLPFSetting = new(BASSBFXBQF.BASS_BFX_BQF_LOWPASS, 12000f, 0f, 0f, 1f, 0f, BASSFXChan.BASS_BFX_CHANALL);
     readonly BASS_BFX_BQF soundEventHPFSetting = new(BASSBFXBQF.BASS_BFX_BQF_HIGHPASS, 0f, 0f, 0f, 1f, 0f, BASSFXChan.BASS_BFX_CHANALL);
     readonly BASS_BFX_BQF soundVoiceHPFSetting = new(BASSBFXBQF.BASS_BFX_BQF_HIGHPASS, 0f, 0f, 0f, 1f, 0f, BASSFXChan.BASS_BFX_CHANALL);
-    readonly BASS_BFX_VOLUME soundGainSetting = new(1.0f);
+    readonly BASS_BFX_VOLUME soundEventGainSetting = new(1.0f);
+    readonly BASS_BFX_VOLUME soundVoiceGainSetting = new(1.0f);
 
-    WVS_Load? wvsFile = null;
+    WVS_Load? wvsFile;
     SYNCPROC? musicEndFunc = null;
     GCHandle soundPtr = new();
 
     string maxTime = "";
 
-    byte[]? soundBytes = null;
+    byte[]? soundBytes;
 
-    float eventFreq = 44100.0f;      //サウンドの周波数
+    readonly float eventFreq = 44100.0f;      //サウンドの周波数
     float voiceFreq = 44100.0f;      //サウンドの周波数
 
     //サウンドのハンドル
@@ -92,8 +95,9 @@ public partial class Voice_Create_Event_Setting : ContentPage
         HPF_Range_C.CheckedChanged += HPF_Range_C_CheckedChanged;
     }
 
-	public void Initialize(CVoiceTypeSetting eventSetting)
+	public void Initialize(WVS_Load wvsFile, CVoiceTypeSetting eventSetting)
 	{
+        this.wvsFile = wvsFile;
 		this.eventSetting = eventSetting;
     }
 
@@ -233,7 +237,7 @@ public partial class Voice_Create_Event_Setting : ContentPage
             if (!eventSetting.IsPitchRange)
             {
                 eventSetting.Pitch = (int)e.NewValue;
-                SetPitch(eventSetting.Pitch);
+                SetPitch(streamHandle, eventSetting.Pitch);
             }
             else
                 eventSetting.PitchRange.Start = (int)Pitch_Start_S.Value;
@@ -259,8 +263,8 @@ public partial class Voice_Create_Event_Setting : ContentPage
             if (!eventSetting.IsVolumeRange)
             {
                 eventSetting.Volume = e.NewValue;
-                soundGainSetting.fVolume = (int)Math.Pow(10.0, e.NewValue / 20.0);
-                Bass.BASS_FXSetParameters(streamEventGainHandle, soundGainSetting);
+                soundEventGainSetting.fVolume = (int)Math.Pow(10.0, e.NewValue / 20.0);
+                Bass.BASS_FXSetParameters(streamEventGainHandle, soundEventGainSetting);
             }
             else
                 eventSetting.VolumeRange.Start = e.NewValue;
@@ -275,12 +279,12 @@ public partial class Voice_Create_Event_Setting : ContentPage
     }
 
     //ピッチのスライダーから値を取得
-    private void SetPitch(int pitch)
+    private void SetPitch(int stream, int pitch)
     {
         //pitchが0の場合はデフォルトの再生速度にする
         if (pitch == 0)
         {
-            Bass.BASS_ChannelSetAttribute(streamHandle, BASSAttribute.BASS_ATTRIB_TEMPO_FREQ, eventFreq);
+            Bass.BASS_ChannelSetAttribute(stream, BASSAttribute.BASS_ATTRIB_TEMPO_FREQ, eventFreq);
             return;
         }
         int key = 0;
@@ -317,7 +321,7 @@ public partial class Voice_Create_Event_Setting : ContentPage
             plusFreq = 10.0 * (pitch - key) / (keyInt[index - 1] - key);
         else if (pitch < 0 && pitch > -1200)
             plusFreq = -10.0 * (pitch - key) / (keyInt[index + 1] - key);
-        Bass.BASS_ChannelSetAttribute(streamHandle, BASSAttribute.BASS_ATTRIB_TEMPO_FREQ, eventFreq * (float)(1 + (Sub_Code.PitchValues[key] + plusFreq) / 100.0));
+        Bass.BASS_ChannelSetAttribute(stream, BASSAttribute.BASS_ATTRIB_TEMPO_FREQ, eventFreq * (float)(1 + (Sub_Code.PitchValues[key] + plusFreq) / 100.0f));
     }
 
     //LPFのスライダーから値を取得
@@ -379,60 +383,67 @@ public partial class Voice_Create_Event_Setting : ContentPage
     }
 
     //徐々に一時停止
-    private async Task Pause_Volume_Animation(bool bStopMode, float fadeTime = 30f)
+    async Task Pause_Volume_Animation(bool IsStop, float Fade_Time = 30f, int handle = -1)
     {
-        bPaused = true;
-        float volumeNow = 1f;
-        Bass.BASS_ChannelGetAttribute(streamHandle, BASSAttribute.BASS_ATTRIB_VOL, ref volumeNow);
-        float Volume_Minus = volumeNow / fadeTime;
-        //音量を少しずつ下げる
-        while (volumeNow > 0f && bPaused)
+        if (bPaused)
+            return;
+        int Before_Handle = handle;
+        if (handle == -1)
         {
-            volumeNow -= Volume_Minus;
-            if (volumeNow < 0f)
-                volumeNow = 0f;
-            Bass.BASS_ChannelSetAttribute(streamHandle, BASSAttribute.BASS_ATTRIB_VOL, volumeNow);
+            handle = Stream_Mix;
+            bPaused = true;
+        }
+        float Volume_Now = 1f;
+        Bass.BASS_ChannelGetAttribute(handle, BASSAttribute.BASS_ATTRIB_VOL, ref Volume_Now);
+        float Volume_Minus = Volume_Now / Fade_Time;
+        while (Volume_Now > 0f && bPaused)
+        {
+            Volume_Now -= Volume_Minus;
+            if (Volume_Now < 0f)
+                Volume_Now = 0f;
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_VOL, Volume_Now);
             await Task.Delay(1000 / 60);
         }
-        //音量が0になったら再生を止める
-        if (volumeNow <= 0f)
+        if (Volume_Now <= 0f)
         {
-            if (bStopMode)
+            if (IsStop)
             {
-                Bass.BASS_ChannelStop(streamHandle);
-                Bass.BASS_StreamFree(streamHandle);
-                PlayTime_S.Value = 0;
-                PlayTime_S.Maximum = 0;
-                PlayTime_T.Text = "00:00 / 00:00";
+                Bass.BASS_ChannelStop(handle);
+                Bass.BASS_StreamFree(handle);
+                Position_S.Value = 0;
+                Position_S.Maximum = 0;
+                Position_T.Text = "00:00 / 00:00";
                 maxTime = "00:00";
                 if (soundPtr.IsAllocated)
                     soundPtr.Free();
+                soundBytes = null;
             }
-            else if (bPaused)
-                Bass.BASS_ChannelPause(streamHandle);
+            else if (bPaused || Before_Handle != -1)
+                Bass.BASS_ChannelPause(handle);
         }
     }
-
     //徐々に再生
-    private async void Play_Volume_Animation(float fadeTime = 30f)
+    async void Play_Volume_Animation(float Feed_Time = 30f, int Handle = -1, float Max_Volume = -1)
     {
+        if (Handle == -1)
+            Handle = Stream_Mix;
+        if (Max_Volume == -1)
+            Max_Volume = (float)(All_Volume_S.Value / 100);
         bPaused = false;
-        //Change_Effect();
-        Bass.BASS_ChannelPlay(streamHandle, false);
-        float volumeNow = 1f;
-        Bass.BASS_ChannelGetAttribute(streamHandle, BASSAttribute.BASS_ATTRIB_VOL, ref volumeNow);
-
-        //1フレームで下げる音量を設定
-        float volumePlus = (float)(All_Volume_S.Value / 100) / fadeTime;
-
-        while (volumeNow < (float)(All_Volume_S.Value / 100) && !bPaused)
+        Bass.BASS_ChannelPlay(Stream_Mix, false);
+        float Volume_Now = 1f;
+        Bass.BASS_ChannelGetAttribute(Handle, BASSAttribute.BASS_ATTRIB_VOL, ref Volume_Now);
+        float Volume_Plus = Max_Volume / Feed_Time;
+        while (Volume_Now < Max_Volume && !bPaused)
         {
-            volumeNow += volumePlus;
-            if (volumeNow > 1f)
-                volumeNow = 1f;
-            Bass.BASS_ChannelSetAttribute(streamHandle, BASSAttribute.BASS_ATTRIB_VOL, volumeNow);
+            Volume_Now += Volume_Plus;
+            if (Volume_Now > 1f)
+                Volume_Now = 1f;
+            Bass.BASS_ChannelSetAttribute(Handle, BASSAttribute.BASS_ATTRIB_VOL, Volume_Now);
             await Task.Delay(1000 / 60);
         }
+        if (!bPaused && selectedVoiceIndex != -1)
+            Bass.BASS_ChannelSetAttribute(streams[1], BASSAttribute.BASS_ATTRIB_VOL, 1f);
     }
 
     //再生
@@ -441,99 +452,104 @@ public partial class Voice_Create_Event_Setting : ContentPage
         if (eventSetting == null)
             return;
 
-        List<double> Sound_Time = [];
-        string Play_SE_Name = "なし";
+        List<double> soundTimes = [];
+        string playSEName = "なし";
         streams.Add(0);
-        Sound_Time.Add(0);
+        soundTimes.Add(0);
         if (eventSetting.SEIndex != -1)
         {
             SE_Type Temp = seSetting.sePreset.types[eventSetting.SEIndex - 1];
             if (Temp.items.Count > 0)
             {
                 List<string> playRandomSE = Temp.GetRandomItems();
-                string Name = playRandomSE[Sub_Code.r.Next(0, playRandomSE.Count)];
+                string Name = playRandomSE[Sub_Code.RandomValue.Next(0, playRandomSE.Count)];
                 if (Path.GetExtension(Name) == ".flac")
                     streams[0] = BassFlac.BASS_FLAC_StreamCreateFile(Name, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
                 else
                     streams[0] = Bass.BASS_StreamCreateFile(Name, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
-                Sound_Time[0] = Bass.BASS_ChannelBytes2Seconds(streams[0], Bass.BASS_ChannelGetLength(streams[0], BASSMode.BASS_POS_BYTES));
-                Play_SE_Name = Path.GetFileName(Name);
+                soundTimes[0] = Bass.BASS_ChannelBytes2Seconds(streams[0], Bass.BASS_ChannelGetLength(streams[0], BASSMode.BASS_POS_BYTES));
+                playSEName = Path.GetFileName(Name);
             }
         }
         Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, 100);
-        string Play_Voice_Name = "なし";
+        string playVoiceName = "なし";
         streams.Add(0);
-        Sound_Time.Add(0);
+        soundTimes.Add(0);
         selectedVoiceIndex = -1;
         if (eventSetting.Sounds.Count > 0)
         {
-            int Max_Probability = 0;
-            foreach (CVoiceSoundSetting Sound in eventSetting.Sounds)
-                Max_Probability += (int)Sound.Probability;
-            int Random_Probability = Sub_Code.RandomValue.Next(0, Max_Probability + 1);
-            int Now_Probability = 0;
-            if (Max_Probability > 0)
+            int maxProbability = 0;
+            foreach (CVoiceSoundSetting sound in eventSetting.Sounds)
+                maxProbability += (int)sound.Probability;
+            int randomProbability = Sub_Code.RandomValue.Next(0, maxProbability + 1);
+            int nowProbability = 0;
+            if (maxProbability > 0)
             {
-                for (int Number = 0; Number < eventSetting.Sounds.Count; Number++)
+                for (int i = 0; i < eventSetting.Sounds.Count; i++)
                 {
-                    if (Now_Probability + eventSetting.Sounds[Number].Probability >= Random_Probability)
+                    if (nowProbability + eventSetting.Sounds[i].Probability >= randomProbability)
                     {
-                        int Voice_Sound_Handle;
-                        if (eventSetting.Sounds[Number].FilePath.Contains('\\'))
+                        int voiceSoundHandle = 0;
+                        if (eventSetting.Sounds[i].FilePath.Contains('\\'))
                         {
-                            if (Path.GetExtension(eventSetting.Sounds[Number].FilePath) == ".flac")
-                                Voice_Sound_Handle = BassFlac.BASS_FLAC_StreamCreateFile(eventSetting.Sounds[Number].FilePath, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+                            if (Path.GetExtension(eventSetting.Sounds[i].FilePath) == ".flac")
+                                voiceSoundHandle = BassFlac.BASS_FLAC_StreamCreateFile(eventSetting.Sounds[i].FilePath, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
                             else
-                                Voice_Sound_Handle = Bass.BASS_StreamCreateFile(eventSetting.Sounds[Number].FilePath, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+                                voiceSoundHandle = Bass.BASS_StreamCreateFile(eventSetting.Sounds[i].FilePath, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
                         }
-                        else
+                        else if (wvsFile != null)
                         {
-                            soundBytes = wvsFile.Load_Sound(eventSetting.Sounds[Number].StreamPosition);
+                            soundBytes = wvsFile.Load_Sound(eventSetting.Sounds[i].StreamPosition);
                             if (soundPtr.IsAllocated)
                                 soundPtr.Free();
-                            soundPtr = GCHandle.Alloc(soundBytes, GCHandleType.Pinned);
-                            IntPtr pin = soundPtr.AddrOfPinnedObject();
-                            if (Path.GetExtension(eventSetting.Sounds[Number].FilePath) == ".flac")
-                                Voice_Sound_Handle = BassFlac.BASS_FLAC_StreamCreateFile(pin, 0L, soundBytes.Length, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
-                            else
-                                Voice_Sound_Handle = Bass.BASS_StreamCreateFile(pin, 0L, soundBytes.Length, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+                            if (soundBytes != null)
+                            {
+                                soundPtr = GCHandle.Alloc(soundBytes, GCHandleType.Pinned);
+                                IntPtr pin = soundPtr.AddrOfPinnedObject();
+                                if (Path.GetExtension(eventSetting.Sounds[i].FilePath) == ".flac")
+                                    voiceSoundHandle = BassFlac.BASS_FLAC_StreamCreateFile(pin, 0L, soundBytes.Length, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+                                else
+                                    voiceSoundHandle = Bass.BASS_StreamCreateFile(pin, 0L, soundBytes.Length, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+                            }
                         }
-                        Play_Voice_Name = Path.GetFileName(eventSetting.Sounds[Number].FilePath);
-                        streams[1] = BassFx.BASS_FX_TempoCreate(Voice_Sound_Handle, BASSFlag.BASS_FX_FREESOURCE | BASSFlag.BASS_STREAM_DECODE);
-                        selectedVoiceIndex = Number;
+                        playVoiceName = Path.GetFileName(eventSetting.Sounds[i].FilePath);
+                        streams[1] = BassFx.BASS_FX_TempoCreate(voiceSoundHandle, BASSFlag.BASS_FX_FREESOURCE | BASSFlag.BASS_STREAM_DECODE);
+                        selectedVoiceIndex = i;
                         break;
                     }
-                    Now_Probability += (int)eventSetting.Sounds[Number].Probability;
+                    nowProbability += (int)eventSetting.Sounds[i].Probability;
                 }
             }
         }
-        int Stream_Mix_Handle = Un4seen.Bass.AddOn.Mix.BassMix.BASS_Mixer_StreamCreate((int)eventFreq, 2, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+        int streamMixHandle = Un4seen.Bass.AddOn.Mix.BassMix.BASS_Mixer_StreamCreate((int)eventFreq, 2, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
         if (selectedVoiceIndex != -1)
         {
             Bass.BASS_ChannelGetAttribute(streams[1], BASSAttribute.BASS_ATTRIB_TEMPO_FREQ, ref voiceFreq);
             streamVoiceLPFHandle = Bass.BASS_ChannelSetFX(streams[1], BASSFXType.BASS_FX_BFX_BQF, 2);
             streamVoiceHPFHandle = Bass.BASS_ChannelSetFX(streams[1], BASSFXType.BASS_FX_BFX_BQF, 1);
-            Set_Voice_Effect(selectedVoiceIndex);
-            long Start = Bass.BASS_ChannelSeconds2Bytes(streams[1], eventSetting.Sounds[selectedVoiceIndex].PlayTime.Start);
+            streamVoiceGainHandle = Bass.BASS_ChannelSetFX(streams[1], BASSFXType.BASS_FX_BFX_VOLUME, 3);
+
+            Change_Voice_Effect(streams[1], eventSetting.Sounds[selectedVoiceIndex]);
             if (eventSetting.Sounds[selectedVoiceIndex].PlayTime.End == 0)
-                Sound_Time[1] = Bass.BASS_ChannelBytes2Seconds(streams[1], Bass.BASS_ChannelGetLength(streams[1], BASSMode.BASS_POS_BYTES)) - Settings.Sounds[selectedVoiceIndex].Play_Time.Start_Time;
+                soundTimes[1] = Bass.BASS_ChannelBytes2Seconds(streams[1], Bass.BASS_ChannelGetLength(streams[1], BASSMode.BASS_POS_BYTES)) - eventSetting.Sounds[selectedVoiceIndex].PlayTime.Start;
             else
-                Sound_Time[1] = eventSetting.Sounds[selectedVoiceIndex].PlayTime.End - eventSetting.Sounds[selectedVoiceIndex].PlayTime.Start;
-            long Start_Pos = Bass.BASS_ChannelSeconds2Bytes(Stream_Mix_Handle, eventSetting.Delay + eventSetting.Sounds[selectedVoiceIndex].Delay);
-            Un4seen.Bass.AddOn.Mix.BassMix.BASS_Mixer_StreamAddChannelEx(Stream_Mix_Handle, streams[1], BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE, Start_Pos, 0);
+                soundTimes[1] = eventSetting.Sounds[selectedVoiceIndex].PlayTime.End - eventSetting.Sounds[selectedVoiceIndex].PlayTime.Start;
+            long startPos = Bass.BASS_ChannelSeconds2Bytes(streamMixHandle, eventSetting.Delay + eventSetting.Sounds[selectedVoiceIndex].Delay);
+            Un4seen.Bass.AddOn.Mix.BassMix.BASS_Mixer_StreamAddChannelEx(streamMixHandle, streams[1], BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE, startPos, 0);
         }
-        Un4seen.Bass.AddOn.Mix.BassMix.BASS_Mixer_StreamAddChannel(Stream_Mix_Handle, streams[0], BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
-        streamHandle = BassFx.BASS_FX_TempoCreate(Stream_Mix_Handle, BASSFlag.BASS_FX_FREESOURCE);
+        Un4seen.Bass.AddOn.Mix.BassMix.BASS_Mixer_StreamAddChannel(streamMixHandle, streams[0], BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+        streamHandle = BassFx.BASS_FX_TempoCreate(streamMixHandle, BASSFlag.BASS_FX_FREESOURCE);
         streamEventLPFHandle = Bass.BASS_ChannelSetFX(streamHandle, BASSFXType.BASS_FX_BFX_BQF, 2);
         streamEventHPFHandle = Bass.BASS_ChannelSetFX(streamHandle, BASSFXType.BASS_FX_BFX_BQF, 1);
+        streamEventGainHandle = Bass.BASS_ChannelSetFX(streamHandle, BASSFXType.BASS_FX_BFX_VOLUME, 3);
         Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, 500);
         musicEndFunc = new SYNCPROC(EndSync);
-        Change_Effect();
+        Change_Event_Effect();
         maxTimeStream = -1;
-        if (Sound_Time.Count > 0)
+        if (soundTimes.Count > 0)
         {
-            PlayTime_S.Maximum = Sound_Time.Max();
-            maxTimeStream = Sound_Time.IndexOf(PlayTime_S.Maximum);
+            PlayTime_S.Maximum = soundTimes.Max();
+            maxTimeStream = soundTimes.IndexOf(PlayTime_S.Maximum);
             maxTime = Sub_Code.Get_Time_String(PlayTime_S.Maximum);
             PlayTime_T.Text = "00:00 / " + maxTime;
         }
@@ -543,21 +559,21 @@ public partial class Voice_Create_Event_Setting : ContentPage
             maxTime = "00:00";
             PlayTime_T.Text = "00:00 / 00:00";
         }
-        About_T.Text = "イベント名:" + Event_Name + "\nSE:" + Play_SE_Name + "\n音声:" + Play_Voice_Name;
-        Bass.BASS_ChannelSetSync(streams[maxTimeStream], BASSSync.BASS_SYNC_END | BASSSync.BASS_SYNC_MIXTIME, 0, musicEndFunc, IntPtr.Zero);
+        About_T.Text = "イベント名:" + eventSetting.EventName + "\nSE:" + playSEName + "\n音声:" + playVoiceName;
+        _ = Bass.BASS_ChannelSetSync(streams[maxTimeStream], BASSSync.BASS_SYNC_END | BASSSync.BASS_SYNC_MIXTIME, 0, musicEndFunc, IntPtr.Zero);
         if (selectedVoiceIndex != -1)
             Bass.BASS_ChannelSetPosition(streams[1], eventSetting.Sounds[selectedVoiceIndex].PlayTime.Start);
         Bass.BASS_ChannelSetAttribute(streamHandle, BASSAttribute.BASS_ATTRIB_VOL, (float)All_Volume_S.Value / 100f);
-        Sound_Time.Clear();
+        soundTimes.Clear();
         if (selectedVoiceIndex != -1 && eventSetting.Sounds[selectedVoiceIndex].IsFadeIn)
         {
             Bass.BASS_ChannelSetAttribute(streams[1], BASSAttribute.BASS_ATTRIB_VOL, 0f);
-            double Play_Time = 0;
+            double playTime = 0;
             if (eventSetting.Sounds[selectedVoiceIndex].PlayTime.End != 0)
-                Play_Time = eventSetting.Sounds[selectedVoiceIndex].PlayTime.End - eventSetting.Sounds[selectedVoiceIndex].PlayTime.Start;
+                playTime = eventSetting.Sounds[selectedVoiceIndex].PlayTime.End - eventSetting.Sounds[selectedVoiceIndex].PlayTime.Start;
             else
-                Play_Time = eventSetting.Sounds[selectedVoiceIndex].PlayTime.Max - eventSetting.Sounds[selectedVoiceIndex].PlayTime.Start;
-            if (Play_Time > 0.5)
+                playTime = eventSetting.Sounds[selectedVoiceIndex].PlayTime.Max - eventSetting.Sounds[selectedVoiceIndex].PlayTime.Start;
+            if (playTime > 0.5)
                 Play_Volume_Animation(30f, streams[1], 1f);
         }
         Bass.BASS_ChannelPlay(streamHandle, true);
@@ -594,7 +610,7 @@ public partial class Voice_Create_Event_Setting : ContentPage
     //エフェクト更新ボタン
     private void Effect_Update_B_Clicked(object? sender, EventArgs e)
     {
-        Change_Effect();
+        Change_Event_Effect();
     }
 
     //エフェクトを更新
@@ -603,7 +619,7 @@ public partial class Voice_Create_Event_Setting : ContentPage
     //mode = 1  : ピッチのみ更新
     //mode = 2  : Low Pass Filterのみ更新
     //mode = 3  : High Pass Filterのみ更新
-    void Change_Effect(int mode = -1)
+    void Change_Event_Effect(int mode = -1)
     {
         if (eventSetting == null)
             return;
@@ -622,8 +638,8 @@ public partial class Voice_Create_Event_Setting : ContentPage
             }
             else
                 volume = eventSetting.Volume;
-            soundGainSetting.fVolume = (int)Math.Pow(10d, volume / 20.0);
-            Bass.BASS_FXSetParameters(streamEventGainHandle, soundGainSetting);
+            soundEventGainSetting.fVolume = (int)Math.Pow(10d, volume / 20.0);
+            Bass.BASS_FXSetParameters(streamEventGainHandle, soundEventGainSetting);
         }
         //ピッチを更新
         if (mode == -1 || mode == 1)
@@ -639,7 +655,7 @@ public partial class Voice_Create_Event_Setting : ContentPage
             }
             else
                 pitch = eventSetting.Pitch;
-            SetPitch(pitch);
+            SetPitch(streamHandle, pitch);
         }
         //Low Pass Filterを更新
         if (mode == -1 || mode == 2)
@@ -675,6 +691,80 @@ public partial class Voice_Create_Event_Setting : ContentPage
             soundEventHPFSetting.fCenter = Get_HPF_Value(hpf);
             Bass.BASS_FXSetParameters(streamEventHPFHandle, soundEventHPFSetting);
         }
+    }
+    //エフェクトを更新
+    //mode = -1 : すべてのエフェクトを更新
+    //mode = 0  : 音量(ゲイン)のみ更新
+    //mode = 1  : ピッチのみ更新
+    //mode = 2  : Low Pass Filterのみ更新
+    //mode = 3  : High Pass Filterのみ更新
+    void Change_Voice_Effect(int stream, CVoiceSoundSetting soundSetting)
+    {
+        if (soundSetting == null)
+            return;
+
+        //音量(ゲイン)の更新
+        double volume;
+
+        //音量の範囲が有効の場合
+        if (soundSetting.IsVolumeRange)
+        {
+            if (soundSetting.VolumeRange.End >= soundSetting.VolumeRange.Start)
+                volume = Sub_Code.Get_Random_Double(soundSetting.VolumeRange.Start, soundSetting.VolumeRange.End);
+            else
+                volume = Sub_Code.Get_Random_Double(soundSetting.VolumeRange.End, soundSetting.VolumeRange.Start);
+        }
+        else
+            volume = soundSetting.Volume;
+        soundEventGainSetting.fVolume = (int)Math.Pow(10d, volume / 20.0);
+        Bass.BASS_FXSetParameters(streamEventGainHandle, soundEventGainSetting);
+
+        //ピッチを更新
+        int pitch;
+
+        //ピッチの範囲が有効の場合
+        if (soundSetting.IsPitchRange)
+        {
+            if (soundSetting.PitchRange.End >= soundSetting.PitchRange.Start)
+                pitch = Sub_Code.RandomValue.Next(soundSetting.PitchRange.Start, soundSetting.PitchRange.End + 1);
+            else
+                pitch = Sub_Code.RandomValue.Next(soundSetting.PitchRange.End, soundSetting.PitchRange.Start);
+        }
+        else
+            pitch = soundSetting.Pitch;
+        SetPitch(stream, pitch);
+
+        //Low Pass Filterを更新
+        int lpf;
+
+        //LPFの範囲が有効の場合
+        if (soundSetting.IsLPFRange)
+        {
+            if (soundSetting.LPFRange.End >= soundSetting.LPFRange.Start)
+                lpf = Sub_Code.RandomValue.Next(soundSetting.LPFRange.Start, soundSetting.LPFRange.End + 1);
+            else
+                lpf = Sub_Code.RandomValue.Next(soundSetting.LPFRange.End, soundSetting.LPFRange.Start);
+        }
+        else
+            lpf = soundSetting.LowPassFilter;
+        soundEventLPFSetting.fCenter = Get_LPF_Value(lpf);
+        Bass.BASS_FXSetParameters(streamEventLPFHandle, soundEventLPFSetting);
+
+        //High Pass Filterを更新
+        int hpf;
+
+        //HPF範囲が有効の場合
+        if (soundSetting.IsHPFRange)
+        {
+            if (soundSetting.HPFRange.End >= soundSetting.HPFRange.Start)
+                hpf = Sub_Code.RandomValue.Next(soundSetting.HPFRange.Start, soundSetting.HPFRange.End + 1);
+            else
+                hpf = Sub_Code.RandomValue.Next(soundSetting.HPFRange.End, soundSetting.HPFRange.Start);
+        }
+        else
+            hpf = soundSetting.HighPassFilter;
+        soundEventHPFSetting.fCenter = Get_HPF_Value(hpf);
+        Bass.BASS_FXSetParameters(streamEventHPFHandle, soundEventHPFSetting);
     }
 
     //ゲインの値をリセット (Androidのスライダーでは0.0に合わせるのが難しいため)
@@ -778,6 +868,7 @@ public partial class Voice_Create_Event_Setting : ContentPage
         }
     }
 
+
     //サウンドを解放
     void Sound_Dispose()
     {
@@ -803,7 +894,7 @@ public partial class Voice_Create_Event_Setting : ContentPage
         }
         if (soundPtr.IsAllocated)
             soundPtr.Free();
-        Sound_Bytes = null;
+        soundBytes = null;
         streams.Clear();
         PlayTime_T.Text = "00:00 / 00:00";
         PlayTime_S.Value = 0;
