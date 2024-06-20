@@ -118,6 +118,9 @@
 	  <MauiXaml Update="All_Page\Select_Files.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="All_Page\SE_Setting.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="All_Page\Voice_Create.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

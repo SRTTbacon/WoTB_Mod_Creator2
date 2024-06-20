@@ -3,7 +3,7 @@
   <PropertyGroup>
     <IsFirstTimeProjectOpen>False</IsFirstTimeProjectOpen>
     <ActiveDebugFramework>net8.0-android</ActiveDebugFramework>
-    <ActiveDebugProfile>Android Emulator</ActiveDebugProfile>
+    <ActiveDebugProfile>Pixel 5 API 32 (Android 12.1 - API 32)</ActiveDebugProfile>
     <SelectedPlatformGroup>Emulator</SelectedPlatformGroup>
     <DefaultDevice>Pixel_5_API_32</DefaultDevice>
   </PropertyGroup>
@@ -19,6 +19,9 @@
   </PropertyGroup>
   <ItemGroup>
     <MauiXaml Update="All_Page\Select_Files.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
+    <MauiXaml Update="All_Page\SE_Setting.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>
     <MauiXaml Update="All_Page\Voice_Create.xaml">

@@ -36,8 +36,8 @@
                 </Border>
                 <Button x:Name="Sound_Add_B" Text="サウンドを追加" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.72,0.47,0.3,0.06"/>
                 <Button x:Name="Sound_Delete_B" Text="サウンドを取消" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.27,0.47,0.3,0.06"/>
-                <Label Text="サウンドリスト" TextColor="Aqua" FontSize="16" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.525,0.65,0.325,0.05"/>
-                <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.82,0.8,0.2">
+                <Label Text="サウンドリスト" TextColor="Aqua" FontSize="16" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.525,0.625,0.325,0.05"/>
+                <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.825,0.8,0.225">
                     <ListView x:Name="Sound_File_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25">
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -52,6 +52,7 @@
                         </ListView.ItemTemplate>
                     </ListView>
                 </Border>
+                <Button x:Name="SE_Setting_B" Text="SEの設定へ" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="16" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.55,0.4,0.06"/>
                 <Button x:Name="Create_B" Text="設定画面へ" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="16" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.95,0.999,0.7,0.07"/>
                 <Button x:Name="Clear_B" Text="クリア" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="16" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0.999,0.25,0.07"/>
                 <Label x:Name="Message_T" Text="" FontSize="14" TextColor="Aqua" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.95,0.8,0.08"/>

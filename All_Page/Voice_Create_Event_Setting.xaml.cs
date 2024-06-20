@@ -1,12 +1,9 @@
-using Android.Text;
-using System.IO;
-using System.Reflection;
+using Octokit;
 using System.Runtime.InteropServices;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Flac;
 using Un4seen.Bass.AddOn.Fx;
 using WoTB_Mod_Creator2.Class;
-using static Android.Icu.Text.Transliterator;
 
 namespace WoTB_Mod_Creator2.All_Page;
 
@@ -390,7 +387,7 @@ public partial class Voice_Create_Event_Setting : ContentPage
         int Before_Handle = handle;
         if (handle == -1)
         {
-            handle = Stream_Mix;
+            handle = streamHandle;
             bPaused = true;
         }
         float Volume_Now = 1f;
@@ -410,9 +407,9 @@ public partial class Voice_Create_Event_Setting : ContentPage
             {
                 Bass.BASS_ChannelStop(handle);
                 Bass.BASS_StreamFree(handle);
-                Position_S.Value = 0;
-                Position_S.Maximum = 0;
-                Position_T.Text = "00:00 / 00:00";
+                PlayTime_S.Value = 0;
+                PlayTime_S.Maximum = 0;
+                PlayTime_T.Text = "00:00 / 00:00";
                 maxTime = "00:00";
                 if (soundPtr.IsAllocated)
                     soundPtr.Free();
@@ -426,11 +423,11 @@ public partial class Voice_Create_Event_Setting : ContentPage
     async void Play_Volume_Animation(float Feed_Time = 30f, int Handle = -1, float Max_Volume = -1)
     {
         if (Handle == -1)
-            Handle = Stream_Mix;
+            Handle = streamHandle;
         if (Max_Volume == -1)
             Max_Volume = (float)(All_Volume_S.Value / 100);
         bPaused = false;
-        Bass.BASS_ChannelPlay(Stream_Mix, false);
+        Bass.BASS_ChannelPlay(streamHandle, false);
         float Volume_Now = 1f;
         Bass.BASS_ChannelGetAttribute(Handle, BASSAttribute.BASS_ATTRIB_VOL, ref Volume_Now);
         float Volume_Plus = Max_Volume / Feed_Time;
@@ -458,7 +455,7 @@ public partial class Voice_Create_Event_Setting : ContentPage
         soundTimes.Add(0);
         if (eventSetting.SEIndex != -1)
         {
-            SE_Type Temp = seSetting.sePreset.types[eventSetting.SEIndex - 1];
+            /*SE_Type Temp = seSetting.sePreset.types[eventSetting.SEIndex - 1];
             if (Temp.items.Count > 0)
             {
                 List<string> playRandomSE = Temp.GetRandomItems();
@@ -469,7 +466,7 @@ public partial class Voice_Create_Event_Setting : ContentPage
                     streams[0] = Bass.BASS_StreamCreateFile(Name, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
                 soundTimes[0] = Bass.BASS_ChannelBytes2Seconds(streams[0], Bass.BASS_ChannelGetLength(streams[0], BASSMode.BASS_POS_BYTES));
                 playSEName = Path.GetFileName(Name);
-            }
+            }*/
         }
         Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, 100);
         string playVoiceName = "‚È‚µ";

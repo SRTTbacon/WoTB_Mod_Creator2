@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 using WoTB_Mod_Creator2.All_Page;
 
@@ -220,5 +221,44 @@ namespace WoTB_Mod_Creator2.Class
                 return 0.0;
             }
         }
+    }
+    public partial class WwiseHash
+    {
+        //GUIDからShortIDを生成
+        public static uint HashGUID(string ID)
+        {
+            Regex alphanum = MyRegex();
+            string filtered = alphanum.Replace(ID, "");
+            List<byte> guidBytes = [];
+            int[] byteOrder = [3, 2, 1, 0, 5, 4, 7, 6, 8, 9, 10, 11, 12, 13, 14, 15];
+            for (int i = 0; i < byteOrder.Length; i++)
+                guidBytes.Add(byte.Parse(filtered.AsSpan(byteOrder[i] * 2, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture));
+            return FnvHash([.. guidBytes], false);
+        }
+
+        public static uint HashString(string Name)
+        {
+            return FnvHash(Encoding.ASCII.GetBytes(Name.ToLowerInvariant()), true);
+        }
+
+        static uint FnvHash(byte[] input, bool use32bits)
+        {
+            uint prime = 16777619;
+            uint offset = 2166136261;
+            uint mask = 1073741823;
+            uint hash = offset;
+            for (int i = 0; i < input.Length; i++)
+            {
+                hash *= prime;
+                hash ^= input[i];
+            }
+            if (use32bits)
+                return hash;
+            else
+                return (hash >> 30) ^ (hash & mask);
+        }
+
+        [GeneratedRegex("[^0-9A-Za-z]")]
+        private static partial Regex MyRegex();
     }
 }

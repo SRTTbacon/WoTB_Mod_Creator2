@@ -25,7 +25,9 @@ public class CVoiceTypeList(string eventName, int index)
 public partial class Voice_Create : ContentPage
 {
     //イベント設定
-    readonly Voice_Create_Sound_Setting soundSettingWindow = new();
+    Voice_Create_Sound_Setting? soundSettingWindow = null;
+    //SE設定
+    SE_Setting? seSettingWindow = null;
 
     //サウンドイベント
     readonly List<CVoiceSoundList> voiceSounds = [];
@@ -57,9 +59,11 @@ public partial class Voice_Create : ContentPage
         Sound_Delete_B.Clicked += Sound_Delete_B_Click;
         Create_B.Clicked += OpenEventSetting_B_Click;
         Clear_B.Clicked += Clear_B_Click;
+        SE_Setting_B.Clicked += SE_Setting_B_Clicked;
         Init_Voice_Type();
         Set_Item_Type();
     }
+
     private void Init_Voice_Type()
     {
         voiceSounds.Clear();
@@ -481,12 +485,31 @@ public partial class Voice_Create : ContentPage
     {
         if (bOtherPageOpened)
             return;
+
         CVoiceTypeList typeList = (CVoiceTypeList)Voice_Type_L.SelectedItem;
         if (typeList == null)
             return;
+        if (typeList.Count <= 0)
+        {
+            Message_Feed_Out("イベント内にサウンドが含まれていないため設定画面を開くことができません。");
+            return;
+        }
+
+        soundSettingWindow ??= new();
 
         soundSettingWindow.Initialize(typeList.TypeSetting, voiceSounds, wvsFile);
         Navigation.PushAsync(soundSettingWindow);
+        bOtherPageOpened = true;
+    }
+
+    private void SE_Setting_B_Clicked(object? sender, EventArgs e)
+    {
+        if (bOtherPageOpened)
+            return;
+
+        seSettingWindow ??= new();
+
+        Navigation.PushAsync(seSettingWindow);
         bOtherPageOpened = true;
     }
 }
