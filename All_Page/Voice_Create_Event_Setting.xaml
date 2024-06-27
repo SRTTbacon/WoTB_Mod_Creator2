@@ -5,6 +5,7 @@
              Shell.BackgroundColor="Black"
              Title="イベント設定"
              Shell.TitleColor="White"
+             Disappearing="ContentPage_Disappearing"
              BackgroundColor="{StaticResource BackGround}">
     <Grid>
         <Grid.RowDefinitions>
@@ -13,14 +14,14 @@
         </Grid.RowDefinitions>
         <ScrollView Grid.Row="1">
             <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                <Label x:Name="All_Volume_T" Text="全体音量:100" TextColor="Aqua" FontSize="16" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.075,0.3,0.05"/>
-                <Slider x:Name="All_Volume_S" MaximumTrackColor="Gray" Maximum="100" Value="100" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.425,0.1,0.5,0.05"/>
+                <Label x:Name="All_Volume_T" Text="全体音量:100" TextColor="Aqua" FontSize="16" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.225,0.1,0.3,0.05"/>
+                <Slider x:Name="All_Volume_S" MaximumTrackColor="Gray" Maximum="100" Value="100" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.05,0.13,0.5,0.05"/>
                 <Label x:Name="PlayTime_T" Text="00:00 / 00:00" TextColor="Aqua" FontSize="16" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.76,0.25,0.05"/>
                 <Slider x:Name="PlayTime_S" MaximumTrackColor="Gray" Value="0"  Maximum="1" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.78,0.5,0.05"/>
-                <Button x:Name="Play_B" Text="再生" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.72,0.69,0.275,0.0575"/>
-                <Button x:Name="Pause_B" Text="一時停止" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.3,0.69,0.275,0.0575"/>
-                <Button x:Name="Minus_B" Text="-5秒" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.3,0.84,0.275,0.0575"/>
-                <Button x:Name="Plus_B" Text="+5秒" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.72,0.84,0.275,0.0575"/>
+                <Button x:Name="Play_B" Text="再生" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.72,0.69,0.275,0.0575" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="Pause_B" Text="一時停止" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.3,0.69,0.275,0.0575" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="Minus_B" Text="-5秒" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.3,0.84,0.275,0.0575" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="Plus_B" Text="+5秒" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.72,0.84,0.275,0.0575" Pressed="Button_Pressed" Released="Button_Released"/>
                 <Label x:Name="Gain_Start_T" Text="ゲイン(db):0" TextColor="Aqua" FontSize="16" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.115,0.2,0.3,0.05"/>
                 <Slider x:Name="Gain_Start_S" Maximum="10" Minimum="-10" MaximumTrackColor="Gray" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0.225,0.45,0.05"/>
                 <Label x:Name="Gain_End_T" Text="～:0" TextColor="Aqua" FontSize="16" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.115,0.28,0.3,0.05"/>
@@ -37,19 +38,19 @@
                 <Slider x:Name="HPF_Start_S" Maximum="70" MaximumTrackColor="Gray" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.9,0.4,0.45,0.05"/>
                 <Label x:Name="HPF_End_T" Text="～:0" TextColor="Aqua" FontSize="16" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.825,0.45,0.25,0.05"/>
                 <Slider x:Name="HPF_End_S" Maximum="70" MaximumTrackColor="Gray" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.9,0.48,0.45,0.05"/>
-                <Button x:Name="Gain_Reset_B" Text="R" BackgroundColor="Transparent" TextColor="Aqua" BorderColor="Aqua" BorderWidth="1" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.42,0.19,0.12,0.045"/>
-                <Button x:Name="Pitch_Reset_B" Text="R" BackgroundColor="Transparent" TextColor="Aqua" BorderColor="Aqua" BorderWidth="1" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.975,0.19,0.12,0.045"/>
-                <Button x:Name="LPF_Reset_B" Text="R" BackgroundColor="Transparent" TextColor="Aqua" BorderColor="Aqua" BorderWidth="1" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.37,0.365,0.12,0.045"/>
-                <Button x:Name="HPF_Reset_B" Text="R" BackgroundColor="Transparent" TextColor="Aqua" BorderColor="Aqua" BorderWidth="1" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.95,0.365,0.12,0.045"/>
+                <Button x:Name="Gain_Reset_B" Text="R" BackgroundColor="Transparent" TextColor="Aqua" BorderColor="Aqua" BorderWidth="1" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.42,0.19,0.12,0.045" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="Pitch_Reset_B" Text="R" BackgroundColor="Transparent" TextColor="Aqua" BorderColor="Aqua" BorderWidth="1" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.975,0.19,0.12,0.045" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="LPF_Reset_B" Text="R" BackgroundColor="Transparent" TextColor="Aqua" BorderColor="Aqua" BorderWidth="1" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.37,0.365,0.12,0.045" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="HPF_Reset_B" Text="R" BackgroundColor="Transparent" TextColor="Aqua" BorderColor="Aqua" BorderWidth="1" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.95,0.365,0.12,0.045" Pressed="Button_Pressed" Released="Button_Released"/>
                 <CheckBox x:Name="Gain_Range_C" Color="Aqua" BackgroundColor="Transparent" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.06,0.188,0.05,0.05"/>
                 <CheckBox x:Name="Pitch_Range_C" Color="Aqua" BackgroundColor="Transparent" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.61,0.188,0.05,0.05"/>
                 <CheckBox x:Name="LPF_Range_C" Color="Aqua" BackgroundColor="Transparent" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.1,0.365,0.05,0.05"/>
                 <CheckBox x:Name="HPF_Range_C" Color="Aqua" BackgroundColor="Transparent" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.65,0.365,0.05,0.05"/>
                 <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.53,0.9,0.003"/>
-                <Button x:Name="Effect_Update_B" Text="エフェクトを更新" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.9,0.6,0.325,0.0575"/>
+                <Button x:Name="Effect_Update_B" Text="エフェクトを更新" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.9,0.6,0.325,0.0575" Pressed="Button_Pressed" Released="Button_Released"/>
                 <Label x:Name="Delay_T" Text="遅延:0秒" TextColor="Aqua" FontSize="16" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.125,0.59,0.25,0.05"/>
                 <Slider x:Name="Delay_S" Maximum="5" Value="0" MaximumTrackColor="Gray" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0.62,0.45,0.05"/>
-                <Label x:Name="About_T" Text="" FontSize="16" TextColor="Aqua" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.95,0.825,0.5,0.08"/>
+                <Label x:Name="About_T" Text="" FontSize="14" TextColor="Aqua" VerticalTextAlignment="Start" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.95,0,0.55,0.2"/>
                 <Label x:Name="Message_T" Text="" FontSize="14" TextColor="Aqua" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.95,0.925,0.5,0.08"/>
             </AbsoluteLayout>
         </ScrollView>

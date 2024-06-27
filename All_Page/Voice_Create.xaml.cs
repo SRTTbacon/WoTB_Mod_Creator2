@@ -18,16 +18,24 @@ public class CVoiceTypeList(string eventName, int index)
     public string Name_Text => Name + " : " + Count + "個";
     public int Count => TypeSetting.Sounds.Count;
     public int Index { get; private set; } = index;
+    public bool IsSelected = false;
     public Color Name_Color => Count == 0 ? Color.FromArgb("#BFFF2C8C") : Colors.Aqua;
+    public Color BackColor => IsSelected ? Color.FromArgb("#82bfc8") : Colors.Transparent;
     public CVoiceTypeSetting TypeSetting = new();
+
+    public void InitTypeSetting(uint eventShortID, uint voiceShortID, SE_Type? seType)
+    {
+        TypeSetting.Init(eventShortID, voiceShortID, seType);
+    }
 }
 
 public partial class Voice_Create : ContentPage
 {
+    //SE設定
+    public SE_Setting? SESettingWindow = null;
+
     //イベント設定
     Voice_Create_Sound_Setting? soundSettingWindow = null;
-    //SE設定
-    SE_Setting? seSettingWindow = null;
 
     //サウンドイベント
     readonly List<CVoiceSoundList> voiceSounds = [];
@@ -38,7 +46,6 @@ public partial class Voice_Create : ContentPage
 
     readonly WVS_Load wvsFile = new();
 
-    static readonly string[] audioExtension = ["audio/*"];
     string projectName = "";
 
     int nowTypePage = 0;
@@ -60,8 +67,6 @@ public partial class Voice_Create : ContentPage
         Create_B.Clicked += OpenEventSetting_B_Click;
         Clear_B.Clicked += Clear_B_Click;
         SE_Setting_B.Clicked += SE_Setting_B_Clicked;
-        Init_Voice_Type();
-        Set_Item_Type();
     }
 
     private void Init_Voice_Type()
@@ -71,42 +76,81 @@ public partial class Voice_Create : ContentPage
         for (int i = 0; i < 3; i++)
             voiceTypes.Add([]);
 
+        if (SESettingWindow == null)
+            return;
+
+        SE_Preset sePreset = SESettingWindow.NowPreset;
+
         //1ページ目
         List<CVoiceTypeList> voiceTypeOne = voiceTypes[0];
         voiceTypeOne.Add(new("味方にダメージ", voiceTypeOne.Count));
-        voiceTypeOne.Add(new("弾薬庫", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(341425709, 170029050, sePreset.GetSEType("貫通"));
+        voiceTypeOne.Add(new("弾薬庫破損", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(908426860, 95559763, sePreset.GetSEType("弾薬庫破損"));
         voiceTypeOne.Add(new("敵への無効弾", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(280189980, 766083947, sePreset.GetSEType("非貫通-無効弾"));
         voiceTypeOne.Add(new("敵への貫通弾", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(815358870, 569784404, sePreset.GetSEType("貫通"));
         voiceTypeOne.Add(new("敵への致命弾", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(49295125, 266422868, sePreset.GetSEType("敵モジュール破損"));
         voiceTypeOne.Add(new("敵への跳弾", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(733342682, 1052258113, sePreset.GetSEType("非貫通-跳弾"));
         voiceTypeOne.Add(new("車長負傷", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(331196727, 242302464, sePreset.GetSEType("搭乗員負傷"));
         voiceTypeOne.Add(new("操縦手負傷", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(619058694, 334837201, sePreset.GetSEType("搭乗員負傷"));
         voiceTypeOne.Add(new("敵炎上", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(794420468, 381780774, sePreset.GetSEType("敵炎上"));
         voiceTypeOne.Add(new("敵撃破", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(109598189, 489572734, sePreset.GetSEType("敵撃破"));
         voiceTypeOne.Add(new("エンジン破損", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(244621664, 210078142, sePreset.GetSEType("モジュール破損"));
         voiceTypeOne.Add(new("エンジン大破", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(73205091, 249535989, sePreset.GetSEType("モジュール大破"));
         voiceTypeOne.Add(new("エンジン復旧", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(466111031, 908710042, sePreset.GetSEType("モジュール復旧"));
         voiceTypeOne.Add(new("自車両火災", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(471196930, 1057023960, null);
         voiceTypeOne.Add(new("自車両消火", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(337626756, 953778289, null);
         voiceTypeOne.Add(new("燃料タンク破損", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(930519512, 121897540, sePreset.GetSEType("燃料タンク破損"));
         voiceTypeOne.Add(new("主砲破損", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(1063632502, 127877647, sePreset.GetSEType("モジュール破損"));
         voiceTypeOne.Add(new("主砲大破", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(175994480, 462397017, sePreset.GetSEType("モジュール大破"));
         voiceTypeOne.Add(new("主砲復旧", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(546476029, 651656679, sePreset.GetSEType("モジュール復旧"));
         voiceTypeOne.Add(new("砲手負傷", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(337748775, 739086111, sePreset.GetSEType("搭乗員負傷"));
         voiceTypeOne.Add(new("装填手負傷", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(302644322, 363753108, sePreset.GetSEType("搭乗員負傷"));
         voiceTypeOne.Add(new("通信機破損", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(356562073, 91697210, sePreset.GetSEType("無線機破損"));
         voiceTypeOne.Add(new("通信手負傷", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(156782042, 987172940, sePreset.GetSEType("搭乗員負傷"));
         voiceTypeOne.Add(new("戦闘開始", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(769815093, 518589126, sePreset.GetSEType("戦闘開始"));
         voiceTypeOne.Add(new("観測装置破損", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(236686366, 330491031, sePreset.GetSEType("モジュール破損"));
         voiceTypeOne.Add(new("観測装置大破", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(559710262, 792301846, sePreset.GetSEType("モジュール大破"));
         voiceTypeOne.Add(new("観測装置復旧", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(47321344, 539730785, sePreset.GetSEType("モジュール復旧"));
         voiceTypeOne.Add(new("履帯破損", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(978556760, 38261315, sePreset.GetSEType("モジュール破損"));
         voiceTypeOne.Add(new("履帯大破", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(878993268, 37535832, sePreset.GetSEType("モジュール大破"));
         voiceTypeOne.Add(new("履帯復旧", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(581830963, 558576963, sePreset.GetSEType("モジュール復旧"));
         voiceTypeOne.Add(new("砲塔破損", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(984973529, 1014565012, sePreset.GetSEType("モジュール破損"));
         voiceTypeOne.Add(new("砲塔大破", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(381112709, 135817430, sePreset.GetSEType("モジュール大破"));
         voiceTypeOne.Add(new("砲塔復旧", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(33436524, 985679417, sePreset.GetSEType("モジュール復旧"));
         voiceTypeOne.Add(new("自車両大破", voiceTypeOne.Count));
+        voiceTypeOne[^1].InitTypeSetting(116097397, 164671745, sePreset.GetSEType("自車両大破"));
     }
 
     //画面下部にメッセージを表示
@@ -142,6 +186,7 @@ public partial class Voice_Create : ContentPage
         bool bChangePage = nowTypePage != nextPage;
         nowTypePage = nextPage;
 
+        CVoiceTypeList? selectedType = Voice_Type_L.SelectedItem as CVoiceTypeList;
         Voice_Type_L.SelectedItem = null;
         Voice_Type_L.ItemsSource = null;
         Voice_Type_L.ItemsSource = voiceTypes[nowTypePage];
@@ -150,7 +195,7 @@ public partial class Voice_Create : ContentPage
         Sound_File_L.ItemsSource = null;
 
         //ページが前回と変わっていないかつ、項目が選択された状態であればイベント内のサウンドファイルをリストに表示
-        if (bChangePage && Voice_Type_L.SelectedItem is CVoiceTypeList selectedType)
+        if (!bChangePage && selectedType != null)
         {
             Voice_Type_L.SelectedItem = selectedType;
 
@@ -171,11 +216,15 @@ public partial class Voice_Create : ContentPage
             lastVoiceTypeCell.View.BackgroundColor = Colors.Transparent;
         ViewCell viewCell = (ViewCell)sender;
 
+        foreach (CVoiceTypeList type in voiceTypes[nowTypePage])
+            type.IsSelected = false;
+
         if (viewCell.View != null && Voice_Type_L.SelectedItem != null)
         {
             viewCell.View.BackgroundColor = Color.FromArgb("#82bfc8");
             lastVoiceTypeCell = viewCell;
             CVoiceTypeList typeList = (CVoiceTypeList)Voice_Type_L.SelectedItem;
+            typeList.IsSelected = true;
             voiceSounds.Clear();
             foreach (CVoiceSoundSetting soundSetting in typeList.TypeSetting.Sounds)
                 voiceSounds.Add(new(soundSetting));
@@ -213,13 +262,13 @@ public partial class Voice_Create : ContentPage
             if (soundBytes != null)
             {
                 int handle = Bass.BASS_StreamCreateFile(soundPtr, 0, 0, BASSFlag.BASS_STREAM_DECODE);
-                streamHandle = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_TempoCreate(handle, BASSFlag.BASS_STREAM_DECODE);
+                streamHandle = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_TempoCreate(handle, BASSFlag.BASS_FX_FREESOURCE);
             }
         }
         else
         {
             int handle = Bass.BASS_StreamCreateFile(voiceSoundSetting.FilePath, 0, 0, BASSFlag.BASS_STREAM_DECODE);
-            streamHandle = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_TempoCreate(handle, BASSFlag.BASS_STREAM_DECODE);
+            streamHandle = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_TempoCreate(handle, BASSFlag.BASS_FX_FREESOURCE);
         }
     }
 
@@ -378,7 +427,7 @@ public partial class Voice_Create : ContentPage
         {
             FilePickerFileType customFileType = new(new Dictionary<DevicePlatform, IEnumerable<string>>
             {
-                { DevicePlatform.Android, audioExtension }
+                { DevicePlatform.Android, Sub_Code.AudioExtension }
             });
             PickOptions options = new()
             {
@@ -398,7 +447,7 @@ public partial class Voice_Create : ContentPage
     //サウンドを追加
     public void Add_Sound(List<string> files)
     {
-        CVoiceTypeList typeList = ((CVoiceTypeList)Voice_Type_L.SelectedItem);
+        CVoiceTypeList typeList = (CVoiceTypeList)Voice_Type_L.SelectedItem;
         int alreadyVoiceCount = 0;
         int addedVoiceCount = 0;
         foreach (string filePath in files)
@@ -436,6 +485,12 @@ public partial class Voice_Create : ContentPage
     private void ContentPage_Appearing(object sender, EventArgs e)
     {
         bOtherPageOpened = false;
+        if (SESettingWindow == null)
+        {
+            SESettingWindow = new();
+            Init_Voice_Type();
+            Set_Item_Type();
+        }
     }
 
     //サウンドの削除ボタン
@@ -507,9 +562,19 @@ public partial class Voice_Create : ContentPage
         if (bOtherPageOpened)
             return;
 
-        seSettingWindow ??= new();
-
-        Navigation.PushAsync(seSettingWindow);
+        Navigation.PushAsync(SESettingWindow);
         bOtherPageOpened = true;
+    }
+
+    private void Button_Pressed(object sender, EventArgs e)
+    {
+        Button button = (Button)sender;
+        button.BorderColor = Colors.White;
+    }
+
+    private void Button_Released(object sender, EventArgs e)
+    {
+        Button button = (Button)sender;
+        button.BorderColor = Colors.Aqua;
     }
 }

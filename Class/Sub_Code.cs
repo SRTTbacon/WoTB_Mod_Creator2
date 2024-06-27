@@ -23,6 +23,8 @@ namespace WoTB_Mod_Creator2.Class
 
         public static readonly Random RandomValue = new();
 
+        public static readonly string[] AudioExtension = ["audio/*"];
+
         //アプリ固有のディレクトリを参照
         public static string ExDir
         {
@@ -221,6 +223,22 @@ namespace WoTB_Mod_Creator2.Class
                 return 0.0;
             }
         }
+
+        public static byte[] ReadResourceData(string fileName)
+        {
+            Task<Stream> streamTask = FileSystem.OpenAppPackageFileAsync(fileName);
+            streamTask.Wait();
+            Stream stream = streamTask.Result;
+            MemoryStream ms = new();
+
+            stream.CopyTo(ms);
+            byte[] readBytes = ms.ToArray();
+
+            ms.Close();
+            stream.Close();
+
+            return readBytes;
+        }
     }
     public partial class WwiseHash
     {
@@ -238,7 +256,7 @@ namespace WoTB_Mod_Creator2.Class
 
         public static uint HashString(string Name)
         {
-            return FnvHash(Encoding.ASCII.GetBytes(Name.ToLowerInvariant()), true);
+            return FnvHash(Encoding.UTF8.GetBytes(Name.ToLowerInvariant()), true);
         }
 
         static uint FnvHash(byte[] input, bool use32bits)

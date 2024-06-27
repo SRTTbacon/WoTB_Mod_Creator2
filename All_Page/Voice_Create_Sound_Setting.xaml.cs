@@ -373,7 +373,7 @@ public partial class Voice_Create_Sound_Setting : ContentPage
             if (!voiceSoundSetting.IsVolumeRange)
             {
                 voiceSoundSetting.Volume = e.NewValue;
-                soundGainSetting.fVolume = (int)Math.Pow(10.0, e.NewValue / 20.0);
+                soundGainSetting.fVolume = (float)Math.Pow(10.0, e.NewValue / 20.0);
                 Bass.BASS_FXSetParameters(streamGainHandle, soundGainSetting);
             }
             else
@@ -432,7 +432,7 @@ public partial class Voice_Create_Sound_Setting : ContentPage
         Bass.BASS_FXReset(streamHPFHandle);
         Bass.BASS_FXReset(streamGainHandle);
         Bass.BASS_StreamFree(streamHandle);
-        Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, 100);
+        Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, 200);
 
         //サウンドをエンジンに読み込む
         int baseHandle = 0;
@@ -678,8 +678,13 @@ public partial class Voice_Create_Sound_Setting : ContentPage
             HPF_Range_C.IsChecked = voiceSoundSetting.IsHPFRange;
             HPF_End_T.IsVisible = voiceSoundSetting.IsHPFRange;
             HPF_End_S.IsVisible = voiceSoundSetting.IsHPFRange;
+            Gain_Start_S.Value = voiceSoundSetting.IsVolumeRange ? voiceSoundSetting.VolumeRange.Start : voiceSoundSetting.Volume;
+            Pitch_Start_S.Value = voiceSoundSetting.IsPitchRange ? voiceSoundSetting.PitchRange.Start : voiceSoundSetting.Pitch;
+            LPF_Start_S.Value = voiceSoundSetting.IsLPFRange ? voiceSoundSetting.LPFRange.Start : voiceSoundSetting.LowPassFilter;
+            HPF_Start_S.Value = voiceSoundSetting.IsHPFRange ? voiceSoundSetting.HPFRange.Start : voiceSoundSetting.HighPassFilter;
             if (voiceSoundSetting.IsVolumeRange || voiceSoundSetting.IsPitchRange || voiceSoundSetting.IsLPFRange || voiceSoundSetting.IsHPFRange)
                 Effect_Update_B.IsVisible = true;
+            Change_Effect();
         }
         else
         {
@@ -856,7 +861,7 @@ public partial class Voice_Create_Sound_Setting : ContentPage
             }
             else
                 volume = voiceSoundSetting.Volume;
-            soundGainSetting.fVolume = (int)Math.Pow(10d, volume / 20.0);
+            soundGainSetting.fVolume = (float)Math.Pow(10d, volume / 20.0);
             Bass.BASS_FXSetParameters(streamGainHandle, soundGainSetting);
         }
         //ピッチを更新
@@ -937,5 +942,17 @@ public partial class Voice_Create_Sound_Setting : ContentPage
     private void ContentPage_Appearing(object sender, EventArgs e)
     {
         bOtherPageOpened = false;
+    }
+
+    private void Button_Pressed(object sender, EventArgs e)
+    {
+        Button button = (Button)sender;
+        button.BorderColor = Colors.White;
+    }
+
+    private void Button_Released(object sender, EventArgs e)
+    {
+        Button button = (Button)sender;
+        button.BorderColor = Colors.Aqua;
     }
 }

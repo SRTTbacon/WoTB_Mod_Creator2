@@ -270,6 +270,20 @@ public partial class Select_Files : ContentPage
     //イベントハンドラーで通知
     private void OK_B_Clicked(object? sender, EventArgs e)
     {
+        bool bExist = false;
+        foreach (Select_File_List selectFile in fileDirList)
+        {
+            if (!selectFile.IsDirectory && selectFile.IsChecked)
+            {
+                bExist = true;
+                break;
+            }
+        }
+        if (!bExist)
+        {
+            Message_Feed_Out("ファイルが選択されていません!\n画面を戻す場合はキャンセルボタンを押してください。");
+            return;
+        }
         Save_Page_Dir();
         Selected?.Invoke(pageName);
         Navigation.PopModalAsync();
@@ -306,5 +320,17 @@ public partial class Select_Files : ContentPage
             bw.Write(valueBytes);
         }
         bw.Close();
+    }
+
+    private void Button_Pressed(object sender, EventArgs e)
+    {
+        Button button = (Button)sender;
+        button.BorderColor = Colors.White;
+    }
+
+    private void Button_Released(object sender, EventArgs e)
+    {
+        Button button = (Button)sender;
+        button.BorderColor = Colors.Aqua;
     }
 }

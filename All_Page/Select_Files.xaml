@@ -15,7 +15,7 @@
             <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
                 <Label Text="ファイルを選択してください。" FontSize="14" HorizontalTextAlignment="Center" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.025,0.65,0.06"/>
                 <Label x:Name="Dir_T" Text="" FontSize="12" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.065,1,0.075"/>
-                <Button x:Name="Dir_Back_B" Text="←" FontSize="13" TextColor="White" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.0775,0.15,0.2,0.06"/>
+                <Button x:Name="Dir_Back_B" Text="←" FontSize="13" TextColor="White" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.0775,0.15,0.2,0.06" Pressed="Button_Pressed" Released="Button_Released"/>
                 <Grid BackgroundColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.215,0.865,0.0025"/>
                 <Grid BackgroundColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.82,0.865,0.0025"/>
                 <Grid BackgroundColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.065,0.544,0.0025,0.605"/>
@@ -36,8 +36,8 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                <Button x:Name="Cancel_B" Text="キャンセル" FontSize="14" BackgroundColor="Transparent" BorderWidth="1" TextColor="Pink" BorderColor="Pink" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.1,0.89,0.35,0.065"/>
-                <Button x:Name="OK_B" Text="選択" FontSize="14" BackgroundColor="Transparent" BorderWidth="1" TextColor="GreenYellow" BorderColor="GreenYellow" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.9,0.89,0.35,0.065"/>
+                <Button x:Name="Cancel_B" Text="キャンセル" FontSize="14" BackgroundColor="Transparent" BorderWidth="1" TextColor="Pink" BorderColor="Pink" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.1,0.89,0.35,0.065" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="OK_B" Text="選択" FontSize="14" BackgroundColor="Transparent" BorderWidth="1" TextColor="GreenYellow" BorderColor="GreenYellow" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.9,0.89,0.35,0.065" Pressed="Button_Pressed" Released="Button_Released"/>
                 <Label x:Name="Message_T" Text="" FontSize="14" TextColor="Aqua" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,1,0.8,0.08"/>
             </AbsoluteLayout>
         </ScrollView>

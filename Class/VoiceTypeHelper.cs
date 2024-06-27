@@ -1,4 +1,6 @@
-﻿namespace WoTB_Mod_Creator2.Class
+﻿using WoTB_Mod_Creator2.All_Page;
+
+namespace WoTB_Mod_Creator2.Class
 {
     public struct SVector2<T>(T start, T end)
     {
@@ -73,14 +75,11 @@
     {
         //SE_Volumeは±表記なので、初期値の0は増減なしとなります。
         public List<CVoiceSoundSetting> Sounds { get; private set; } = [];
-        public string EventName { get; set; } = string.Empty;
+        public SE_Type? SEType { get; set; } = null;
         public double Volume { get; set; }
-        public double SEVolume { get; set; }
         public double Delay { get; set; }
         public uint EventShortID { get; private set; }
         public uint VoiceShortID { get; private set; }
-        public uint SEShortID { get; private set; }
-        public int SEIndex { get; private set; }
         public int Pitch { get; set; }
         public int LowPassFilter { get; set; }
         public int HighPassFilter { get; set; }
@@ -98,35 +97,18 @@
         public bool IsLoadMode = false;
         public CVoiceTypeSetting()
         {
-            SEIndex = -1;
-            SEVolume = 0;
-            Init(0, 0);
+
         }
-        public CVoiceTypeSetting(uint eventShortID, uint voiceShortID, uint seShortID = 0, int seIndex = -1, double seVolume = 0)
+        public CVoiceTypeSetting(uint eventShortID, uint voiceShortID, SE_Type? seType)
         {
-            SEIndex = seIndex;
-            SEVolume = seVolume;
-            Init(eventShortID, voiceShortID, seShortID);
+            Init(eventShortID, voiceShortID, seType);
         }
-        public void Set_Param(uint eventShortID, uint voiceShortID, uint seShortID = 0, int seIndex = -1, double seVolume = 0)
+
+        public void Init(uint eventShortID, uint voiceShortID, SE_Type? seType)
         {
             EventShortID = eventShortID;
             VoiceShortID = voiceShortID;
-            SEShortID = seShortID;
-            SEIndex = seIndex;
-            SEVolume = seVolume;
-        }
-        public void Set_Param(string eventName, uint voiceShortID)
-        {
-            EventName = eventName;
-            VoiceShortID = voiceShortID;
-        }
-        public void Init(uint eventShortID, uint voiceShortID, uint seShortID = 0)
-        {
-            EventShortID = eventShortID;
-            VoiceShortID = voiceShortID;
-            SEShortID = seShortID;
-            EventName = string.Empty;
+            SEType = seType;
             Pitch = 0;
             LowPassFilter = 0;
             HighPassFilter = 0;
@@ -141,6 +123,7 @@
             HPFRange = new(0, 0);
             IsLoadMode = false;
         }
+
         public CVoiceTypeSetting Clone(bool bIsIncludeSounds)
         {
             CVoiceTypeSetting clone = (CVoiceTypeSetting)MemberwiseClone();
@@ -150,13 +133,12 @@
                     clone.Sounds.Add(soundInfo.Clone());
             return clone;
         }
-
-        public static void Set_Event_ShortID(List<List<All_Page.CVoiceTypeList>> eventSettings)
+        /*public static void Set_Event_ShortID(List<List<CVoiceTypeList>> eventSettings, SE_Preset sePreset)
         {
             //イベントID, 音声コンテナID, SEコンテナID, SE_Index, 音量
-            eventSettings[0][0].TypeSetting.Set_Param(341425709, 170029050, 366092539, 5, -6);
-            eventSettings[0][1].TypeSetting.Set_Param(908426860, 95559763, 370075103, 3, -2);
-            eventSettings[0][2].TypeSetting.Set_Param(280189980, 766083947, 298293840, 9, -1);
+            eventSettings[0][0].TypeSetting.Set_Param(341425709, 170029050, sePreset.GetSEType(""));
+            eventSettings[0][1].TypeSetting.Set_Param(908426860, 95559763);
+            eventSettings[0][2].TypeSetting.Set_Param(280189980, 766083947);
             eventSettings[0][3].TypeSetting.Set_Param(815358870, 569784404, 862763776, 5, -6);
             eventSettings[0][4].TypeSetting.Set_Param(49295125, 266422868, 876186554, 6, -1);
             eventSettings[0][5].TypeSetting.Set_Param(733342682, 1052258113, 568110765, 10, -1);
@@ -213,6 +195,6 @@
             eventSettings[2][3].TypeSetting.Set_Param(420002792, 681331945);
             eventSettings[2][4].TypeSetting.Set_Param(420002792, 190711689);
             eventSettings[2][5].TypeSetting.Set_Param(420002792, 918836720);
-        }
+        }*/
     }
 }

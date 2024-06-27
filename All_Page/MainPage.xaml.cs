@@ -32,6 +32,8 @@ namespace WoTB_Mod_Creator2.All_Page
             {
                 if (pageName == "Voice_Create")
                     voiceCreate_Page.Add_Sound(Sub_Code.Select_Files_Window.Get_Select_Files());
+                if (pageName == "SE_Setting" && voiceCreate_Page.SESettingWindow != null)
+                    voiceCreate_Page.SESettingWindow.Add_Sound(Sub_Code.Select_Files_Window.Get_Select_Files());
                 Sub_Code.Select_Files_Window.Dispose();
             };
 
@@ -109,6 +111,18 @@ namespace WoTB_Mod_Creator2.All_Page
         private void UseSelectPage_C_CheckedChanged(object? sender, CheckedChangedEventArgs e)
         {
             Sub_Code.IsUseSelectPage = e.Value;
+        }
+
+        private void Button_Pressed(object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+            button.BorderColor = Colors.Red;
+        }
+
+        private void Button_Released(object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+            button.BorderColor = Colors.Transparent;
         }
 
 #if ANDROID

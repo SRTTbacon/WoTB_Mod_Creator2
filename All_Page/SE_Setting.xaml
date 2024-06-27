@@ -2,7 +2,11 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WoTB_Mod_Creator2.All_Page.SE_Setting"
-             Title="SE_Setting">
+             Shell.BackgroundColor="Black"
+             Title="SE設定"
+             Shell.TitleColor="White"
+             Appearing="ContentPage_Appearing"
+             Disappearing="ContentPage_Disappearing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -10,16 +14,16 @@
         </Grid.RowDefinitions>
         <ScrollView Grid.Row="1">
             <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                <Button x:Name="All_Disable_B" Text="すべて無効化" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.19,0,0.375,0.07"/>
-                <Button x:Name="All_Enable_B" Text="すべて有効化" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.83,0,0.375,0.07"/>
-                <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.1,0.8,0.25">
-                    <ListView x:Name="SE_Type_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25">
+                <Button x:Name="All_Disable_B" Text="すべて無効化" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.19,0,0.375,0.07" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="All_Enable_B" Text="すべて有効化" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.83,0,0.375,0.07" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 5,5,5,5" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.1,0.8,0.25">
+                    <ListView x:Name="SE_Type_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" HeightRequest="190" ItemSelected="SE_Type_L_ItemSelected">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <ViewCell Tapped="SE_Type_L_Tapped">
-                                    <StackLayout Orientation="Horizontal">
+                                <ViewCell>
+                                    <StackLayout Orientation="Horizontal" BackgroundColor="{Binding BackColor}">
                                         <StackLayout>
-                                            <Label Text="{Binding TypeName}" TextColor="Aqua"/>
+                                            <Label Text="{Binding TypeName}" TextColor="{Binding NameColor}"/>
                                         </StackLayout>
                                     </StackLayout>
                                 </ViewCell>
@@ -27,18 +31,18 @@
                         </ListView.ItemTemplate>
                     </ListView>
                 </Border>
-                <Button x:Name="Disable_B" Text="無効化" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.19,0.355,0.375,0.07"/>
-                <Button x:Name="Enable_B" Text="有効化" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.83,0.355,0.375,0.07"/>
+                <Button x:Name="Disable_B" Text="無効化" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.19,0.355,0.375,0.07" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="Enable_B" Text="有効化" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.83,0.355,0.375,0.07" Pressed="Button_Pressed" Released="Button_Released"/>
                 <Label Text="↓" FontSize="30" TextColor="Aqua" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.425,0.5,0.08"/>
                 <Label Text="SE音源" FontSize="20" TextColor="Aqua" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.475,0.5,0.08"/>
-                <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.63,0.8,0.2">
-                    <ListView x:Name="SE_Sound_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25">
+                <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 5,5,5,5" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.63,0.8,0.2">
+                    <ListView x:Name="SE_Sound_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" HeightRequest="150">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ViewCell Tapped="SE_Sound_L_Tapped">
                                     <StackLayout Orientation="Horizontal">
                                         <StackLayout>
-                                            <Label Text="{Binding Name_Text}" TextColor="Aqua"/>
+                                            <Label Text="{Binding SoundName}" TextColor="Aqua"/>
                                         </StackLayout>
                                     </StackLayout>
                                 </ViewCell>
@@ -46,15 +50,15 @@
                         </ListView.ItemTemplate>
                     </ListView>
                 </Border>
-                <Button x:Name="Delete_Sound_B" Text="削除" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0.755,0.24,0.06"/>
-                <Button x:Name="Add_Sound_B" Text="追加" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.33,0.755,0.24,0.06"/>
-                <Button x:Name="Pause_B" Text="停止" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.675,0.755,0.24,0.06"/>
-                <Button x:Name="Play_B" Text="再生" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="1,0.755,0.24,0.06"/>
+                <Button x:Name="Delete_Sound_B" Text="削除" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0.755,0.24,0.06" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="Add_Sound_B" Text="追加" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.33,0.755,0.24,0.06" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="Pause_B" Text="停止" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.675,0.755,0.24,0.06" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="Play_B" Text="再生" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="1,0.755,0.24,0.06" Pressed="Button_Pressed" Released="Button_Released"/>
                 <Label Text="プリセットを選択" FontSize="15" TextColor="Aqua" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.1,0.85,0.5,0.08"/>
-                <Button x:Name="Preset_Load_B" Text="読み込み" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.22,0.91,0.3,0.06"/>
+                <Button x:Name="Preset_Load_B" Text="読み込み" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.22,0.91,0.3,0.06" Pressed="Button_Pressed" Released="Button_Released"/>
                 <Label Text="プリセットを保存" FontSize="15" TextColor="Aqua" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.95,0.85,0.5,0.08"/>
-                <Button x:Name="Preset_Save_B" Text="保存" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.82,0.91,0.3,0.06"/>
-                <Label x:Name="Message_T" Text="asasasasssss" FontSize="14" TextColor="Aqua" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.99,0.5,0.08"/>
+                <Button x:Name="Preset_Save_B" Text="保存" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.82,0.91,0.3,0.06" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Label x:Name="Message_T" Text="" FontSize="14" TextColor="Aqua" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.99,0.9,0.08"/>
             </AbsoluteLayout>
         </ScrollView>
     </Grid>
