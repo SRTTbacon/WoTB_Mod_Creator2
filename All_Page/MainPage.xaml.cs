@@ -13,11 +13,11 @@ namespace WoTB_Mod_Creator2.All_Page
         string apkURL = "";
         bool bDownloading = false;
         bool bUpdating = false;
-        bool bMessageShowing = false;
         bool bCanUpdate = false;
 #endif
 
         bool bPageOpened = false;
+        bool bMessageShowing = false;
 
         public MainPage()
         {
@@ -39,6 +39,7 @@ namespace WoTB_Mod_Creator2.All_Page
 
             //ボタン
             Voice_Create_B.Clicked += Voice_Create_B_Clicked;
+            Other_Sound_B.Clicked += Other_Sound_B_Clicked;
             UseSelectPage_C.CheckedChanged += UseSelectPage_C_CheckedChanged;
 
             Sub_Code.IsUseSelectPage = UseSelectPage_C.IsChecked;
@@ -61,7 +62,11 @@ namespace WoTB_Mod_Creator2.All_Page
 #endif
         }
 
-#if ANDROID
+        private void Other_Sound_B_Clicked(object? sender, EventArgs e)
+        {
+            Message_Feed_Out("現在のバージョンではこの機能は利用できません。");
+        }
+
         //画面下部にメッセージを表示
         private async void Message_Feed_Out(string Message)
         {
@@ -86,7 +91,6 @@ namespace WoTB_Mod_Creator2.All_Page
             Message_T.Text = "";
             Message_T.Opacity = 1;
         }
-#endif
 
         private void Voice_Create_B_Clicked(object? sender, EventArgs e)
         {

@@ -32,7 +32,7 @@ public class CVoiceTypeList(string eventName, int index)
 public partial class Voice_Create : ContentPage
 {
     //SE設定
-    public SE_Setting? SESettingWindow = null;
+    public SE_Setting SESettingWindow;
 
     //イベント設定
     Voice_Create_Sound_Setting? soundSettingWindow = null;
@@ -56,7 +56,7 @@ public partial class Voice_Create : ContentPage
 
 
     public Voice_Create()
-	{
+    {
 		InitializeComponent();
         Load_B.Clicked += Load_B_Click;
         Save_B.Clicked += Save_B_Click;
@@ -67,6 +67,11 @@ public partial class Voice_Create : ContentPage
         Create_B.Clicked += OpenEventSetting_B_Click;
         Clear_B.Clicked += Clear_B_Click;
         SE_Setting_B.Clicked += SE_Setting_B_Clicked;
+
+        Init_Voice_Type();
+        Set_Item_Type();
+
+        SESettingWindow = new();
     }
 
     private void Init_Voice_Type()
@@ -76,8 +81,6 @@ public partial class Voice_Create : ContentPage
         for (int i = 0; i < 3; i++)
             voiceTypes.Add([]);
 
-        if (SESettingWindow == null)
-            return;
 
         SE_Preset sePreset = SESettingWindow.NowPreset;
 
@@ -322,7 +325,7 @@ public partial class Voice_Create : ContentPage
             WVS_Save Save = new();
             Save.Add_Sound(voiceTypes, wvsFile);
             wvsFile.Dispose();
-            Save.Create(Sub_Code.ExDir + "/Saves/" + result + ".wvs", result);
+            Save.Create(Sub_Code.ExDir + "/Saves/" + result + ".wvs", result, false);
             Save.Dispose();
             Voice_Load_From_File(Sub_Code.ExDir + "/Saves/" + result + ".wvs");
             Message_Feed_Out("セーブしました。");
@@ -485,12 +488,6 @@ public partial class Voice_Create : ContentPage
     private void ContentPage_Appearing(object sender, EventArgs e)
     {
         bOtherPageOpened = false;
-        if (SESettingWindow == null)
-        {
-            SESettingWindow = new();
-            Init_Voice_Type();
-            Set_Item_Type();
-        }
     }
 
     //サウンドの削除ボタン

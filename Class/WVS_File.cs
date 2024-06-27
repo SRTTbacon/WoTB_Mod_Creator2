@@ -49,7 +49,7 @@ namespace WoTB_Mod_Creator2.Class
         }
 
         //.wvsファイルを生成
-        public void Create(string toFile, string projectName, bool bIncludeSE, SE_Preset sePreset)
+        public void Create(string toFile, string projectName, bool bIncludeSE, SE_Preset? sePreset = null)
         {
             //同名のファイルが存在する場合、削除する
             if (File.Exists(toFile))
@@ -162,8 +162,8 @@ namespace WoTB_Mod_Creator2.Class
                 }
             }
             //SE情報も保存 (Android版かつビルド時のみ)
-            bw.Write(bIncludeSE);
-            if (bIncludeSE)
+            bw.Write(bIncludeSE && sePreset != null);
+            if (bIncludeSE && sePreset != null)
             {
                 //どのイベントがどのSEを使うか (SEを使用しないイベントは0を入力)
                 foreach (List<CVoiceTypeList> types in blitzEvents)
@@ -192,7 +192,7 @@ namespace WoTB_Mod_Creator2.Class
                         if (seSound.IsAndroidResource)          //アプリに埋め込まれているサウンドの場合
                         {
                             bw.Write(true);
-                            byte[] soundBytes = Sub_Code.ReadResourceData(seSound.FilePath);
+                            byte[] soundBytes = Sub_Code.ReadResourceData(seSound.FilePath);    //埋め込みリソースからサウンドを取得
                             bw.Write(soundBytes.Length);
                             bw.Write(soundBytes);
                         }
@@ -276,7 +276,7 @@ namespace WoTB_Mod_Creator2.Class
         }
         //WVSファイルをロードします
         //この時点ではサウンドを読み込まないため、サウンドを取得するときはGet_Sound_Bytes()を実行する必要があります。(メモリ使用率を抑えるため)
-        public WVS_Result WVS_Load_File(string filePath, List<List<All_Page.CVoiceTypeList>> voiceTypes)
+        public WVS_Result WVS_Load_File(string filePath, List<List<CVoiceTypeList>> voiceTypes)
         {
             //ファイルが存在しない場合終了
             if (!File.Exists(filePath))
