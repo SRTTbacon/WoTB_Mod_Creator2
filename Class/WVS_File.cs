@@ -38,10 +38,6 @@ namespace WoTB_Mod_Creator2.Class
         //.wvsファイルを生成
         public void Create(string toFile, string projectName, bool bIncludeSE, SE_Preset? sePreset = null, bool bUnloadWVSLoad = true)
         {
-            //同名のファイルが存在する場合、削除する
-            if (File.Exists(toFile))
-                File.Delete(toFile);
-
             //サウンドが存在する階層を保存 (ファイルサイズ削減のため)
             List<string> dirNames = [];
 
@@ -211,7 +207,7 @@ namespace WoTB_Mod_Creator2.Class
             bw.Write((ushort)imageBytes.Count);     //サウンド数
             foreach (byte[] bytes in imageBytes)
             {
-                bw.Write(bytes.Length);     //サウンドデータのサイズ(65535バイト超える画像があったらやばいからint型)
+                bw.Write(bytes.Length);     //サウンドデータのサイズ(65535バイト超えるデータがあったらやばいからint型)
                 bw.Write(bytes);            //サウンドデータ
             }
 
