@@ -6,7 +6,8 @@
              Title="SE設定"
              Shell.TitleColor="White"
              Appearing="ContentPage_Appearing"
-             Disappearing="ContentPage_Disappearing">
+             Disappearing="ContentPage_Disappearing"
+             BackgroundColor="{StaticResource BackGround}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

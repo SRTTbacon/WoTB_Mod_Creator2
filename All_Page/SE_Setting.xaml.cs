@@ -215,10 +215,10 @@ public partial class SE_Setting : ContentPage
         defaultPreset.Types.Add(new("非貫通-跳弾", 568110765, -1));
         defaultPreset.Types[^1].AddSound("Not_Piercing_01.mp3", 0, true);
         defaultPreset.Types.Add(new("装填完了", 769579073, 0));
-        defaultPreset.Types[^1].AddSound("howitzer_load_01.mp3", 0, true, true);
-        defaultPreset.Types[^1].AddSound("howitzer_load_02.mp3", 0, true, true);
-        defaultPreset.Types[^1].AddSound("howitzer_load_03.mp3", 0, true, true);
-        defaultPreset.Types[^1].AddSound("howitzer_load_04.mp3", 0, true, true);
+        defaultPreset.Types[^1].AddSound("howitzer_load_01.wav", 0, true, true);
+        defaultPreset.Types[^1].AddSound("howitzer_load_02.wav", 0, true, true);
+        defaultPreset.Types[^1].AddSound("howitzer_load_03.wav", 0, true, true);
+        defaultPreset.Types[^1].AddSound("howitzer_load_04.wav", 0, true, true);
         defaultPreset.Types[^1].AddSound("Reload_01.mp3", 0, true);
         defaultPreset.Types[^1].AddSound("Reload_02.mp3", 0, true);
         defaultPreset.Types[^1].AddSound("Reload_03.mp3", 0, true);
@@ -242,7 +242,7 @@ public partial class SE_Setting : ContentPage
         defaultPreset.Types[^1].AddSound("target_on_SE_01.wav", 0, true, true);
         defaultPreset.Types[^1].AddSound("Lock_01.mp3", 0, true);
         defaultPreset.Types.Add(new("アンロック", 166694669, 0));
-        defaultPreset.Types[^1].AddSound("target_off_SE_01.mp3", 0, true, true);
+        defaultPreset.Types[^1].AddSound("target_off_SE_01.wav", 0, true, true);
         defaultPreset.Types[^1].AddSound("Unlock_01.mp3", 0, true);
         defaultPreset.Types.Add(new("ノイズ音", 921545948, 0));
         defaultPreset.Types[^1].AddSound("Noise_01.mp3", 0, true, true);
@@ -284,7 +284,7 @@ public partial class SE_Setting : ContentPage
     }
 
     //画面右下部にメッセージを表示
-    private async void Message_Feed_Out(string Message)
+    private async void Message_Feed_Out(string message)
     {
         //テキストが一定期間経ったらフェードアウト
         if (bMessageShowing)
@@ -292,7 +292,7 @@ public partial class SE_Setting : ContentPage
             bMessageShowing = false;
             await Task.Delay(1000 / 59);
         }
-        Message_T.Text = Message;
+        Message_T.Text = message;
         bMessageShowing = true;
         Message_T.Opacity = 1;
         int Number = 0;

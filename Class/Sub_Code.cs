@@ -93,6 +93,8 @@ namespace WoTB_Mod_Creator2.Class
         {
             if (string.IsNullOrEmpty(path))
                 return false;
+            if (bFileName && path == "キャンセル")
+                return false;
             char[] invalidChars = bFileName ? Path.GetInvalidFileNameChars() : Path.GetInvalidPathChars();
             return path.IndexOfAny(invalidChars) < 0 && !MyRegex().IsMatch(path);
         }

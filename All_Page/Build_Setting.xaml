@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WoTB_Mod_Creator2.All_Page.Build_Setting"
+             Shell.BackgroundColor="Black"
+             Title="ビルド設定"
+             Shell.TitleColor="White"
+             BackgroundColor="{StaticResource BackGround}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ScrollView Grid.Row="1">
+            <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <CheckBox x:Name="Volume_Set_C" IsChecked="True" Color="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.24,0.47,0.07,0.03"/>
+                <Label Text="音量を均一にする" TextColor="White" FontSize="15" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.475,0.38,0.05"/>
+                <CheckBox x:Name="Default_Voice_Mode_C" Color="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.24,0.54,0.07,0.03"/>
+                <Label Text="音声がない項目は標準の音声を再生させる" TextColor="White" FontSize="15" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.625,0.54,0.5,0.075"/>
+                <Label Text="保存名" TextColor="White" FontSize="15" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.85,0.635,0.5,0.075"/>
+                <Entry x:Name="Project_Name_T" Grid.Column="1" Placeholder="ここに入力" FontSize="14" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.665,0.6,0.07"/>
+                <Button x:Name="Server_Build_B" Text="ビルド" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.75,0.5,0.07"  Pressed="Button_Pressed" Released="Button_Released"/>
+                <Label Text="コマンド" TextColor="White" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.82,0.85,0.5,0.075"/>
+                <Label x:Name="Command_T" Text="" TextColor="Aqua" FontSize="14" AbsoluteLayout.LayoutFlags="All" HorizontalTextAlignment="End" AbsoluteLayout.LayoutBounds="0.3,0.9,0.5,0.075"/>
+                <Button x:Name="Command_Copy_B" Text="コピー" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" FontSize="10" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.815,0.875,0.175,0.06" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Label x:Name="Message_T" Text="" TextColor="White" FontSize="13" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.45,0.995,0.78,0.12" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+            </AbsoluteLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

@@ -35,7 +35,8 @@ public partial class Voice_Create : ContentPage
     public SE_Setting SESettingWindow;
 
     //イベント設定
-    Voice_Create_Sound_Setting? soundSettingWindow = null;
+    Voice_Create_Sound_Setting? soundSettingWindow;
+    Build_Setting? buildSettingWindow;
 
     //サウンドイベント
     readonly List<CVoiceSoundList> voiceSounds = [];
@@ -64,14 +65,14 @@ public partial class Voice_Create : ContentPage
         Voice_Type_Next_B.Clicked += Voice_Type_Next_B_Click;
         Sound_Add_B.Clicked += Sound_Add_B_Click;
         Sound_Delete_B.Clicked += Sound_Delete_B_Click;
-        Create_B.Clicked += OpenEventSetting_B_Click;
+        EventSetting_B.Clicked += OpenEventSetting_B_Click;
         Clear_B.Clicked += Clear_B_Click;
         SE_Setting_B.Clicked += SE_Setting_B_Clicked;
-
-        Init_Voice_Type();
-        Set_Item_Type();
+        BuildSetting_B.Clicked += BuildSetting_B_Clicked;
 
         SESettingWindow = new();
+        Init_Voice_Type();
+        Set_Item_Type();
     }
 
     private void Init_Voice_Type()
@@ -157,7 +158,7 @@ public partial class Voice_Create : ContentPage
     }
 
     //画面下部にメッセージを表示
-    private async void Message_Feed_Out(string Message)
+    private async void Message_Feed_Out(string message)
     {
         //テキストが一定期間経ったらフェードアウト
         if (bMessageShowing)
@@ -165,7 +166,7 @@ public partial class Voice_Create : ContentPage
             bMessageShowing = false;
             await Task.Delay(1000 / 59);
         }
-        Message_T.Text = Message;
+        Message_T.Text = message;
         bMessageShowing = true;
         Message_T.Opacity = 1;
         int Number = 0;
@@ -289,18 +290,20 @@ public partial class Voice_Create : ContentPage
         foreach (string Files in Directory.GetFiles(Sub_Code.ExDir + "/Saves", "*.wvs", SearchOption.TopDirectoryOnly))
             savedNames.Add(Path.GetFileNameWithoutExtension(Files));
 
+        //選択画面を表示
         if (savedNames.Count == 0)      //セーブファイルが1つも存在しない
-        {
             await DisplayActionSheet("プロジェクトを選択してください。", "キャンセル", null, ["!プロジェクトが存在しません!"]);
-            savedNames.Clear();
-        }
-        else                            //セーブファイルがあれば選択ウィンドウを表示
+        else
         {
-            bOtherPageOpened = true;
-            string extention = ".wvs";
-            Sub_Code.Select_Files_Window.Window_Show("Voice_Create_Load", Sub_Code.ExDir + "/Saves", extention, true, false);
-            await Navigation.PushModalAsync(Sub_Code.Select_Files_Window);
+            string fileName = await DisplayActionSheet("プロジェクトを選択してください。", "キャンセル", null, savedNames.ToArray());
+            int index = savedNames.IndexOf(fileName);
+            if (index != -1)
+            {
+                Voice_Load_From_File(Sub_Code.ExDir + "/Saves/" + savedNames[index] + ".wvs");
+                Set_Item_Type();
+            }
         }
+        savedNames.Clear();
     }
 
     //プロジェクトを保存
@@ -322,13 +325,13 @@ public partial class Voice_Create : ContentPage
             }
             if (!Directory.Exists(Sub_Code.ExDir + "/Saves"))
                 _ = Directory.CreateDirectory(Sub_Code.ExDir + "/Saves");
-            WVS_Save Save = new();
-            Save.Add_Sound(voiceTypes, wvsFile);
-            wvsFile.Dispose();
-            Save.Create(Sub_Code.ExDir + "/Saves/" + result + ".wvs", result, false);
-            Save.Dispose();
+            WVS_Save save = new();
+            save.Add_Sound(voiceTypes, wvsFile);
+            save.Create(Sub_Code.ExDir + "/Saves/" + result + ".wvs", result, false);
             Voice_Load_From_File(Sub_Code.ExDir + "/Saves/" + result + ".wvs");
             Message_Feed_Out("セーブしました。");
+
+            Set_Item_Type();
         }
     }
     //プロジェクトをロード
@@ -365,7 +368,7 @@ public partial class Voice_Create : ContentPage
                 if (wvsResult == WVS_Load.WVS_Result.OK)
                 {
                     projectName = wvsFile.ProjectName;
-                    Message_Feed_Out(Path.GetFileName(filePath) + "をロードしました。");
+                    Message_Feed_Out(Path.GetFileNameWithoutExtension(filePath) + "をロードしました。");
                 }
                 else
                     throw new Exception(".wvsファイルが破損しています。");
@@ -560,6 +563,17 @@ public partial class Voice_Create : ContentPage
             return;
 
         Navigation.PushAsync(SESettingWindow);
+        bOtherPageOpened = true;
+    }
+
+    private void BuildSetting_B_Clicked(object? sender, EventArgs e)
+    {
+        if (bOtherPageOpened)
+            return;
+
+        buildSettingWindow ??= new(voiceTypes, wvsFile, SESettingWindow.NowPreset);
+
+        Navigation.PushAsync(buildSettingWindow);
         bOtherPageOpened = true;
     }
 

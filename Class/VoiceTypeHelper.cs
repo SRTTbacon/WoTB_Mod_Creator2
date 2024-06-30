@@ -78,8 +78,8 @@ namespace WoTB_Mod_Creator2.Class
         public SE_Type? SEType { get; set; } = null;
         public double Volume { get; set; }
         public double Delay { get; set; }
-        public uint EventShortID { get; private set; }
-        public uint VoiceShortID { get; private set; }
+        public uint EventShortID { get; set; }
+        public uint VoiceShortID { get; set; }
         public int Pitch { get; set; }
         public int LowPassFilter { get; set; }
         public int HighPassFilter { get; set; }

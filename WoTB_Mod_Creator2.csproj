@@ -84,6 +84,7 @@
 	  <None Remove="Resources\Raw\Capture_End_01.mp3" />
 	  <None Remove="Resources\Raw\Capture_End_02.mp3" />
 	  <None Remove="Resources\Raw\Capture_Finish_SE.mp3" />
+	  <None Remove="Resources\Raw\Churu.dat" />
 	  <None Remove="Resources\Raw\Command_01.wav" />
 	  <None Remove="Resources\Raw\Destroy_01.mp3" />
 	  <None Remove="Resources\Raw\EnemyDestory_01.wav" />
@@ -176,6 +177,7 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="9.0.0" />
 		<PackageReference Include="CommunityToolkit.Maui.Core" Version="9.0.0" />
+		<PackageReference Include="Google.Apis.Drive.v3" Version="1.68.0.3428" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.14" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.14" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
@@ -198,6 +200,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="All_Page\Build_Setting.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="All_Page\Select_Files.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

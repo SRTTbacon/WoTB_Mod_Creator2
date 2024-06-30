@@ -108,7 +108,7 @@ public partial class Voice_Create_Sound_Setting : ContentPage
     }
 
     //画面右下部にメッセージを表示
-    private async void Message_Feed_Out(string Message)
+    private async void Message_Feed_Out(string message)
     {
         //テキストが一定期間経ったらフェードアウト
         if (bMessageShowing)
@@ -116,7 +116,7 @@ public partial class Voice_Create_Sound_Setting : ContentPage
             bMessageShowing = false;
             await Task.Delay(1000 / 59);
         }
-        Message_T.Text = Message;
+        Message_T.Text = message;
         bMessageShowing = true;
         Message_T.Opacity = 1;
         int Number = 0;

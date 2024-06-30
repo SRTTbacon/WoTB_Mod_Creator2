@@ -68,7 +68,7 @@ namespace WoTB_Mod_Creator2.All_Page
         }
 
         //画面下部にメッセージを表示
-        private async void Message_Feed_Out(string Message)
+        private async void Message_Feed_Out(string message)
         {
             //テキストが一定期間経ったらフェードアウト
             if (bMessageShowing)
@@ -76,7 +76,7 @@ namespace WoTB_Mod_Creator2.All_Page
                 bMessageShowing = false;
                 await Task.Delay(1000 / 59);
             }
-            Message_T.Text = Message;
+            Message_T.Text = message;
             bMessageShowing = true;
             Message_T.Opacity = 1;
             int Number = 0;
