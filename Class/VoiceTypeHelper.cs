@@ -76,6 +76,7 @@ namespace WoTB_Mod_Creator2.Class
         //SE_Volumeは±表記なので、初期値の0は増減なしとなります。
         public List<CVoiceSoundSetting> Sounds { get; private set; } = [];
         public SE_Type? SEType { get; set; } = null;
+        public string DefaultVoiceName = "";
         public double Volume { get; set; }
         public double Delay { get; set; }
         public uint EventShortID { get; set; }
@@ -99,16 +100,17 @@ namespace WoTB_Mod_Creator2.Class
         {
 
         }
-        public CVoiceTypeSetting(uint eventShortID, uint voiceShortID, SE_Type? seType)
+        public CVoiceTypeSetting(uint eventShortID, uint voiceShortID, SE_Type? seType, string defaultVoiceName)
         {
-            Init(eventShortID, voiceShortID, seType);
+            Init(eventShortID, voiceShortID, seType, defaultVoiceName);
         }
 
-        public void Init(uint eventShortID, uint voiceShortID, SE_Type? seType)
+        public void Init(uint eventShortID, uint voiceShortID, SE_Type? seType, string defaultVoiceName)
         {
             EventShortID = eventShortID;
             VoiceShortID = voiceShortID;
             SEType = seType;
+            DefaultVoiceName = defaultVoiceName;
             Pitch = 0;
             LowPassFilter = 0;
             HighPassFilter = 0;

@@ -1,5 +1,4 @@
-﻿using Microsoft.WindowsAppSDK.Runtime.Packages;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using WoTB_Mod_Creator2.All_Page;
 
@@ -16,12 +15,17 @@ namespace WoTB_Mod_Creator2.Class
         List<List<CVoiceTypeList>> blitzEvents = [];
         WVS_Load? wvsFile;
 
+        double volume = 0.0;
+        bool bDefaultVoiceMode = false;
+
         //WVS_Fileは、.wvsファイルがロードされていない場合はnullを指定します。
         //ここでWVS_Fileを指定かつ、セーブファイルを上書きする場合はCreate()を実行する前に必ずWVS_File.Dispose()を実行する必要があります。
-        public void Add_Sound(List<List<CVoiceTypeList>> blitzEvents, WVS_Load wvsFile)
+        public void Add_Sound(List<List<CVoiceTypeList>> blitzEvents, WVS_Load wvsFile, double volume = 0.0, bool bDefaultVoiceMode = false)
         {
             this.blitzEvents = blitzEvents;
             this.wvsFile = wvsFile;
+            this.volume = volume;
+            this.bDefaultVoiceMode = bDefaultVoiceMode;
         }
 
         //サウンド同士を比較し、同じサウンドであればtrueを返す
@@ -66,6 +70,8 @@ namespace WoTB_Mod_Creator2.Class
             //改行1バイト
             bw.Write((byte)0x0a);
 
+            bw.Write(volume);
+            bw.Write(bDefaultVoiceMode);
             //SE情報を保存 (Android版かつビルド時のみ)
             bw.Write(bIncludeSE && sePreset != null);
             if (bIncludeSE && sePreset != null)
@@ -77,6 +83,7 @@ namespace WoTB_Mod_Creator2.Class
                     bw.Write(seType.TypeID);                //識別ID
                     bw.Write((sbyte)seType.Gain);           //音量の増減 (0がデフォルト)
                     bw.Write(seType.IsEnable);              //プリセットに指定されたサウンドを使用するか(falseの場合WoTBデフォルトのサウンドが入る)
+                    bw.Write(seType.IsLoop);                //戦闘開始タイマーなどループするかどうか
                     bw.Write((byte)seType.Sounds.Count);    //サウンド数
                     foreach (SE_Sound seSound in seType.Sounds)
                     {
@@ -105,7 +112,7 @@ namespace WoTB_Mod_Creator2.Class
                         if (!bExist)
                             imageBytes.Add(soundBytes);
 
-                        bw.Write((ushort)number);                                       //サウンドデータが入っているインデックス
+                        bw.Write((ushort)number);       //サウンドデータが入っているインデックス
                     }
                 }
             }
@@ -122,6 +129,9 @@ namespace WoTB_Mod_Creator2.Class
                     //音量、ピッチ、エフェクトなどの情報を保存
                     bw.Write(eventInfo.EventShortID);
                     bw.Write(eventInfo.VoiceShortID);
+                    byte[] voiceName = Encoding.UTF8.GetBytes(eventInfo.DefaultVoiceName);
+                    bw.Write((byte)voiceName.Length);
+                    bw.Write(voiceName);
                     bool IsIncludeSEType = eventInfo.SEType != null;
                     bw.Write(IsIncludeSEType);
                     if (eventInfo.SEType != null)
@@ -150,8 +160,9 @@ namespace WoTB_Mod_Creator2.Class
                     if (eventIndex % 5 == 3)
                         bw.Write((byte)0x0a);
                     bw.Write((byte)eventInfo.Sounds.Count);
-                    foreach (CVoiceSoundSetting soundInfo in eventInfo.Sounds)
+                    for (int soundIndex = 0; soundIndex < eventInfo.Sounds.Count; soundIndex++)
                     {
+                        CVoiceSoundSetting soundInfo = eventInfo.Sounds[soundIndex];
                         //名前、音量、ピッチ、エフェクトなどの情報を保存
                         byte[] fileNameByte = Encoding.UTF8.GetBytes(Path.GetFileName(soundInfo.FilePath));
                         bw.Write((byte)fileNameByte.Length);
@@ -180,6 +191,7 @@ namespace WoTB_Mod_Creator2.Class
                         bw.Write(soundInfo.IsFadeOut);
 
                         //既に同じサウンドが設定されていればそのインデックスを取得。なければCount
+                        //貫通と致命弾は同じサウンドを使用する可能性があるため容量削減のため同じサウンドの場合はまとめる
                         int number = imageBytes.Count;
                         bool bExist = false;
                         byte[] soundBytes;
@@ -199,6 +211,10 @@ namespace WoTB_Mod_Creator2.Class
                         if (!bExist)
                             imageBytes.Add(soundBytes);
                         bw.Write((ushort)number);       //サウンドデータが入っているインデックス
+
+                        //横長になるため3個イベントが進むたびに改行
+                        if (soundIndex % 5 == 3)
+                            bw.Write((byte)0x0a);
                     }
                 }
                 bw.Write((byte)0x0a);
@@ -218,9 +234,9 @@ namespace WoTB_Mod_Creator2.Class
             {
                 //WVS_Loadを使用してセーブファイルを作成している場合アンロードする
                 wvsFile?.Dispose();
-                if (File.Exists(toFile))
-                    File.Delete(toFile);
             }
+            if (File.Exists(toFile))
+                File.Delete(toFile);
             File.Move(toFile + ".tmp", toFile);
         }
     }
@@ -241,8 +257,6 @@ namespace WoTB_Mod_Creator2.Class
 
         public string ProjectName { get; private set; } = "";
         public string WVSFile { get; private set; } = "";
-        public bool IsNotChangeNameMode { get; private set; }
-        public bool IsIncludedSound = true;
         public bool IsLoaded = false;
 
         private const byte MAX_VERSION = 5;         //2024/06/30現在はPC版はバージョン4、Android版は5
@@ -335,10 +349,10 @@ namespace WoTB_Mod_Creator2.Class
             int projectNameBytes = version < 3 ? br.ReadInt32() : br.ReadByte();
             ProjectName = Encoding.UTF8.GetString(br.ReadBytes(projectNameBytes));
             //プロジェクト名の変更が可能かどうかを取得
-            IsNotChangeNameMode = br.ReadBoolean();
-            IsIncludedSound = br.ReadBoolean();
+            _ = br.ReadBoolean();
+            bool bIncludeSound = br.ReadBoolean();
             br.ReadByte();
-            if (!IsIncludedSound && version >= 3)
+            if (!bIncludeSound && version >= 3)
             {
                 ushort dirCount = br.ReadUInt16();
                 for (int i = 0; i < dirCount; i++)
@@ -352,6 +366,9 @@ namespace WoTB_Mod_Creator2.Class
                 {
                     List<List<List<ushort>>> soundBytesTemp = [];               //サウンドがどの場所に保存されているかを一時的に管理 (CVoiceSoundSettingを取得するときにはまだ分からないため)
 
+                    _ = br.ReadDouble();        //音量を均一に(アプリ上では使用しない)
+                    _ = br.ReadBoolean();       //サウンドが1つもない場合デフォルトの音声を再生させるか(アプリ上では使用しない)
+
                     //SE情報が含まれていたらスキップ (サーバー側ではSE情報も読み取る必要があるが、Android版Mod Creatorではプリセットをロードするため読み取る必要はない)
                     bool bIncludeSE = br.ReadBoolean();
                     if (bIncludeSE)
@@ -361,6 +378,7 @@ namespace WoTB_Mod_Creator2.Class
                         {
                             _ = br.ReadUInt32();
                             _ = br.ReadSByte();
+                            _ = br.ReadBoolean();
                             _ = br.ReadBoolean();
                             byte seCount = br.ReadByte();
                             for (int i = 0; i < seCount; i++)
@@ -372,8 +390,8 @@ namespace WoTB_Mod_Creator2.Class
                         }
                     }
 
-                    byte typeCount = br.ReadByte();
                     //ページ数ぶん繰り返す
+                    byte typeCount = br.ReadByte();
                     for (int typeIndex = 0; typeIndex < typeCount; typeIndex++)
                     {
                         soundBytesTemp.Add([]);
@@ -386,7 +404,10 @@ namespace WoTB_Mod_Creator2.Class
                             CVoiceTypeSetting eventInfo = voiceTypes[typeIndex][eventIndex].TypeSetting;
                             eventInfo.EventShortID = br.ReadUInt32();
                             eventInfo.VoiceShortID = br.ReadUInt32();
-                            _ = br.ReadUInt32();
+                            _ = br.ReadBytes(br.ReadByte());
+                            bool bIncludeSEType = br.ReadBoolean();
+                            if (bIncludeSEType)
+                                _ = br.ReadUInt32();
                             eventInfo.IsLoadMode = true;
                             eventInfo.IsVolumeRange = br.ReadBoolean();
                             eventInfo.IsPitchRange = br.ReadBoolean();
@@ -445,6 +466,9 @@ namespace WoTB_Mod_Creator2.Class
                                 voiceTypes[typeIndex][eventIndex].TypeSetting.Sounds.Add(soundInfo);
                                 ushort soundBytesIndex = br.ReadUInt16();
                                 soundBytesTemp[^1][^1].Add(soundBytesIndex);        //サウンド本体がどの位置にあるかを一時的に保存
+                                //ファイルをテキストエディタで開いたとき横長になりすぎるため改行
+                                if (soundIndex % 5 == 3)
+                                    _ = br.ReadByte();
                             }
                         }
                         _ = br.ReadByte();
@@ -473,6 +497,7 @@ namespace WoTB_Mod_Creator2.Class
                         }
                     }
                 }
+                //バージョン5未満 (PC版のセーブデータを読み取る)
                 else
                 {
                     byte typeCount = br.ReadByte();
@@ -531,7 +556,7 @@ namespace WoTB_Mod_Creator2.Class
                         {
                             listIndex = br.ReadByte();
                             soundIndex = br.ReadByte();
-                            if (!IsIncludedSound)
+                            if (!bIncludeSound)
                                 fileName = dirNames[br.ReadUInt16()] + "\\";
                             fileNameCount = br.ReadByte();
                         }
@@ -565,7 +590,7 @@ namespace WoTB_Mod_Creator2.Class
                             soundInfo.Delay = br.ReadDouble();
                             soundInfo.IsFadeIn = br.ReadBoolean();
                             soundInfo.IsFadeOut = br.ReadBoolean();
-                            if (IsIncludedSound)
+                            if (bIncludeSound)
                             {
                                 //サウンドが開始される地点を保存しておく(Get_Sound_Bytes()でその地点のサウンドをbyte[]形式で読み取れます)
                                 soundInfo.StreamPosition = br.BaseStream.Position;
@@ -574,7 +599,7 @@ namespace WoTB_Mod_Creator2.Class
                                 soundInfo.FilePath = Path.GetFileName(fileName);
                             }
                         }
-                        else if (IsIncludedSound)
+                        else if (bIncludeSound)
                         {
                             //サウンドが開始される地点を保存しておく(Get_Sound_Bytes()でその地点のサウンドをbyte[]形式で読み取れます)
                             soundInfo.StreamPosition = br.BaseStream.Position;

@@ -22,7 +22,7 @@ public class SE_Sound(string filePath, uint shortID, bool bAndroidResource = fal
     public bool IsDefaultSound = bDefaultSound;
 }
 
-public class SE_Type(string typeName, uint defaultShortID, double gain)
+public class SE_Type(string typeName, uint defaultShortID, double gain, bool bLoopMode = false)
 {
     //サウンド配列
     public List<SE_Sound> Sounds = [];
@@ -45,6 +45,8 @@ public class SE_Type(string typeName, uint defaultShortID, double gain)
     public bool IsEnable = true;
     //選択済みかどうか
     public bool IsSelected = false;
+    //ループSEかどうか
+    public bool IsLoop = bLoopMode;
 
     //選択時に背景色を変更する
     public Color BackColor => IsSelected ? Color.FromArgb("#82bfc8") : Colors.Transparent;
@@ -234,7 +236,7 @@ public partial class SE_Setting : ContentPage
         defaultPreset.Types[^1].AddSound("EnemySpoted_01.mp3", 0, true, true);
         defaultPreset.Types[^1].AddSound("Spot_01.mp3", 0, true);
         defaultPreset.Types[^1].AddSound("Spot_02.wav", 0, true);
-        defaultPreset.Types.Add(new("戦闘開始前タイマー", 816581364, 0));
+        defaultPreset.Types.Add(new("戦闘開始前タイマー", 816581364, 0, true));
         defaultPreset.Types[^1].AddSound("Timer_SE.mp3", 0, true, true);
         defaultPreset.Types[^1].AddSound("Timer_01.wav", 0, true);
         defaultPreset.Types[^1].AddSound("Timer_02.wav", 0, true);
@@ -504,7 +506,6 @@ public partial class SE_Setting : ContentPage
     }
 
     //サウンドを追加
-
     public void Add_Sound(List<string> files)
     {
         SE_Type seType = (SE_Type)SE_Type_L.SelectedItem;

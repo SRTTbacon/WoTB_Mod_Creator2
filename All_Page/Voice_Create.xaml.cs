@@ -1,3 +1,4 @@
+using System.Reflection;
 using Un4seen.Bass;
 using WoTB_Mod_Creator2.Class;
 
@@ -18,14 +19,12 @@ public class CVoiceTypeList(string eventName, int index)
     public string Name_Text => Name + " : " + Count + "個";
     public int Count => TypeSetting.Sounds.Count;
     public int Index { get; private set; } = index;
-    public bool IsSelected = false;
     public Color Name_Color => Count == 0 ? Color.FromArgb("#BFFF2C8C") : Colors.Aqua;
-    public Color BackColor => IsSelected ? Color.FromArgb("#82bfc8") : Colors.Transparent;
     public CVoiceTypeSetting TypeSetting = new();
 
-    public void InitTypeSetting(uint eventShortID, uint voiceShortID, SE_Type? seType)
+    public void InitTypeSetting(uint eventShortID, uint voiceShortID, SE_Type? seType, string defaultVoiceName)
     {
-        TypeSetting.Init(eventShortID, voiceShortID, seType);
+        TypeSetting.Init(eventShortID, voiceShortID, seType, defaultVoiceName);
     }
 }
 
@@ -42,15 +41,11 @@ public partial class Voice_Create : ContentPage
     readonly List<CVoiceSoundList> voiceSounds = [];
     readonly List<List<CVoiceTypeList>> voiceTypes = [];
 
-    ViewCell? lastVoiceTypeCell = null;
-    ViewCell? lastVoiceSoundCell = null;
-
     readonly WVS_Load wvsFile = new();
 
     string projectName = "";
 
     int nowTypePage = 0;
-    int streamHandle = 0;
 
     bool bOtherPageOpened = false;
     bool bMessageShowing = false;
@@ -88,73 +83,73 @@ public partial class Voice_Create : ContentPage
         //1ページ目
         List<CVoiceTypeList> voiceTypeOne = voiceTypes[0];
         voiceTypeOne.Add(new("味方にダメージ", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(341425709, 170029050, sePreset.GetSEType("貫通"));
+        voiceTypeOne[^1].InitTypeSetting(341425709, 170029050, sePreset.GetSEType("貫通"), "ally_killed_by_player");
         voiceTypeOne.Add(new("弾薬庫破損", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(908426860, 95559763, sePreset.GetSEType("弾薬庫破損"));
+        voiceTypeOne[^1].InitTypeSetting(908426860, 95559763, sePreset.GetSEType("弾薬庫破損"), "ammo_bay_damaged");
         voiceTypeOne.Add(new("敵への無効弾", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(280189980, 766083947, sePreset.GetSEType("非貫通-無効弾"));
+        voiceTypeOne[^1].InitTypeSetting(280189980, 766083947, sePreset.GetSEType("非貫通-無効弾"), "armor_not_pierced_by_player");
         voiceTypeOne.Add(new("敵への貫通弾", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(815358870, 569784404, sePreset.GetSEType("貫通"));
+        voiceTypeOne[^1].InitTypeSetting(815358870, 569784404, sePreset.GetSEType("貫通"), "armor_pierced_by_player");
         voiceTypeOne.Add(new("敵への致命弾", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(49295125, 266422868, sePreset.GetSEType("敵モジュール破損"));
+        voiceTypeOne[^1].InitTypeSetting(49295125, 266422868, sePreset.GetSEType("敵モジュール破損"), "armor_pierced_crit_by_player");
         voiceTypeOne.Add(new("敵への跳弾", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(733342682, 1052258113, sePreset.GetSEType("非貫通-跳弾"));
+        voiceTypeOne[^1].InitTypeSetting(733342682, 1052258113, sePreset.GetSEType("非貫通-跳弾"), "armor_ricochet_by_player");
         voiceTypeOne.Add(new("車長負傷", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(331196727, 242302464, sePreset.GetSEType("搭乗員負傷"));
+        voiceTypeOne[^1].InitTypeSetting(331196727, 242302464, sePreset.GetSEType("搭乗員負傷"), "commander_killed");
         voiceTypeOne.Add(new("操縦手負傷", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(619058694, 334837201, sePreset.GetSEType("搭乗員負傷"));
+        voiceTypeOne[^1].InitTypeSetting(619058694, 334837201, sePreset.GetSEType("搭乗員負傷"), "driver_killed");
         voiceTypeOne.Add(new("敵炎上", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(794420468, 381780774, sePreset.GetSEType("敵炎上"));
+        voiceTypeOne[^1].InitTypeSetting(794420468, 381780774, sePreset.GetSEType("敵炎上"), "enemy_fire_started_by_player");
         voiceTypeOne.Add(new("敵撃破", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(109598189, 489572734, sePreset.GetSEType("敵撃破"));
+        voiceTypeOne[^1].InitTypeSetting(109598189, 489572734, sePreset.GetSEType("敵撃破"), "enemy_killed_by_player");
         voiceTypeOne.Add(new("エンジン破損", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(244621664, 210078142, sePreset.GetSEType("モジュール破損"));
+        voiceTypeOne[^1].InitTypeSetting(244621664, 210078142, sePreset.GetSEType("モジュール破損"), "engine_damaged");
         voiceTypeOne.Add(new("エンジン大破", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(73205091, 249535989, sePreset.GetSEType("モジュール大破"));
+        voiceTypeOne[^1].InitTypeSetting(73205091, 249535989, sePreset.GetSEType("モジュール大破"), "engine_destroyed");
         voiceTypeOne.Add(new("エンジン復旧", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(466111031, 908710042, sePreset.GetSEType("モジュール復旧"));
+        voiceTypeOne[^1].InitTypeSetting(466111031, 908710042, sePreset.GetSEType("モジュール復旧"), "engine_functional");
         voiceTypeOne.Add(new("自車両火災", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(471196930, 1057023960, null);
+        voiceTypeOne[^1].InitTypeSetting(471196930, 1057023960, null, "fire_started");
         voiceTypeOne.Add(new("自車両消火", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(337626756, 953778289, null);
+        voiceTypeOne[^1].InitTypeSetting(337626756, 953778289, null, "fire_stopped");
         voiceTypeOne.Add(new("燃料タンク破損", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(930519512, 121897540, sePreset.GetSEType("燃料タンク破損"));
+        voiceTypeOne[^1].InitTypeSetting(930519512, 121897540, sePreset.GetSEType("燃料タンク破損"), "fuel_tank_damaged");
         voiceTypeOne.Add(new("主砲破損", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(1063632502, 127877647, sePreset.GetSEType("モジュール破損"));
+        voiceTypeOne[^1].InitTypeSetting(1063632502, 127877647, sePreset.GetSEType("モジュール破損"), "gun_damaged");
         voiceTypeOne.Add(new("主砲大破", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(175994480, 462397017, sePreset.GetSEType("モジュール大破"));
+        voiceTypeOne[^1].InitTypeSetting(175994480, 462397017, sePreset.GetSEType("モジュール大破"), "gun_destroyed");
         voiceTypeOne.Add(new("主砲復旧", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(546476029, 651656679, sePreset.GetSEType("モジュール復旧"));
+        voiceTypeOne[^1].InitTypeSetting(546476029, 651656679, sePreset.GetSEType("モジュール復旧"), "gun_functional");
         voiceTypeOne.Add(new("砲手負傷", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(337748775, 739086111, sePreset.GetSEType("搭乗員負傷"));
+        voiceTypeOne[^1].InitTypeSetting(337748775, 739086111, sePreset.GetSEType("搭乗員負傷"), "gunner_killed");
         voiceTypeOne.Add(new("装填手負傷", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(302644322, 363753108, sePreset.GetSEType("搭乗員負傷"));
+        voiceTypeOne[^1].InitTypeSetting(302644322, 363753108, sePreset.GetSEType("搭乗員負傷"), "loader_killed");
         voiceTypeOne.Add(new("通信機破損", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(356562073, 91697210, sePreset.GetSEType("無線機破損"));
+        voiceTypeOne[^1].InitTypeSetting(356562073, 91697210, sePreset.GetSEType("無線機破損"), "radio_damaged");
         voiceTypeOne.Add(new("通信手負傷", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(156782042, 987172940, sePreset.GetSEType("搭乗員負傷"));
+        voiceTypeOne[^1].InitTypeSetting(156782042, 987172940, sePreset.GetSEType("搭乗員負傷"), "radioman_killed");
         voiceTypeOne.Add(new("戦闘開始", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(769815093, 518589126, sePreset.GetSEType("戦闘開始"));
+        voiceTypeOne[^1].InitTypeSetting(769815093, 518589126, sePreset.GetSEType("戦闘開始"), "start_battle");
         voiceTypeOne.Add(new("観測装置破損", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(236686366, 330491031, sePreset.GetSEType("モジュール破損"));
+        voiceTypeOne[^1].InitTypeSetting(236686366, 330491031, sePreset.GetSEType("モジュール破損"), "surveying_devices_damaged");
         voiceTypeOne.Add(new("観測装置大破", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(559710262, 792301846, sePreset.GetSEType("モジュール大破"));
+        voiceTypeOne[^1].InitTypeSetting(559710262, 792301846, sePreset.GetSEType("モジュール大破"), "surveying_devices_destroyed");
         voiceTypeOne.Add(new("観測装置復旧", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(47321344, 539730785, sePreset.GetSEType("モジュール復旧"));
+        voiceTypeOne[^1].InitTypeSetting(47321344, 539730785, sePreset.GetSEType("モジュール復旧"), "surveying_devices_functional");
         voiceTypeOne.Add(new("履帯破損", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(978556760, 38261315, sePreset.GetSEType("モジュール破損"));
+        voiceTypeOne[^1].InitTypeSetting(978556760, 38261315, sePreset.GetSEType("モジュール破損"), "track_damaged");
         voiceTypeOne.Add(new("履帯大破", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(878993268, 37535832, sePreset.GetSEType("モジュール大破"));
+        voiceTypeOne[^1].InitTypeSetting(878993268, 37535832, sePreset.GetSEType("モジュール大破"), "track_destroyed");
         voiceTypeOne.Add(new("履帯復旧", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(581830963, 558576963, sePreset.GetSEType("モジュール復旧"));
+        voiceTypeOne[^1].InitTypeSetting(581830963, 558576963, sePreset.GetSEType("モジュール復旧"), "track_functional");
         voiceTypeOne.Add(new("砲塔破損", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(984973529, 1014565012, sePreset.GetSEType("モジュール破損"));
+        voiceTypeOne[^1].InitTypeSetting(984973529, 1014565012, sePreset.GetSEType("モジュール破損"), "turret_rotator_damaged");
         voiceTypeOne.Add(new("砲塔大破", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(381112709, 135817430, sePreset.GetSEType("モジュール大破"));
+        voiceTypeOne[^1].InitTypeSetting(381112709, 135817430, sePreset.GetSEType("モジュール大破"), "turret_rotator_destroyed");
         voiceTypeOne.Add(new("砲塔復旧", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(33436524, 985679417, sePreset.GetSEType("モジュール復旧"));
+        voiceTypeOne[^1].InitTypeSetting(33436524, 985679417, sePreset.GetSEType("モジュール復旧"), "turret_rotator_functional");
         voiceTypeOne.Add(new("自車両大破", voiceTypeOne.Count));
-        voiceTypeOne[^1].InitTypeSetting(116097397, 164671745, sePreset.GetSEType("自車両大破"));
+        voiceTypeOne[^1].InitTypeSetting(116097397, 164671745, sePreset.GetSEType("自車両大破"), "vehicle_destroyed");
     }
 
     //画面下部にメッセージを表示
@@ -216,63 +211,15 @@ public partial class Voice_Create : ContentPage
     //サウンドイベントを選択
     private void VoiceTypeViewCell_Tapped(object sender, EventArgs e)
     {
-        if (lastVoiceTypeCell != null)
-            lastVoiceTypeCell.View.BackgroundColor = Colors.Transparent;
-        ViewCell viewCell = (ViewCell)sender;
-
-        foreach (CVoiceTypeList type in voiceTypes[nowTypePage])
-            type.IsSelected = false;
-
-        if (viewCell.View != null && Voice_Type_L.SelectedItem != null)
+        if (Voice_Type_L.SelectedItem != null)
         {
-            viewCell.View.BackgroundColor = Color.FromArgb("#82bfc8");
-            lastVoiceTypeCell = viewCell;
             CVoiceTypeList typeList = (CVoiceTypeList)Voice_Type_L.SelectedItem;
-            typeList.IsSelected = true;
             voiceSounds.Clear();
             foreach (CVoiceSoundSetting soundSetting in typeList.TypeSetting.Sounds)
                 voiceSounds.Add(new(soundSetting));
-            if (voiceSounds.Count == 0)
-                Sound_File_L.ItemsSource = null;
-            else 
+            Sound_File_L.ItemsSource = null;
+            if (voiceSounds.Count > 0)
                 Sound_File_L.ItemsSource = voiceSounds;
-        }
-    }
-    //サウンドファイルを選択
-    private void Sound_List_Tapped(object sender, EventArgs e)
-    {
-        if (lastVoiceSoundCell != null)
-            lastVoiceSoundCell.View.BackgroundColor = Colors.Transparent;
-        ViewCell viewCell = (ViewCell)sender;
-
-        if (viewCell.View != null && Sound_File_L.SelectedItem != null)
-        {
-            viewCell.View.BackgroundColor = Color.FromArgb("#82bfc8");
-            lastVoiceSoundCell = viewCell;
-        }
-
-        if (Sound_File_L.SelectedItem == null)
-            return;
-
-        if (streamHandle != 0)
-            Bass.BASS_StreamFree(streamHandle);
-
-        CVoiceSoundSetting voiceSoundSetting = ((CVoiceSoundList)Sound_File_L.SelectedItem).VoiceSoundSetting;
-        //サウンドが.wvsファイル内に存在している場合
-        if (voiceSoundSetting.IsBinarySound)
-        {
-            byte[]? soundBytes = wvsFile.Load_Sound(voiceSoundSetting.StreamPosition);
-            IntPtr soundPtr = IntPtr.Parse(soundBytes);
-            if (soundBytes != null)
-            {
-                int handle = Bass.BASS_StreamCreateFile(soundPtr, 0, 0, BASSFlag.BASS_STREAM_DECODE);
-                streamHandle = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_TempoCreate(handle, BASSFlag.BASS_FX_FREESOURCE);
-            }
-        }
-        else
-        {
-            int handle = Bass.BASS_StreamCreateFile(voiceSoundSetting.FilePath, 0, 0, BASSFlag.BASS_STREAM_DECODE);
-            streamHandle = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_TempoCreate(handle, BASSFlag.BASS_FX_FREESOURCE);
         }
     }
 
@@ -295,7 +242,7 @@ public partial class Voice_Create : ContentPage
             await DisplayActionSheet("プロジェクトを選択してください。", "キャンセル", null, ["!プロジェクトが存在しません!"]);
         else
         {
-            string fileName = await DisplayActionSheet("プロジェクトを選択してください。", "キャンセル", null, savedNames.ToArray());
+            string fileName = await DisplayActionSheet("プロジェクトを選択してください。", "キャンセル", null, [..savedNames]);
             int index = savedNames.IndexOf(fileName);
             if (index != -1)
             {
@@ -587,5 +534,27 @@ public partial class Voice_Create : ContentPage
     {
         Button button = (Button)sender;
         button.BorderColor = Colors.Aqua;
+    }
+
+    private void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+    {
+        ListView listView = (ListView)sender;
+        IEnumerable<PropertyInfo> pInfos = listView.GetType().GetRuntimeProperties();
+        PropertyInfo? templatedItems = pInfos.FirstOrDefault(info => info.Name == "TemplatedItems");
+        if (templatedItems != null)
+        {
+            object? cells = templatedItems.GetValue(listView);
+            if (cells == null)
+                return;
+            int index = 0;
+            foreach (ViewCell cell in ((ITemplatedItemsList<Cell>)cells).Cast<ViewCell>())
+            {
+                if (index == e.SelectedItemIndex)
+                    cell.View.BackgroundColor = Color.FromArgb("#82bfc8");
+                else
+                    cell.View.BackgroundColor = Colors.Transparent;
+                index++;
+            }
+        }
     }
 }
