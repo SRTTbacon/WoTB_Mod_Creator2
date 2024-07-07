@@ -59,7 +59,7 @@ public class SE_Type(string typeName, uint defaultShortID, double gain, bool bLo
         if (Sounds.Count >= 255)
             return false;
         foreach (SE_Sound sound in Sounds)
-            if (sound.FilePath == filePath)
+            if (sound.FilePath == filePath && sound.IsDefaultSound == bDefaultSound)
                 return false;
         if (shortID == 0)
             shortID = DefaultShortID;
@@ -201,7 +201,7 @@ public partial class SE_Setting : ContentPage
         defaultPreset.Types.Add(new("敵撃破", 582349497, -2));
         defaultPreset.Types[^1].AddSound("EnemyDestory_01.wav", 0, true);
         defaultPreset.Types[^1].AddSound("EnemyDestory_02.wav", 0, true);
-        defaultPreset.Types.Add(new("貫通", 862763776, -6));
+        defaultPreset.Types.Add(new("貫通", 862763776, -3));
         defaultPreset.Types[^1].AddSound("Piercing_01.mp3", 0, true);
         defaultPreset.Types[^1].AddSound("Piercing_02.mp3", 0, true);
         defaultPreset.Types[^1].AddSound("Piercing_03.mp3", 0, true);
@@ -531,7 +531,7 @@ public partial class SE_Setting : ContentPage
         else if (alreadyVoiceCount > 0 && addedVoiceCount > 0)
             Message_Feed_Out("既に追加されているため" + alreadyVoiceCount + "個のファイルをスキップし、" + addedVoiceCount + "個のファイルを追加しました。");
         else
-            Message_Feed_Out(addedVoiceCount + "個のファイルをイベントに追加しました。");
+            Message_Feed_Out(addedVoiceCount + "個のファイルを追加しました。");
     }
 
     private void ContentPage_Appearing(object sender, EventArgs e)

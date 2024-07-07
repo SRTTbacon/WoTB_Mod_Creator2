@@ -29,12 +29,21 @@ public class Select_File_List(string name, bool bIsDirectory, string fullPath = 
 }
 public partial class Select_Files : ContentPage
 {
+    enum Load_State
+    {
+        None,
+        Loading,
+        Finished,
+        Failed
+    }
+
     public delegate void Select_File_EventHandler<T>(T args);
     public event Select_File_EventHandler<string>? Selected;
     private readonly List<string> searchOptions = [];
     private readonly List<string> backDirs = [];
     private readonly Dictionary<string, string> pageDirs = [];
     private List<Select_File_List> fileDirList = [];
+    private Load_State state = Load_State.None;
     private string pageName = "";
     private string dir = "";
     private string bottomDir = "";
@@ -210,40 +219,76 @@ public partial class Select_Files : ContentPage
         Files_L.ItemsSource = null;
         fileDirList.Clear();
 
-        try
+        Message_T.Text = "ファイル一覧を取得しています...";
+        Message_T.Opacity = 1.0;
+
+        state = Load_State.Loading;
+
+        GetFiles();
+        Loop();
+
+        Dir_T.Text = (dir + "/").Replace(Sub_Code.ANDROID_ROOT, "");
+    }
+
+    private async void Loop()
+    {
+        while (state == Load_State.Loading)
+            await Task.Delay(100);
+
+        if (state == Load_State.Finished)
         {
-            //フォルダ内のフォルダを取得
-            string[] dirs = Directory.GetDirectories(dir, "*", SearchOption.TopDirectoryOnly);
-            foreach (string nowDir in dirs)
-                fileDirList.Add(new Select_File_List(Path.GetFileName(nowDir), true));
-            //フォルダ内のファイルを取得
-            IEnumerable<string> files;
-            if (searchOptions.Count > 0)
-                files = Directory.EnumerateFiles(dir, "*.*", SearchOption.TopDirectoryOnly).Where(file => searchOptions.Any(pattern => file.ToLower().EndsWith(pattern)));
-            else
-                files = Directory.GetFiles(dir, "*.*", SearchOption.TopDirectoryOnly);
-
-            foreach (string file in files)
-                fileDirList.Add(new Select_File_List(Path.GetFileName(file), false));
-
-            //名前順にソート
-            fileDirList = [.. fileDirList.OrderBy(h => !h.IsDirectory).ThenBy(h => h.Name)];
             Files_L.ItemsSource = fileDirList;
+            Message_T.Text = "";
         }
-        catch
+        else if (state == Load_State.Failed)
         {
             Files_L.SelectedItem = null;
             Files_L.ItemsSource = null;
-            fileDirList.Clear();
             Message_Feed_Out("このフォルダはアクセスできません。");
         }
 
-        Dir_T.Text = (dir + "/").Replace(Sub_Code.ANDROID_ROOT, "");
+        state = Load_State.None;
+    }
+
+    private void GetFiles()
+    {
+        Task.Run(() =>
+        {
+            try
+            {
+                //フォルダ内のフォルダを取得
+                string[] dirs = Directory.GetDirectories(dir, "*", SearchOption.TopDirectoryOnly);
+                foreach (string nowDir in dirs)
+                    fileDirList.Add(new Select_File_List(Path.GetFileName(nowDir), true));
+                //フォルダ内のファイルを取得
+                IEnumerable<string> files;
+                if (searchOptions.Count > 0)
+                    files = Directory.EnumerateFiles(dir, "*.*", SearchOption.TopDirectoryOnly).Where(file => searchOptions.Any(pattern => file.ToLower().EndsWith(pattern)));
+                else
+                    files = Directory.GetFiles(dir, "*.*", SearchOption.TopDirectoryOnly);
+
+                foreach (string file in files)
+                    fileDirList.Add(new Select_File_List(Path.GetFileName(file), false));
+
+                //名前順にソート
+                fileDirList = [.. fileDirList.OrderBy(h => !h.IsDirectory).ThenBy(h => h.Name)];
+
+                state = Load_State.Finished;
+            }
+            catch
+            {
+                fileDirList.Clear();
+                state = Load_State.Failed;
+            }
+        });
     }
 
     //フォルダを1つ戻る
     private void Dir_Back_B_Clicked(object? sender, EventArgs e)
     {
+        if (state != Load_State.None)
+            return;
+
         if (dir != Sub_Code.ANDROID_ROOT && dir != bottomDir)
         {
             DirectoryInfo? dirInfo = Directory.GetParent(dir);
@@ -262,6 +307,9 @@ public partial class Select_Files : ContentPage
     //何もせずウィンドウを閉じる
     private void Cancel_B_Clicked(object? sender, EventArgs e)
     {
+        if (state != Load_State.None)
+            return;
+
         Save_Page_Dir();
         Dispose();
         Navigation.PopModalAsync();
@@ -270,6 +318,9 @@ public partial class Select_Files : ContentPage
     //イベントハンドラーで通知
     private void OK_B_Clicked(object? sender, EventArgs e)
     {
+        if (state != Load_State.None)
+            return;
+
         bool bExist = false;
         foreach (Select_File_List selectFile in fileDirList)
         {

@@ -22,7 +22,7 @@ public class CVoiceTypeList(string eventName, int index)
     public Color Name_Color => Count == 0 ? Color.FromArgb("#BFFF2C8C") : Colors.Aqua;
     public CVoiceTypeSetting TypeSetting = new();
 
-    public void InitTypeSetting(uint eventShortID, uint voiceShortID, SE_Type? seType, string defaultVoiceName)
+    public void InitTypeSetting(uint eventShortID, uint voiceShortID, SE_Type? seType, string defaultVoiceName = "")
     {
         TypeSetting.Init(eventShortID, voiceShortID, seType, defaultVoiceName);
     }
@@ -42,6 +42,8 @@ public partial class Voice_Create : ContentPage
     readonly List<List<CVoiceTypeList>> voiceTypes = [];
 
     readonly WVS_Load wvsFile = new();
+
+    Build_Setting.Build_State state = Build_Setting.Build_State.None;
 
     string projectName = "";
 
@@ -150,6 +152,58 @@ public partial class Voice_Create : ContentPage
         voiceTypeOne[^1].InitTypeSetting(33436524, 985679417, sePreset.GetSEType("モジュール復旧"), "turret_rotator_functional");
         voiceTypeOne.Add(new("自車両大破", voiceTypeOne.Count));
         voiceTypeOne[^1].InitTypeSetting(116097397, 164671745, sePreset.GetSEType("自車両大破"), "vehicle_destroyed");
+
+        //2ページ目
+        List<CVoiceTypeList> voiceTypeTwo = voiceTypes[1];
+        voiceTypeTwo.Add(new("敵発見", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(308272618, 447063394, sePreset.GetSEType("敵発見"));
+        voiceTypeTwo.Add(new("第六感", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(767278023, 154835998, sePreset.GetSEType("第六感"));
+        voiceTypeTwo.Add(new("了解", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(230904672, 607694618, sePreset.GetSEType("クイックコマンド"));
+        voiceTypeTwo.Add(new("拒否", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(390478464, 391276124, sePreset.GetSEType("クイックコマンド"));
+        voiceTypeTwo.Add(new("救援を請う", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(17969037, 840378218, sePreset.GetSEType("クイックコマンド"));
+        voiceTypeTwo.Add(new("攻撃せよ！", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(900922817, 549968154, sePreset.GetSEType("クイックコマンド"));
+        voiceTypeTwo.Add(new("攻撃中", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(727518878, 1015337424, sePreset.GetSEType("クイックコマンド"));
+        voiceTypeTwo.Add(new("陣地を占領せよ！", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(101252368, 271044645, sePreset.GetSEType("クイックコマンド"));
+        voiceTypeTwo.Add(new("陣地を防衛せよ！ ", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(576711003, 310153012, sePreset.GetSEType("クイックコマンド"));
+        voiceTypeTwo.Add(new("固守せよ！ ", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(470859110, 379548034, sePreset.GetSEType("クイックコマンド"));
+        voiceTypeTwo.Add(new("ロックオン ", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(502585189, 839607605, sePreset.GetSEType("ロックオン"));
+        voiceTypeTwo.Add(new("アンロック ", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(769354725, 233444430, sePreset.GetSEType("アンロック"));
+        voiceTypeTwo.Add(new("装填完了 ", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(402727222, 299739777, sePreset.GetSEType("装填完了"));
+        voiceTypeTwo.Add(new("マップクリック時 ", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(670169971, 120795627, sePreset.GetSEType("マップクリック"));
+        voiceTypeTwo.Add(new("戦闘終了時(時間切れや占領時のみ) ", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(204685755, 924876614, sePreset.GetSEType("時間切れ&占領ポイントMax"));
+        voiceTypeTwo.Add(new("戦闘BGM ", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(1065169508, 891902653, null);
+        voiceTypeTwo.Add(new("移動中 ", voiceTypeTwo.Count));
+        voiceTypeTwo[^1].InitTypeSetting(198183306, 52813795, sePreset.GetSEType("移動中"));
+
+        //3ページ目
+        List<CVoiceTypeList> voiceTypeThree = voiceTypes[2];
+        voiceTypeThree.Add(new("チャット:味方-送信", voiceTypeThree.Count));
+        voiceTypeTwo[^1].InitTypeSetting(440862849, 491691546, null);
+        voiceTypeThree.Add(new("チャット:味方-受信", voiceTypeThree.Count));
+        voiceTypeTwo[^1].InitTypeSetting(750405, 417768496, null);
+        voiceTypeThree.Add(new("チャット:全体-送信", voiceTypeThree.Count));
+        voiceTypeTwo[^1].InitTypeSetting(228164469, 46472417, null);
+        voiceTypeThree.Add(new("チャット:全体-受信", voiceTypeThree.Count));
+        voiceTypeTwo[^1].InitTypeSetting(253510370, 681331945, null);
+        voiceTypeThree.Add(new("チャット:小隊-送信", voiceTypeThree.Count));
+        voiceTypeTwo[^1].InitTypeSetting(639029638, 190711689, null);
+        voiceTypeThree.Add(new("チャット:小隊-受信", voiceTypeThree.Count));
+        voiceTypeTwo[^1].InitTypeSetting(523678232, 918836720, null);
     }
 
     //画面下部にメッセージを表示
@@ -175,6 +229,16 @@ public partial class Voice_Create : ContentPage
         bMessageShowing = false;
         Message_T.Text = "";
         Message_T.Opacity = 1;
+    }
+
+    async void StateLoop(string projectName)
+    {
+        while (state == Build_Setting.Build_State.Building)
+            await Task.Delay(100);
+
+        Voice_Load_From_File(Sub_Code.ExDir + "/Saves/" + projectName + ".wvs");
+
+        Message_Feed_Out("セーブしました。");
     }
 
     //リストの状態を更新
@@ -272,15 +336,30 @@ public partial class Voice_Create : ContentPage
             }
             if (!Directory.Exists(Sub_Code.ExDir + "/Saves"))
                 _ = Directory.CreateDirectory(Sub_Code.ExDir + "/Saves");
-            WVS_Save save = new();
-            save.Add_Sound(voiceTypes, wvsFile);
-            save.Create(Sub_Code.ExDir + "/Saves/" + result + ".wvs", result, false);
-            Voice_Load_From_File(Sub_Code.ExDir + "/Saves/" + result + ".wvs");
-            Message_Feed_Out("セーブしました。");
 
-            Set_Item_Type();
+            bMessageShowing = false;
+            Message_T.Text = "セーブしています...";
+            Message_T.Opacity = 1.0;
+
+            state = Build_Setting.Build_State.Building;
+
+            StateLoop(result);
+            SaveProject(result);
         }
     }
+
+    void SaveProject(string projectName)
+    {
+        Task.Run(() =>
+        {
+            WVS_Save save = new();
+            save.Add_Sound(voiceTypes, wvsFile);
+            save.Create(Sub_Code.ExDir + "/Saves/" + projectName + ".wvs", projectName, false);
+
+            state = Build_Setting.Build_State.None;
+        });
+    }
+
     //プロジェクトをロード
     private void Voice_Load_From_File(string filePath)
     {

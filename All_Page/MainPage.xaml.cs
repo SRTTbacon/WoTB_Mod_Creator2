@@ -1,6 +1,9 @@
 ﻿using Un4seen.Bass;
 using WoTB_Mod_Creator2.Class;
+
+#if ANDROID
 using Octokit;
+#endif
 
 namespace WoTB_Mod_Creator2.All_Page
 {
@@ -40,6 +43,8 @@ namespace WoTB_Mod_Creator2.All_Page
             //ボタン
             Voice_Create_B.Clicked += Voice_Create_B_Clicked;
             Other_Sound_B.Clicked += Other_Sound_B_Clicked;
+            Music_Player_B.Clicked += Music_Player_B_Clicked;
+            Tools_B.Clicked += Tools_B_Clicked;
             UseSelectPage_C.CheckedChanged += UseSelectPage_C_CheckedChanged;
 
             Sub_Code.IsUseSelectPage = UseSelectPage_C.IsChecked;
@@ -51,6 +56,9 @@ namespace WoTB_Mod_Creator2.All_Page
             Update_B.IsVisible = false;
 
 #if ANDROID
+            if (!AndroidClass.CheckExternalStoragePermission() && File.Exists(APK_FILEPATH))
+                File.Delete(APK_FILEPATH);
+
             Update_B.Clicked += Update_B_Clicked;
 
             //インターネットにアクセスできる環境であればアップデートがあるか確認する
@@ -60,6 +68,16 @@ namespace WoTB_Mod_Creator2.All_Page
                 CheckUpdate();
             }
 #endif
+        }
+
+        private void Tools_B_Clicked(object? sender, EventArgs e)
+        {
+            Message_Feed_Out("現在のバージョンではこの機能は利用できません。");
+        }
+
+        private void Music_Player_B_Clicked(object? sender, EventArgs e)
+        {
+            Message_Feed_Out("現在のバージョンではこの機能は利用できません。");
         }
 
         private void Other_Sound_B_Clicked(object? sender, EventArgs e)
@@ -201,23 +219,32 @@ namespace WoTB_Mod_Creator2.All_Page
                 Message_Feed_Out("アクセス許可を行ってください。");
                 return;
             }
-                        bUpdating = true;
+
+            bUpdating = true;
             bDownloading = true;
             Loop();
+
             if (!File.Exists(APK_FILEPATH))
             {
                 bool bDownloadMode = await DisplayAlert("確認", "最新バージョンのapkファイルをダウンロードしますか?", "はい", "いいえ");
                 if (!bDownloadMode)
+                {
+                    bDownloading = false;
+                    bUpdating = false;
                     return;
+                }
                 Update_T.Text = "apkファイルをダウンロードしています...";
                 DownloadAPK();
             }
             else
             {
                 bool bDownloadMode = await DisplayAlert("確認", "apkファイルは既にダウンロードされています。更新しますか?", "はい", "いいえ");
-                if (!bDownloadMode)
-                    return;
                 bDownloading = false;
+                if (!bDownloadMode)
+                {
+                    bUpdating = false;
+                    return;
+                }
             }
         }
         private async void DownloadAPK()

@@ -8,6 +8,24 @@ namespace WoTB_Mod_Creator2.Class
     //このセーブファイルは、サウンドファイルも一緒に書き込まれるため、別のPC、Android端末でロードしても正常に再生やModの作成が行えます。
     public class WVS_Save
     {
+        enum Format
+        {
+            AndroidResorce,
+            WVSLoad,
+            FilePath
+        }
+
+        class SaveFormat(Format format, string filePath, long streamPosition = 0)
+        {
+            public Format format = format;
+
+            public string filePath = filePath;
+
+            public long streamPosition = streamPosition;
+
+            public byte[] md5 = [];
+        }
+
         //ヘッダ情報(WVSFormatの9バイトとバージョン情報の2バイトは確定)
         public const string WVSHeader = "WVSFormat";
         public const ushort WVSVersion = 5;
@@ -32,11 +50,10 @@ namespace WoTB_Mod_Creator2.Class
         private static bool CompareBytes(byte[] lhs, byte[] rhs)
         {
             //MD5ハッシュを取る
-            byte[] hash1 = MD5.HashData(lhs);
             byte[] hash2 = MD5.HashData(rhs);
 
             //ハッシュを比較
-            return hash1.SequenceEqual(hash2);
+            return lhs.SequenceEqual(hash2);
         }
 
         //.wvsファイルを生成
@@ -45,7 +62,7 @@ namespace WoTB_Mod_Creator2.Class
             //サウンドが存在する階層を保存 (ファイルサイズ削減のため)
             List<string> dirNames = [];
 
-            List<byte[]> imageBytes = [];
+            List<SaveFormat> saveFormats = [];
 
             if (File.Exists(toFile + ".tmp"))
                 File.Delete(toFile + ".tmp");
@@ -87,6 +104,9 @@ namespace WoTB_Mod_Creator2.Class
                     bw.Write((byte)seType.Sounds.Count);    //サウンド数
                     foreach (SE_Sound seSound in seType.Sounds)
                     {
+                        byte[] seName = Encoding.UTF8.GetBytes(Path.GetFileName(seSound.FilePath));
+                        bw.Write((byte)seName.Length);
+                        bw.Write(seName);
                         bw.Write(seSound.ShortID);          //どのコンテナに配置するか
                         bw.Write(seSound.IsDefaultSound);   //WoTBデフォルトのサウンドかどうか
 
@@ -97,12 +117,12 @@ namespace WoTB_Mod_Creator2.Class
                         else if (File.Exists(seSound.FilePath)) //ユーザーが選択したサウンドファイルの場合
                             soundBytes = File.ReadAllBytes(seSound.FilePath);
 
-                        int number = imageBytes.Count;
+                        int number = saveFormats.Count;
                         bool bExist = false;
 
-                        for (int i = 0; i < imageBytes.Count; i++)
+                        for (int i = 0; i < saveFormats.Count; i++)
                         {
-                            if (CompareBytes(soundBytes, imageBytes[i]))
+                            if (CompareBytes(saveFormats[i].md5, soundBytes))
                             {
                                 number = i;
                                 bExist = true;
@@ -110,8 +130,13 @@ namespace WoTB_Mod_Creator2.Class
                             }
                         }
                         if (!bExist)
-                            imageBytes.Add(soundBytes);
-
+                        {
+                            if (seSound.IsAndroidResource)
+                                saveFormats.Add(new(Format.AndroidResorce, seSound.FilePath));
+                            else
+                                saveFormats.Add(new(Format.FilePath, seSound.FilePath));
+                            saveFormats[^1].md5 = MD5.HashData(soundBytes);
+                        }
                         bw.Write((ushort)number);       //サウンドデータが入っているインデックス
                     }
                 }
@@ -192,16 +217,16 @@ namespace WoTB_Mod_Creator2.Class
 
                         //既に同じサウンドが設定されていればそのインデックスを取得。なければCount
                         //貫通と致命弾は同じサウンドを使用する可能性があるため容量削減のため同じサウンドの場合はまとめる
-                        int number = imageBytes.Count;
+                        int number = saveFormats.Count;
                         bool bExist = false;
                         byte[] soundBytes;
                         if (soundInfo.IsBinarySound && wvsFile != null)
                             soundBytes = wvsFile.Load_Sound(soundInfo.StreamPosition);
                         else
                             soundBytes = File.ReadAllBytes(soundInfo.FilePath);
-                        for (int i = 0; i < imageBytes.Count; i++)
+                        for (int i = 0; i < saveFormats.Count; i++)
                         {
-                            if (CompareBytes(soundBytes, imageBytes[i]))
+                            if (CompareBytes(saveFormats[i].md5, soundBytes))
                             {
                                 number = i;
                                 bExist = true;
@@ -209,7 +234,13 @@ namespace WoTB_Mod_Creator2.Class
                             }
                         }
                         if (!bExist)
-                            imageBytes.Add(soundBytes);
+                        {
+                            if (soundInfo.IsBinarySound && wvsFile != null)
+                                saveFormats.Add(new(Format.WVSLoad, "", soundInfo.StreamPosition));
+                            else
+                                saveFormats.Add(new(Format.FilePath, soundInfo.FilePath));
+                            saveFormats[^1].md5 = MD5.HashData(soundBytes);
+                        }
                         bw.Write((ushort)number);       //サウンドデータが入っているインデックス
 
                         //横長になるため3個イベントが進むたびに改行
@@ -220,9 +251,17 @@ namespace WoTB_Mod_Creator2.Class
                 bw.Write((byte)0x0a);
             }
 
-            bw.Write((ushort)imageBytes.Count);     //サウンド数
-            foreach (byte[] bytes in imageBytes)
+            bw.Write((ushort)saveFormats.Count);     //サウンド数
+            foreach (SaveFormat saveFormat in saveFormats)
             {
+                byte[] bytes;
+                if (saveFormat.format == Format.AndroidResorce)
+                    bytes = Sub_Code.ReadResourceData(saveFormat.filePath);
+                else if (saveFormat.format == Format.WVSLoad && wvsFile != null)
+                    bytes = wvsFile.Load_Sound(saveFormat.streamPosition);
+                else
+                    bytes = File.ReadAllBytes(saveFormat.filePath);
+
                 bw.Write(bytes.Length);     //サウンドデータのサイズ(65535バイト超えるデータがあったらやばいからint型)
                 bw.Write(bytes);            //サウンドデータ
             }
@@ -383,6 +422,7 @@ namespace WoTB_Mod_Creator2.Class
                             byte seCount = br.ReadByte();
                             for (int i = 0; i < seCount; i++)
                             {
+                                _ = br.ReadBytes(br.ReadByte());
                                 _ = br.ReadUInt32();
                                 _ = br.ReadBoolean();
                                 _ = br.ReadUInt16();

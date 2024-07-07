@@ -4,9 +4,10 @@ namespace WoTB_Mod_Creator2.All_Page;
 
 public partial class Build_Setting : ContentPage
 {
-    enum Upload_State
+    public enum Build_State
     {
         None,
+        Building,
         Uploading,
         Uploaded,
         Failed
@@ -19,7 +20,7 @@ public partial class Build_Setting : ContentPage
 
     readonly string uploadIDFile = Sub_Code.ExDir + "/Temp0101.dat";
 
-    Upload_State uploadState;
+    Build_State state;
 
     string commandText = "";
     string fileID = "";
@@ -39,7 +40,11 @@ public partial class Build_Setting : ContentPage
         Server_Build_B.Clicked += Server_Build_B_Clicked;
         Command_Copy_B.Clicked += Command_Copy_B_Clicked;
 
+        Volume_S.ValueChanged += Volume_S_ValueChanged;
+
         Command_T.Text = "アップロード待ち...";
+
+        ShowVolumeSlider();
     }
 
     //画面右下部にメッセージを表示
@@ -69,12 +74,21 @@ public partial class Build_Setting : ContentPage
 
     async void Loop()
     {
-        while (uploadState == Upload_State.Uploading)
-            await Task.Delay(1000 / 10);
+        Build_State nowState = state;
+        while (true)
+        {
+            if (state == Build_State.Uploaded)
+                break;
+            if (nowState == Build_State.Building && state == Build_State.Uploading)
+                Message_T.Text = ".wvsファイルを作成しました。\nアップロードしています...";
+            nowState = state;
 
-        if (uploadState == Upload_State.Uploaded)
+            await Task.Delay(1000 / 10);
+        }
+
+        if (state == Build_State.Uploaded)
             Message_T.Text = "プロジェクトファイルをアップロードしました。表示されているコマンドをDiscordのBot(SRTT_Yuna)に送信してください。";
-        else if (uploadState == Upload_State.Failed)
+        else if (state == Build_State.Failed)
             Message_Feed_Out("アップロードに失敗しました。時間を置いて再度ビルドしてください。");
 
         BinaryWriter bw = new(File.OpenWrite(uploadIDFile));
@@ -85,13 +99,13 @@ public partial class Build_Setting : ContentPage
 
         Command_T.Text = commandText;
 
-        uploadState = Upload_State.None;
+        state = Build_State.None;
     }
 
     //.wvsを作成しドライブにアップロード
     private async void Server_Build_B_Clicked(object? sender, EventArgs e)
     {
-        if (uploadState != Upload_State.None)
+        if (state != Build_State.None)
             return;
 
         if (voiceTypes == null || wvsData == null || sePreset == null)
@@ -127,7 +141,7 @@ public partial class Build_Setting : ContentPage
                 return;
         }
 
-        uploadState = Upload_State.Uploading;
+        state = Build_State.Building;
 
         Command_T.Text = "アップロード待ち...";
 
@@ -145,37 +159,26 @@ public partial class Build_Setting : ContentPage
             }
             br.Close();
             File.Delete(uploadIDFile);
-            File.Delete(uploadIDFile);
         }
-
-        string saveFilePath = Sub_Code.ExDir + "/Generated_Project.wvs";
 
         //.wvsファイルを作成
         bMessageShowing = false;
         Message_T.Text = ".wvsファイルを作成しています...";
         Message_T.Opacity = 1.0;
-        await Task.Delay(50);
-
-        WVS_Save save = new();
-        save.Add_Sound(voiceTypes, wvsData);
-        save.Create(saveFilePath, Project_Name_T.Text, true, sePreset, false);
-
-        Message_T.Text = ".wvsファイルを作成しました。\nアップロードしています...";
-        await Task.Delay(50);
 
         Loop();
-        Upload(saveFilePath);
+        BuildAndUpload();
     }
 
     private async void Command_Copy_B_Clicked(object? sender, EventArgs e)
     {
-        if (uploadState != Upload_State.None)
+        if (state != Build_State.None)
             return;
         try
         {
             if (Command_T.Text == "アップロード待ち...")
             {
-                Message_Feed_Out("先に'ビルド'ボタンを押して下さい。");
+                Message_Feed_Out("先に'作成'ボタンを押して下さい。");
                 return;
             }
             await Clipboard.SetTextAsync(Command_T.Text);
@@ -187,22 +190,33 @@ public partial class Build_Setting : ContentPage
         }
     }
 
-    void Upload(string saveFilePath)
+    void BuildAndUpload()
     {
+        string saveFilePath = Sub_Code.ExDir + "/Generated_Project.wvs";
         Task.Run(() =>
         {
+            //SEを含めたプロジェクトを作成
+            WVS_Save save = new();
+            if (Volume_Set_C.IsChecked)
+                save.Add_Sound(voiceTypes, wvsData, Math.Round(Volume_S.Value, 1), Default_Voice_Mode_C.IsChecked);
+            else
+                save.Add_Sound(voiceTypes, wvsData, 0.0, Default_Voice_Mode_C.IsChecked);
+            save.Create(saveFilePath, Project_Name_T.Text, true, sePreset, false);
+
+            state = Build_State.Uploading;
+
             //ドライブにアップロード
             int uploadID = Sub_Code.RandomValue.Next(1000000, int.MaxValue);
             if (drive.UploadFile(saveFilePath, out string fileID, uploadID + ".wvs"))
             {
                 commandText = ".swvs-id " + uploadID;
                 this.fileID = fileID;
-                uploadState = Upload_State.Uploaded;
+                state = Build_State.Uploaded;
                 bUploaded = true;
             }
             else
             {
-                uploadState = Upload_State.Failed;
+                state = Build_State.Failed;
             }
         });
     }
@@ -217,5 +231,25 @@ public partial class Build_Setting : ContentPage
     {
         Button button = (Button)sender;
         button.BorderColor = Colors.Aqua;
+    }
+
+    private void Volume_S_ValueChanged(object? sender, ValueChangedEventArgs e)
+    {
+        double volume = Math.Round(Volume_S.Value, 1);
+        Volume_T.Text = volume + "db";
+    }
+
+    private void Volume_Set_C_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        Volume_Set_T.Text = "音量を均一にする";
+        if (e.Value)
+            Volume_Set_T.Text += "(デフォルト:99db)";
+        ShowVolumeSlider();
+    }
+
+    void ShowVolumeSlider()
+    {
+        Volume_S.IsVisible = Volume_Set_C.IsChecked;
+        Volume_T.IsVisible = Volume_Set_C.IsChecked;
     }
 }

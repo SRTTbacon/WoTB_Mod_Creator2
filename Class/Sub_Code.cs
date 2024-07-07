@@ -18,7 +18,7 @@ namespace WoTB_Mod_Creator2.Class
         public static readonly Dictionary<int, int> HPFValues = [];
         public static readonly Dictionary<int, int> PitchValues = [];
 
-        public const string APP_VERSION = "0.1";
+        public const string APP_VERSION = "0.2";
         public const string ANDROID_ROOT = "/storage/emulated/0";
 
         public static readonly Random RandomValue = new();

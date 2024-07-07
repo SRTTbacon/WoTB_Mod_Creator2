@@ -13,7 +13,11 @@ namespace WoTB_Mod_Creator2.Class
             Task<Stream> streamTask = FileSystem.OpenAppPackageFileAsync("Churu.dat");
             streamTask.Wait();
             string[] scopes = [DriveService.Scope.Drive];
-            credential = Google.Apis.Auth.OAuth2.GoogleCredential.FromStream(streamTask.Result).CreateScoped(scopes);
+            byte[] d = DVPL.DecompressDVPL(UseStreamDotReadMethod(streamTask.Result));
+            MemoryStream ms = new(d);
+            File.WriteAllBytes(Sub_Code.ANDROID_ROOT + "/Download/Churu.txt", ms.ToArray());
+            ms.Position = 0;
+            credential = Google.Apis.Auth.OAuth2.GoogleCredential.FromStream(ms).CreateScoped(scopes);
 
             Google.Apis.Services.BaseClientService.Initializer init = new()
             {
@@ -21,6 +25,19 @@ namespace WoTB_Mod_Creator2.Class
                 ApplicationName = "WoTB_Mod_Creator2"
             };
             service = new DriveService(init);
+        }
+        static byte[] UseStreamDotReadMethod(Stream stream)
+        {
+            byte[] bytes;
+            List<byte> totalStream = [];
+            byte[] buffer = new byte[32];
+            int read;
+            while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                totalStream.AddRange(buffer.Take(read));
+            }
+            bytes = [..totalStream];
+            return bytes;
         }
         public bool DeleteFile(string fileID)
         {
