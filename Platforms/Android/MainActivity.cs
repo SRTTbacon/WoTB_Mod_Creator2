@@ -37,7 +37,7 @@ namespace WoTB_Mod_Creator2
         }
         public static void UpdateApplication(string aplFilePath)
         {
-            var context = Android.App.Application.Context;
+            Context context = Android.App.Application.Context;
             Java.IO.File file = new(aplFilePath);
 
             using Intent install = new(Intent.ActionView);
@@ -47,7 +47,7 @@ namespace WoTB_Mod_Creator2
                 install.SetDataAndType(apkURI, "application/vnd.android.package-archive");
                 install.AddFlags(ActivityFlags.NewTask);
                 install.AddFlags(ActivityFlags.GrantReadUriPermission);
-                install.AddFlags(ActivityFlags.ClearTop);
+                //install.AddFlags(ActivityFlags.ClearTop);
                 install.PutExtra(Intent.ExtraNotUnknownSource, true);
                 Platform.CurrentActivity?.StartActivity(install);
             }

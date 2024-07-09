@@ -39,8 +39,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
-	  <ApplicationDisplayVersion>0.2</ApplicationDisplayVersion>
-	  <ApplicationVersion>2</ApplicationVersion>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
@@ -49,8 +49,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|AnyCPU'">
-	  <ApplicationDisplayVersion>0.2</ApplicationDisplayVersion>
-	  <ApplicationVersion>2</ApplicationVersion>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|AnyCPU'">
@@ -59,8 +59,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|x64'">
-	  <ApplicationDisplayVersion>0.2</ApplicationDisplayVersion>
-	  <ApplicationVersion>2</ApplicationVersion>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|x64'">
@@ -69,8 +69,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|x64'">
-	  <ApplicationDisplayVersion>0.2</ApplicationDisplayVersion>
-	  <ApplicationVersion>2</ApplicationVersion>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|x64'">
@@ -79,8 +79,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|ARM64'">
-	  <ApplicationDisplayVersion>0.2</ApplicationDisplayVersion>
-	  <ApplicationVersion>2</ApplicationVersion>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|ARM64'">
@@ -89,8 +89,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|ARM64'">
-	  <ApplicationDisplayVersion>0.2</ApplicationDisplayVersion>
-	  <ApplicationVersion>2</ApplicationVersion>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|ARM64'">
@@ -99,8 +99,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
-	  <ApplicationDisplayVersion>0.2</ApplicationDisplayVersion>
-	  <ApplicationVersion>2</ApplicationVersion>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <ApplicationVersion>1</ApplicationVersion>
 	  <AndroidPackageFormat>apk</AndroidPackageFormat>
 	</PropertyGroup>
 
@@ -110,8 +110,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|AnyCPU'">
-	  <ApplicationDisplayVersion>0.2</ApplicationDisplayVersion>
-	  <ApplicationVersion>2</ApplicationVersion>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|AnyCPU'">
@@ -120,8 +120,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|x64'">
-	  <ApplicationDisplayVersion>0.2</ApplicationDisplayVersion>
-	  <ApplicationVersion>2</ApplicationVersion>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <ApplicationVersion>1</ApplicationVersion>
 	  <AndroidPackageFormat>apk</AndroidPackageFormat>
 	</PropertyGroup>
 
@@ -131,8 +131,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|x64'">
-	  <ApplicationDisplayVersion>0.2</ApplicationDisplayVersion>
-	  <ApplicationVersion>2</ApplicationVersion>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|x64'">
@@ -141,8 +141,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|ARM64'">
-	  <ApplicationDisplayVersion>0.2</ApplicationDisplayVersion>
-	  <ApplicationVersion>2</ApplicationVersion>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <ApplicationVersion>1</ApplicationVersion>
 	  <AndroidPackageFormat>apk</AndroidPackageFormat>
 	</PropertyGroup>
 
@@ -152,8 +152,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|ARM64'">
-	  <ApplicationDisplayVersion>0.2</ApplicationDisplayVersion>
-	  <ApplicationVersion>2</ApplicationVersion>
+	  <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|ARM64'">
@@ -163,10 +163,10 @@
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+		<MauiIcon Include="Resources\AppIcon\icon.png" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+		<MauiSplashScreen Include="Resources\Splash\splashicon.png" Color="#111216" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
@@ -198,6 +198,8 @@
 	  <None Remove="Platforms\Android\libs\x86_64\libbassflac.so" />
 	  <None Remove="Platforms\Android\libs\x86_64\libbassmix.so" />
 	  <None Remove="Platforms\Android\libs\x86_64\libbass_fx.so" />
+	  <None Remove="Resources\AppIcon\icon - コピー.png" />
+	  <None Remove="Resources\AppIcon\icon.png" />
 	  <None Remove="Resources\Raw\Ammo_Damaged_01.mp3" />
 	  <None Remove="Resources\Raw\BattleStart_01.wav" />
 	  <None Remove="Resources\Raw\BattleStart_02.wav" />

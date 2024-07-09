@@ -17,6 +17,7 @@ namespace WoTB_Mod_Creator2.All_Page
         bool bDownloading = false;
         bool bUpdating = false;
         bool bCanUpdate = false;
+        bool bAPKDeleted = false;
 #endif
 
         bool bPageOpened = false;
@@ -56,9 +57,6 @@ namespace WoTB_Mod_Creator2.All_Page
             Update_B.IsVisible = false;
 
 #if ANDROID
-            if (!AndroidClass.CheckExternalStoragePermission() && File.Exists(APK_FILEPATH))
-                File.Delete(APK_FILEPATH);
-
             Update_B.Clicked += Update_B_Clicked;
 
             //インターネットにアクセスできる環境であればアップデートがあるか確認する
@@ -195,7 +193,6 @@ namespace WoTB_Mod_Creator2.All_Page
                 if (!bDownloading)
                 {
                     Update_T.Text = "apkファイルをインストールできます。";
-                    AndroidClass.UpdateApplication(APK_FILEPATH);
                     bUpdating = false;
                 }
 
@@ -220,6 +217,13 @@ namespace WoTB_Mod_Creator2.All_Page
                 return;
             }
 
+            if (!bAPKDeleted)
+            {
+                if (File.Exists(APK_FILEPATH))
+                    File.Delete(APK_FILEPATH);
+                bAPKDeleted = true;
+            }
+
             bUpdating = true;
             bDownloading = true;
             Loop();
@@ -240,10 +244,19 @@ namespace WoTB_Mod_Creator2.All_Page
             {
                 bool bDownloadMode = await DisplayAlert("確認", "apkファイルは既にダウンロードされています。更新しますか?", "はい", "いいえ");
                 bDownloading = false;
+                bUpdating = false;
+
                 if (!bDownloadMode)
-                {
-                    bUpdating = false;
                     return;
+
+                try
+                {
+                    AndroidClass.UpdateApplication(APK_FILEPATH);
+                }
+                catch (Exception e1)
+                {
+                    Sub_Code.ErrorLogWrite(e1.Message);
+                    Message_Feed_Out("エラーが発生しました。" + e1.Message);
                 }
             }
         }
