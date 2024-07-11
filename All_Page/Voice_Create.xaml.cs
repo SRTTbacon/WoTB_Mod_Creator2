@@ -52,7 +52,6 @@ public partial class Voice_Create : ContentPage
     bool bOtherPageOpened = false;
     bool bMessageShowing = false;
 
-
     public Voice_Create()
     {
 		InitializeComponent();
@@ -68,8 +67,6 @@ public partial class Voice_Create : ContentPage
         BuildSetting_B.Clicked += BuildSetting_B_Clicked;
 
         SESettingWindow = new();
-        Init_Voice_Type();
-        Set_Item_Type();
     }
 
     private void Init_Voice_Type()
@@ -440,9 +437,6 @@ public partial class Voice_Create : ContentPage
         if (bOtherPageOpened)
             return;
 
-        //ファイル閲覧の権限を持っているかつ、ホーム画面でオリジナルの選択画面を有効にした場合はその選択画面でファイルを選択
-        if (Sub_Code.IsUseSelectPage)
-        {
 #if ANDROID
             if (!AndroidClass.CheckExternalStoragePermission())
             {
@@ -450,6 +444,10 @@ public partial class Voice_Create : ContentPage
                 return;
             }
 #endif
+
+        //ファイル閲覧の権限を持っているかつ、ホーム画面でオリジナルの選択画面を有効にした場合はその選択画面でファイルを選択
+        if (Sub_Code.IsUseSelectPage)
+        {
             bOtherPageOpened = true;
             string extension = ".aac|.mp3|.wav|.ogg|.aiff|.flac|.m4a|.mp4";             //対応している拡張子
             Sub_Code.Select_Files_Window.Window_Show("Voice_Create", "", extension);    //選択画面を初期化
@@ -635,5 +633,11 @@ public partial class Voice_Create : ContentPage
                 index++;
             }
         }
+    }
+
+    private void ContentPage_Loaded(object sender, EventArgs e)
+    {
+        Init_Voice_Type();
+        Set_Item_Type();
     }
 }

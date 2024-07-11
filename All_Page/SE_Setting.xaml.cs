@@ -158,8 +158,6 @@ public partial class SE_Setting : ContentPage
 
         Preset_Load();
 
-        UpdateList();
-
         //ƒ{ƒ^ƒ“ˆ—
         All_Disable_B.Clicked += All_Disable_B_Clicked;
         All_Enable_B.Clicked += All_Enable_B_Clicked;
@@ -783,5 +781,10 @@ public partial class SE_Setting : ContentPage
     {
         Button button = (Button)sender;
         button.BorderColor = Colors.Aqua;
+    }
+
+    private void ContentPage_Loaded(object sender, EventArgs e)
+    {
+        UpdateList();
     }
 }

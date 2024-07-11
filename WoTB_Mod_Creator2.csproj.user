@@ -21,6 +21,12 @@
     <MauiXaml Update="All_Page\Build_Setting.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>
+    <MauiXaml Update="All_Page\Music_Player.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
+    <MauiXaml Update="All_Page\Music_Player_Setting_Page.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
     <MauiXaml Update="All_Page\Select_Files.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>
@@ -31,6 +37,9 @@
       <SubType>Designer</SubType>
     </MauiXaml>
     <MauiXaml Update="All_Page\Voice_Create_Sound_Setting.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
+    <MauiXaml Update="All_Page\Youtube_Downloader.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>
   </ItemGroup>

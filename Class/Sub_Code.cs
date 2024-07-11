@@ -18,7 +18,7 @@ namespace WoTB_Mod_Creator2.Class
         public static readonly Dictionary<int, int> HPFValues = [];
         public static readonly Dictionary<int, int> PitchValues = [];
 
-        public const string APP_VERSION = "0.1";
+        public const string APP_VERSION = "0.3";
         public const string ANDROID_ROOT = "/storage/emulated/0";
 
         public static readonly Random RandomValue = new();
@@ -240,6 +240,16 @@ namespace WoTB_Mod_Creator2.Class
             stream.Close();
 
             return readBytes;
+        }
+
+        //ファイル名に使用できない文字を_に変更
+        public static string File_Replace_Name(string FileName)
+        {
+            string valid = FileName;
+            char[] invalidch = Path.GetInvalidFileNameChars();
+            foreach (char c in invalidch)
+                valid = valid.Replace(c, '_');
+            return valid;
         }
     }
     public partial class WwiseHash

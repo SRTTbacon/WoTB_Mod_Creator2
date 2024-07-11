@@ -10,6 +10,7 @@ namespace WoTB_Mod_Creator2.All_Page
     public partial class MainPage : ContentPage
     {
         readonly Voice_Create voiceCreate_Page = new();
+        readonly Music_Player musicPlayer_Page = new();
 
 #if ANDROID
         const string APK_FILEPATH = Sub_Code.ANDROID_ROOT + "/Download/Update_Mod_Creator2.apk";
@@ -36,8 +37,10 @@ namespace WoTB_Mod_Creator2.All_Page
             {
                 if (pageName == "Voice_Create")
                     voiceCreate_Page.Add_Sound(Sub_Code.Select_Files_Window.Get_Select_Files());
-                if (pageName == "SE_Setting" && voiceCreate_Page.SESettingWindow != null)
+                else if (pageName == "SE_Setting" && voiceCreate_Page.SESettingWindow != null)
                     voiceCreate_Page.SESettingWindow.Add_Sound(Sub_Code.Select_Files_Window.Get_Select_Files());
+                if (pageName == "Music_Player")
+                    musicPlayer_Page.Selected_Files(Sub_Code.Select_Files_Window.Get_Select_Files());
                 Sub_Code.Select_Files_Window.Dispose();
             };
 
@@ -75,7 +78,17 @@ namespace WoTB_Mod_Creator2.All_Page
 
         private void Music_Player_B_Clicked(object? sender, EventArgs e)
         {
-            Message_Feed_Out("現在のバージョンではこの機能は利用できません。");
+#if ANDROID
+            if (bUpdating)
+            {
+                Message_Feed_Out("アップデート中に他の操作を行うことはできません。");
+                return;
+            }
+#endif
+            if (bPageOpened)
+                return;
+            Navigation.PushAsync(musicPlayer_Page);
+            bPageOpened = true;
         }
 
         private void Other_Sound_B_Clicked(object? sender, EventArgs e)

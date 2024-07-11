@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WoTB_Mod_Creator2.All_Page.Music_Player"
+             Shell.BackgroundColor="Black"
+             Title="音楽プレイヤー"
+             Shell.TitleColor="White"
+             BackgroundColor="{StaticResource BackGround}"
+             Loaded="ContentPage_Loaded"
+             Appearing="ContentPage_Appearing"
+             Disappearing="ContentPage_Disappearing">
+    <ContentPage.Content>
+        <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+            <Label x:Name="PageText" Text="音楽リスト:1" TextColor="Aqua" FontSize="14" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.015,0.275,0.06"/>
+            <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.075,0.7,0.295">
+                <ListView x:Name="Music_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" MaximumHeightRequest="220">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell Tapped="Music_List_Tapped">
+                                <StackLayout Orientation="Vertical">
+                                    <StackLayout>
+                                        <Label Text="{Binding Name_Text}" TextColor="{Binding Name_Color}" HorizontalOptions="Center" LineBreakMode="NoWrap"/>
+                                    </StackLayout>
+                                </StackLayout>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Border>
+            <Button x:Name="Music_Delete_B" Text="リストから除去" FontSize="13" TextColor="Aqua" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.23,0.38,0.35,0.065"/>
+            <Button x:Name="Music_Add_B" Text="曲を追加" FontSize="13" TextColor="Aqua" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.77,0.38,0.35,0.065"/>
+            <Button x:Name="Music_Pause_B" Text="停止" FontSize="13" TextColor="Aqua" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.17,0.4675,0.35,0.065"/>
+            <Button x:Name="Music_Play_B" Text="再生" FontSize="13" TextColor="Aqua" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.825,0.4675,0.35,0.065"/>
+            <Button x:Name="Music_Page_Back_B" Text="←" FontSize="11" TextColor="Aqua" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.005,0.175,0.1475,0.07"/>
+            <Button x:Name="Music_Page_Next_B" Text="→" FontSize="11" TextColor="Aqua" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.99,0.175,0.145,0.07"/>
+            <Button x:Name="Music_Minus_B" Text="-5秒" FontSize="11" TextColor="Aqua" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.2,0.5525,0.25,0.0575"/>
+            <Button x:Name="Music_Plus_B" Text="+5秒" FontSize="11" TextColor="Aqua" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.8,0.5525,0.25,0.0575"/>
+            <Label x:Name="Location_T" Text="00:00" FontSize="13" TextColor="Aqua" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.57,0.2,0.06"/>
+            <Slider x:Name="Location_S" Maximum="1" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.62,0.8,0.055"/>
+            <Label x:Name="Volume_T" Text="音量:0" FontSize="13" TextColor="Aqua" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.2,0.675,0.2,0.06"/>
+            <Slider x:Name="Volume_S" Maximum="100" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.05,0.715,0.475,0.07"/>
+            <Label x:Name="Pitch_T" Text="音程:0" FontSize="13" TextColor="Aqua" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.82,0.675,0.25,0.06"/>
+            <Slider x:Name="Pitch_S" Maximum="20" Minimum="-30" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.95,0.715,0.475,0.07"/>
+            <Label x:Name="Speed_T" Text="速度:0" FontSize="13" TextColor="Aqua" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.82,0.775,0.25,0.06"/>
+            <Slider x:Name="Speed_S" Maximum="100" Minimum="-80" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.95,0.815,0.475,0.07"/>
+            <Label x:Name="Pitch_Speed_T" Text="音程と速度:100" FontSize="12" TextColor="Aqua" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.85,0.675,0.325,0.06" IsVisible="False"/>
+            <Slider x:Name="Pitch_Speed_S" Maximum="100" Minimum="0.1" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.95,0.715,0.475,0.07" IsVisible="False"/>
+            <Button x:Name="Reset_B" Text="R" BackgroundColor="Transparent" BorderColor="Aqua" BorderWidth="1" TextColor="Aqua" FontSize="8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.97,0.66,0.085,0.0525"/>
+            <Label Text="音程と速度を同期" FontSize="13" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.225,0.83,0.425,0.06"/>
+            <CheckBox x:Name="Mode_C" Color="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.05,0.8,0.07,0.03"/>
+            <Label Text="ループ再生" FontSize="13" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.225,0.89,0.425,0.06"/>
+            <CheckBox x:Name="Loop_C" Color="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.05,0.858,0.07,0.03"/>
+            <Label Text="ランダム再生" FontSize="13" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.735,0.89,0.425,0.06"/>
+            <CheckBox x:Name="Random_C" Color="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.37,0.858,0.07,0.03"/>
+            <Label x:Name="Message_T" Text="" FontSize="12" TextColor="Aqua" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.95,0.8,0.08"/>
+            <Button x:Name="Clear_B" Text="クリア" FontSize="13" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Red" TextColor="Red" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,1,0.275,0.065"/>
+            <Button x:Name="Setting_B" Text="音響設定" FontSize="13" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.445,1,0.35,0.065"/>
+            <Button x:Name="Youtube_B" Text="Youtubeから取得" FontSize="12" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="1,1,0.35,0.065"/>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

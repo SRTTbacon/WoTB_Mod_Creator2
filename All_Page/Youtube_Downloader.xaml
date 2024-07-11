@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WoTB_Mod_Creator2.All_Page.Youtube_Downloader"
+             Shell.BackgroundColor="Black"
+             Title="Youtube Downloader"
+             Shell.TitleColor="White"
+             BackgroundColor="{StaticResource BackGround}"
+             Appearing="ContentPage_Appearing"
+             Disappearing="ContentPage_Disappearing">
+    <ContentPage.Content>
+        <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+            <Label Text="Youtubeからダウンロード" TextColor="Aqua" FontSize="25" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.1,0.8,0.1"/>
+            <Entry x:Name="URL_T" Grid.Column="1" Placeholder="https://www.youtube.com/watch/..." FontSize="14" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" TextColor="White" PlaceholderColor="Gray" AbsoluteLayout.LayoutBounds="0.5,0.175,0.9,0.07"/>
+            <Image x:Name="Thumbnail_Image" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.375,0.8,0.3" Aspect="AspectFit"/>
+            <Button x:Name="Download_B" Text="ダウンロード" FontSize="13" TextColor="Aqua" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.68,0.35,0.065"/>
+            <Label x:Name="Message_T" Text="" TextColor="Aqua" FontSize="20" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.8,0.925,0.95,0.1" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
+            <Button x:Name="Back_B" Text="戻る" FontSize="13" TextColor="Aqua" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.8,0.35,0.065"/>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

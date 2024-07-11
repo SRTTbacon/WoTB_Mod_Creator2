@@ -5,7 +5,7 @@ using WoTB_Mod_Creator2.All_Page;
 namespace WoTB_Mod_Creator2.Class
 {
     //Mod Creator専用のセーブファイルをバイナリデータとして作成
-    //このセーブファイルは、サウンドファイルも一緒に書き込まれるため、別のPC、Android端末でロードしても正常に再生やModの作成が行えます。
+    //このセーブファイルはサウンドデータも一緒に書き込まれるため、別のPC、Android端末でロードしても正常にModの作成が行えます。(バージョン5以降対応していれば)
     public class WVS_Save
     {
         enum Format
@@ -36,8 +36,8 @@ namespace WoTB_Mod_Creator2.Class
         double volume = 0.0;
         bool bDefaultVoiceMode = false;
 
-        //WVS_Fileは、.wvsファイルがロードされていない場合はnullを指定します。
-        //ここでWVS_Fileを指定かつ、セーブファイルを上書きする場合はCreate()を実行する前に必ずWVS_File.Dispose()を実行する必要があります。
+        //wvsFileは、.wvsファイルがロードされていない場合はnullを指定します。
+        //ここでwvsFileを指定かつ、セーブファイルを上書きする場合はCreate()を実行する前に必ずwvsFile.Dispose()を実行する必要があります。
         public void Add_Sound(List<List<CVoiceTypeList>> blitzEvents, WVS_Load wvsFile, double volume = 0.0, bool bDefaultVoiceMode = false)
         {
             this.blitzEvents = blitzEvents;
