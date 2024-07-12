@@ -5,29 +5,29 @@
              Shell.BackgroundColor="Black"
              Title="音響設定"
              Shell.TitleColor="White"
-             BackgroundColor="{StaticResource BackGround}"
+             BackgroundColor="#46111111"
              Disappearing="ContentPage_Disappearing_1"
              Appearing="ContentPage_Appearing">
     <ContentPage.Content>
         <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-            <Grid BackgroundColor="#e4111216" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.5,0.85,0.6"/>
-            <Label Text="音響設定" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.225,0.4,0.06"/>
-            <Label x:Name="LPF_T" Text="Low Pass Filter:0" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.275,0.4,0.06"/>
-            <Slider x:Name="LPF_S" Maximum="100" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.33,0.7,0.05"/>
-            <CheckBox x:Name="LPF_Enable_C" Color="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.225,0.285,0.07,0.03"/>
-            <Label x:Name="HPF_T" Text="High Pass Filter:0" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.375,0.4,0.06"/>
-            <Slider x:Name="HPF_S" Maximum="100" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.43,0.7,0.05"/>
-            <CheckBox x:Name="HPF_Enable_C" Color="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.225,0.385,0.07,0.03"/>
-            <Label x:Name="ECHO_Delay_T" Text="エコー(遅延):0.5秒" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="12" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.15,0.5,0.4,0.06"/>
-            <Slider x:Name="ECHO_Delay_S" Maximum="1" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.15,0.55,0.4,0.07"/>
-            <Label x:Name="ECHO_Length_T" Text="エコー(長さ):0" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="12" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.8,0.5,0.4,0.06"/>
-            <Slider x:Name="ECHO_Length_S" Maximum="100" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.8,0.55,0.4,0.07"/>
-            <Label x:Name="ECHO_Power_Original_T" Text="エコー(元音量):0" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="12" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.15,0.625,0.4,0.06"/>
-            <Slider x:Name="ECHO_Power_Original_S" Maximum="100" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.15,0.675,0.4,0.07"/>
-            <Label x:Name="ECHO_Power_ECHO_T" Text="エコー音量:0" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="12" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.8,0.625,0.4,0.06"/>
-            <Slider x:Name="ECHO_Power_ECHO_S" Maximum="100" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.8,0.675,0.4,0.07"/>
-            <Label Text="エコーを有効にする" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="13" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.525,0.74,0.4,0.06"/>
-            <CheckBox x:Name="ECHO_Enable_C" Color="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.265,0.733,0.07,0.03"/>
+            <Grid BackgroundColor="#e4111216" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.5,0.85,0.7"/>
+            <Label Text="音響設定" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.175,0.4,0.06"/>
+            <Label x:Name="LPF_T" Text="Low Pass Filter:0" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.225,0.4,0.06"/>
+            <Slider x:Name="LPF_S" Maximum="100" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.28,0.7,0.05"/>
+            <CheckBox x:Name="LPF_Enable_C" Color="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.225,0.235,0.07,0.03"/>
+            <Label x:Name="HPF_T" Text="High Pass Filter:0" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="14" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.325,0.4,0.06"/>
+            <Slider x:Name="HPF_S" Maximum="100" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.38,0.7,0.05"/>
+            <CheckBox x:Name="HPF_Enable_C" Color="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.225,0.335,0.07,0.03"/>
+            <Label x:Name="ECHO_Delay_T" Text="エコー(遅延):0.5秒" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="12" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.15,0.45,0.4,0.06"/>
+            <Slider x:Name="ECHO_Delay_S" Maximum="1" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.15,0.5,0.4,0.07"/>
+            <Label x:Name="ECHO_Length_T" Text="エコー(長さ):0" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="12" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.8,0.45,0.4,0.06"/>
+            <Slider x:Name="ECHO_Length_S" Maximum="100" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.8,0.5,0.4,0.07"/>
+            <Label x:Name="ECHO_Power_Original_T" Text="エコー(元音量):0" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="12" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.15,0.575,0.4,0.06"/>
+            <Slider x:Name="ECHO_Power_Original_S" Maximum="100" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.15,0.625,0.4,0.07"/>
+            <Label x:Name="ECHO_Power_ECHO_T" Text="エコー音量:0" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="12" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.8,0.575,0.4,0.06"/>
+            <Slider x:Name="ECHO_Power_ECHO_S" Maximum="100" ThumbColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.8,0.625,0.4,0.07"/>
+            <Label Text="エコーを有効にする" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" TextColor="White" FontSize="13" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.525,0.69,0.4,0.06"/>
+            <CheckBox x:Name="ECHO_Enable_C" Color="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.265,0.683,0.07,0.03"/>
             <Button x:Name="Back_B" Text="戻る" FontSize="13" TextColor="Aqua" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.8,0.35,0.065"/>
         </AbsoluteLayout>
     </ContentPage.Content>
