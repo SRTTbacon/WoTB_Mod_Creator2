@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using WoTB_Mod_Creator2.All_Page;
@@ -18,7 +19,7 @@ namespace WoTB_Mod_Creator2.Class
         public static readonly Dictionary<int, int> HPFValues = [];
         public static readonly Dictionary<int, int> PitchValues = [];
 
-        public const string APP_VERSION = "0.3";
+        public const string APP_VERSION = "0.4";
         public const string ANDROID_ROOT = "/storage/emulated/0";
 
         public static readonly Random RandomValue = new();
@@ -250,6 +251,16 @@ namespace WoTB_Mod_Creator2.Class
             foreach (char c in invalidch)
                 valid = valid.Replace(c, '_');
             return valid;
+        }
+
+        //サウンド同士を比較し、同じサウンドであればtrueを返す
+        public static bool CompareBytes(byte[] lhs, byte[] rhs)
+        {
+            //MD5ハッシュを取る
+            byte[] hash2 = MD5.HashData(rhs);
+
+            //ハッシュを比較
+            return lhs.SequenceEqual(hash2);
         }
     }
     public partial class WwiseHash

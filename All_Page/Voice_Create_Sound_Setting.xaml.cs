@@ -76,6 +76,7 @@ public partial class Voice_Create_Sound_Setting : ContentPage
         Plus_B.Clicked += Plus_B_Clicked;
         Effect_Update_B.Clicked += Effect_Update_B_Clicked;
         EventSetting_B.Clicked += EventSetting_B_Clicked;
+
         //値リセットボタン
         Gain_Reset_B.Clicked += Gain_Reset_B_Clicked;
         Pitch_Reset_B.Clicked += Pitch_Reset_B_Clicked;
@@ -411,16 +412,6 @@ public partial class Voice_Create_Sound_Setting : ContentPage
 
         CVoiceSoundSetting voiceSoundSetting = ((CVoiceSoundList)Voice_Sound_L.SelectedItem).VoiceSoundSetting;
 
-        //ファイルが存在するか確認
-        if (voiceSoundSetting.FilePath.Contains('\\') || voiceSoundSetting.FilePath.Contains('/'))
-        {
-            if (!File.Exists(voiceSoundSetting.FilePath))
-            {
-                Message_Feed_Out("音声ファイルが存在しません。削除された可能性があります。");
-                return;
-            }
-        }
-
         //再生中のサウンドを停止
         await Pause_Volume_Animation(true, 10);
 
@@ -432,6 +423,17 @@ public partial class Voice_Create_Sound_Setting : ContentPage
         Bass.BASS_FXReset(streamHPFHandle);
         Bass.BASS_FXReset(streamGainHandle);
         Bass.BASS_StreamFree(streamHandle);
+
+        //ファイルが存在するか確認
+        if (voiceSoundSetting.FilePath.Contains('\\') || voiceSoundSetting.FilePath.Contains('/'))
+        {
+            if (!File.Exists(voiceSoundSetting.FilePath))
+            {
+                Message_Feed_Out("音声ファイルが存在しません。削除されたか、移動されている可能性があります。");
+                return;
+            }
+        }
+
         Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, 200);
 
         //サウンドをエンジンに読み込む
@@ -472,7 +474,6 @@ public partial class Voice_Create_Sound_Setting : ContentPage
         //サウンドの長さを取得し、シークバーに反映
         PlayTime_S.Maximum = Bass.BASS_ChannelBytes2Seconds(streamHandle, Bass.BASS_ChannelGetLength(streamHandle, BASSMode.BASS_POS_BYTES));
         voiceSoundSetting.PlayTime.Max = PlayTime_S.Maximum;
-        PlayTime_T.Text = "00:00 / " + maxTime;
 
         //終了検知
         musicEndFunc = new SYNCPROC(EndSync);
@@ -527,6 +528,7 @@ public partial class Voice_Create_Sound_Setting : ContentPage
 
         //サウンドの長さを表示
         maxTime = Sub_Code.Get_Time_String(PlayTime_S.Maximum);
+        PlayTime_T.Text = "00:00 / " + maxTime;
         Change_Range_Mode();
     }
 

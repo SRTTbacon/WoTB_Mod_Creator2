@@ -6,6 +6,7 @@ using System.Text;
 
 namespace WoTB_Mod_Creator2.All_Page;
 
+//リスト内のサウンド情報
 public class Music_Type_List(string filePath, string? fileName = null)
 {
     public string FilePath = filePath;
@@ -19,40 +20,41 @@ public class Music_Type_List(string filePath, string? fileName = null)
 
 public partial class Music_Player : ContentPage
 {
-    readonly List<List<Music_Type_List>> musicList = [];
-    List<Music_Type_List> SelectedMusicList => musicList[musicPage];
-    Music_Type_List? playingMusicNameNow = null;
-    readonly List<Music_Type_List> alreadyPlayedPath = [];
-    readonly BASS_BFX_BQF lpfSetting = new(BASSBFXBQF.BASS_BFX_BQF_LOWPASS, 500f, 0f, 0.707f, 0f, 0f, BASSFXChan.BASS_BFX_CHANALL);
-    readonly BASS_BFX_BQF hpfSetting = new(BASSBFXBQF.BASS_BFX_BQF_HIGHPASS, 1000f, 0f, 0.707f, 0f, 0f, BASSFXChan.BASS_BFX_CHANALL);
-    readonly BASS_BFX_ECHO4 echoSetting = new(0, 0, 0, 0, true, BASSFXChan.BASS_BFX_CHANALL);
-    static readonly string[] value = ["audio/*"];
-    const string CONFIG_HEADER = "WMC_Format";
-    const byte CONFIG_VERSION = 0x00;
-    const byte MUSIC_VERSION = 0x00;
-    int stream = 0;
-    int streamLPF = 0;
-    int streamHPF = 0;
-    int streamECHO = 0;
-    int musicPage = 0;
-    double startTime = 0;
-    double endTime = 0;
-    float musicFrequency = 44100f;
-    bool bNotMusicChange = false;
-    bool bEnded = false;
-    bool bSyncPitch_And_Speed = false;
-    bool bPaused = false;
-    bool bLocationChanging = false;
-    bool bPlayingMouseDown = false;
-    bool bAddMode = false;
-    bool bMessageShowing = false;
-    bool bPageOpen = false;
-    bool bIgnorePageChange = false;
-    bool bShowing = false;
-    SYNCPROC? bMusicEnd = null;
-    readonly Music_Player_Setting_Page settingWindow = new();
-    readonly Youtube_Downloader youtubeDownloaderWindow = new();
+    readonly List<List<Music_Type_List>> musicList = [];                //サウンドリスト
+    List<Music_Type_List> SelectedMusicList => musicList[musicPage];    //現在のプリセット
+    Music_Type_List? playingMusicNameNow = null;                        //現在再生しているサウンド1
+    readonly List<Music_Type_List> alreadyPlayedPath = [];              //既に再生済みのサウンド
+    readonly BASS_BFX_BQF lpfSetting = new(BASSBFXBQF.BASS_BFX_BQF_LOWPASS, 500f, 0f, 0.707f, 0f, 0f, BASSFXChan.BASS_BFX_CHANALL);     //Low Pass Filterの設定
+    readonly BASS_BFX_BQF hpfSetting = new(BASSBFXBQF.BASS_BFX_BQF_HIGHPASS, 1000f, 0f, 0.707f, 0f, 0f, BASSFXChan.BASS_BFX_CHANALL);   //High Pass Filterの設定
+    readonly BASS_BFX_ECHO4 echoSetting = new(0, 0, 0, 0, true, BASSFXChan.BASS_BFX_CHANALL);                                           //エコーの設定
+    SYNCPROC? bMusicEnd = null;                 //再生終了検知の関数
     ViewCell? Music_List_LastCell = null;
+    static readonly string[] value = ["audio/*"];
+    const string CONFIG_HEADER = "WMC_Format";  //セーブファイルのヘッダー
+    const byte CONFIG_VERSION = 0x00;           //セーブファイルのバージョン
+    const byte MUSIC_VERSION = 0x00;            //同上
+    int stream = 0;                             //再生中のサウンドのハンドル
+    int streamLPF = 0;                          //Low Pass Filterのハンドル
+    int streamHPF = 0;                          //High Pass Filterのハンドル
+    int streamECHO = 0;                         //エコーのハンドル
+    int musicPage = 0;                          //プリセットのページ
+    double startTime = 0;                       //ループ再生の開始位置(PC版のみ)
+    double endTime = 0;                         //ループ再生の終了位置(PC版のみ)
+    float musicFrequency = 44100f;              //再生中のサウンドの周波数
+    bool bNotMusicChange = false;               //trueの間はリストの選択状態を変更してもサウンドを変更しない
+    bool bEnded = false;                        //再生が終了したらtrue
+    bool bSyncPitch_And_Speed = false;          //再生速度とピッチを同期
+    bool bPaused = false;                       //停止中かどうか
+    bool bLocationChanging = false;             //シークバーを動かしているか
+    bool bPlayingMouseDown = false;             //同上
+    bool bAddMode = false;                      //サウンドを追加中はリストを変更してもサウンドを変更しない
+    bool bMessageShowing = false;               //下部のメッセージが表示中
+    bool bPageOpen = false;                     //他にウィンドウが表示中
+    bool bIgnorePageChange = false;             //他のウィンドウに移動する際サウンドが解放されないように
+    bool bShowing = false;                      //音楽プレイヤーのウィンドウが表示中かどうか
+
+    readonly Music_Player_Setting_Page settingWindow = new();
+    Youtube_Downloader? youtubeDownloaderWindow = null;
 
     public Music_Player()
 	{
@@ -66,8 +68,7 @@ public partial class Music_Player : ContentPage
             Music_L_SelectionChanged(e, true);
         };
 
-        youtubeDownloaderWindow.Init(this);
-
+        //ボタン類
         Music_Page_Back_B.Clicked += Music_Page_Back_B_Click;
         Music_Page_Next_B.Clicked += Music_Page_Next_B_Click;
         Music_Pause_B.Clicked += Music_Pause_B_Click;
@@ -97,8 +98,9 @@ public partial class Music_Player : ContentPage
         Volume_S.Value = 50;
         Pitch_Speed_S.Value = 50;
 
-        Bass.BASS_Init(-1, 48000, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
         Configs_Load();
+
+        //音響設定を反映
         settingWindow.ChangeLPFEnable += delegate (bool IsEnable)
         {
             if (IsEnable)
@@ -139,12 +141,14 @@ public partial class Music_Player : ContentPage
             else
                 Bass.BASS_ChannelRemoveFX(stream, streamECHO);
         };
+
         settingWindow.Configs_Load();
 
         if (!Directory.Exists(Sub_Code.ExDir + "/Configs"))
             Directory.CreateDirectory(Sub_Code.ExDir + "/Configs");
     }
 
+    //Youtuber_Downloader.csから呼び出される
     public void Add_Youtube_Music(Music_Type_List? musicList)
     {
         if (musicList != null)
@@ -154,10 +158,10 @@ public partial class Music_Player : ContentPage
             Music_List_Save();
             Message_Feed_Out(musicList.Name_Text + "を追加しました。");
         }
-        bPageOpen = false;
     }
 
-    private async void Position_Change()
+    //ウィンドウ表示中ずっとループ (シークバーの位置同期やサウンドのブツブツ軽減)
+    private async void Loop()
     {
         double nextFrame = Environment.TickCount;
         float period = 1000f / 30f;
@@ -171,6 +175,8 @@ public partial class Music_Player : ContentPage
                     await Task.Delay((int)(nextFrame - tickCount));
                 continue;
             }
+
+            //再生中かどうか
             bool IsPlaying = Bass.BASS_ChannelIsActive(stream) == BASSActive.BASS_ACTIVE_PLAYING;
             if (IsPlaying)
             {
@@ -186,59 +192,60 @@ public partial class Music_Player : ContentPage
                     Set_Position_Slider();
                 }
             }
-            if (IsVisible)
+            if (IsPlaying && !bLocationChanging)
             {
-                if (IsPlaying && !bLocationChanging)
+                Set_Position_Slider();
+                TimeSpan Time = TimeSpan.FromSeconds(Location_S.Value);
+                string Minutes = Time.Minutes.ToString();
+                string Seconds = Time.Seconds.ToString();
+                if (Time.Minutes < 10)
+                    Minutes = "0" + Time.Minutes;
+                if (Time.Seconds < 10)
+                    Seconds = "0" + Time.Seconds;
+                Location_T.Text = Minutes + ":" + Seconds;
+            }
+            if (streamLPF != 0 && settingWindow.IsVisible)
+            {
+                if (settingWindow.bLPFChanged && settingWindow.bLPFEnable)
                 {
-                    Set_Position_Slider();
-                    TimeSpan Time = TimeSpan.FromSeconds(Location_S.Value);
-                    string Minutes = Time.Minutes.ToString();
-                    string Seconds = Time.Seconds.ToString();
-                    if (Time.Minutes < 10)
-                        Minutes = "0" + Time.Minutes;
-                    if (Time.Seconds < 10)
-                        Seconds = "0" + Time.Seconds;
-                    Location_T.Text = Minutes + ":" + Seconds;
+                    lpfSetting.fCenter = 500f + 4000f * (1 - (float)settingWindow.lpfValue / 100f);
+                    Bass.BASS_FXSetParameters(streamLPF, lpfSetting);
+                    settingWindow.bLPFChanged = false;
                 }
-                if (streamLPF != 0 && settingWindow.IsVisible)
+                if (settingWindow.bHPFChanged && settingWindow.bHPFEnable)
                 {
-                    if (settingWindow.bLPFChanged && settingWindow.bLPFEnable)
-                    {
-                        lpfSetting.fCenter = 500f + 4000f * (1 - (float)settingWindow.lpfValue / 100f);
-                        Bass.BASS_FXSetParameters(streamLPF, lpfSetting);
-                        settingWindow.bLPFChanged = false;
-                    }
-                    if (settingWindow.bHPFChanged && settingWindow.bHPFEnable)
-                    {
-                        hpfSetting.fCenter = 100f + 4000f * (float)settingWindow.hpfValue / 100f;
-                        Bass.BASS_FXSetParameters(streamHPF, hpfSetting);
-                        settingWindow.bHPFChanged = false;
-                    }
-                    if (settingWindow.bECHOChanged && settingWindow.bECHOEnable)
-                    {
-                        echoSetting.fDelay = (float)settingWindow.echoDelayValue;
-                        echoSetting.fDryMix = (float)settingWindow.echoPowerOriginalValue / 100f;
-                        echoSetting.fWetMix = (float)settingWindow.echoPowerECHOValue / 100f;
-                        echoSetting.fFeedback = (float)settingWindow.echoLengthValue / 100f;
-                        Bass.BASS_FXSetParameters(streamECHO, echoSetting);
-                        settingWindow.bECHOChanged = false;
-                    }
+                    hpfSetting.fCenter = 100f + 4000f * (float)settingWindow.hpfValue / 100f;
+                    Bass.BASS_FXSetParameters(streamHPF, hpfSetting);
+                    settingWindow.bHPFChanged = false;
+                }
+                if (settingWindow.bECHOChanged && settingWindow.bECHOEnable)
+                {
+                    echoSetting.fDelay = (float)settingWindow.echoDelayValue;
+                    echoSetting.fDryMix = (float)settingWindow.echoPowerOriginalValue / 100f;
+                    echoSetting.fWetMix = (float)settingWindow.echoPowerECHOValue / 100f;
+                    echoSetting.fFeedback = (float)settingWindow.echoLengthValue / 100f;
+                    Bass.BASS_FXSetParameters(streamECHO, echoSetting);
+                    settingWindow.bECHOChanged = false;
                 }
             }
+
+            //再生が終了したら最初に戻すかランダムに入れ替えるか
             if (bEnded)
             {
-                int Index = Get_Select_Index();
+                //ループ再生
                 if (Loop_C.IsChecked)
                 {
                     Bass.BASS_ChannelStop(stream);
                     Bass.BASS_ChannelPlay(stream, true);
                 }
+                //ランダム再生
                 else if (Random_C.IsChecked)
                 {
                     if (musicList[musicPage].Count == 1)
                         Bass.BASS_ChannelSetPosition(stream, 0);
                     else
                     {
+                        //既に全て再生していたら最初から
                         if (alreadyPlayedPath.Count >= musicList[musicPage].Count)
                         {
                             alreadyPlayedPath.Clear();
@@ -247,7 +254,9 @@ public partial class Music_Player : ContentPage
                             Music_List_Sort();
                         }
                         else
-                            musicList[musicPage][Index].IsPlayed = true;
+                            musicList[musicPage][Get_Select_Index()].IsPlayed = true;
+
+                        //次のサウンドをランダムに再生
                         while (true)
                         {
                             int r2 = Sub_Code.RandomValue.Next(0, musicList[musicPage].Count);
@@ -261,6 +270,7 @@ public partial class Music_Player : ContentPage
                         }
                     }
                 }
+                //ループ再生でもランダム再生でもない場合は停止&解放
                 else
                 {
                     Bass.BASS_ChannelStop(stream);
@@ -281,6 +291,7 @@ public partial class Music_Player : ContentPage
         }
     }
 
+    //サウンドの再生終了を検知
     private async void EndSync(int handle, int channel, int data, IntPtr user)
     {
         if (!bEnded)
@@ -290,9 +301,9 @@ public partial class Music_Player : ContentPage
         }
     }
 
+    //テキストが一定期間経ったらフェードアウト
     private async void Message_Feed_Out(string Message)
     {
-        //テキストが一定期間経ったらフェードアウト
         if (bMessageShowing)
         {
             bMessageShowing = false;
@@ -314,6 +325,7 @@ public partial class Music_Player : ContentPage
         Message_T.Opacity = 1;
     }
 
+    //リスト内のサウンドをタップ
     private void Music_List_Tapped(object? sender, EventArgs e)
     {
         if (Music_List_LastCell != null)
@@ -325,6 +337,7 @@ public partial class Music_Player : ContentPage
         }
     }
 
+    //再生中のサウンドのインデックスを取得
     private int Get_Select_Index()
     {
         if (Music_L.SelectedItem == null)
@@ -336,6 +349,7 @@ public partial class Music_Player : ContentPage
         return -1;
     }
 
+    //指定したインデックスのサウンドに変更
     private void Set_Music_Index(int Index)
     {
         Music_L.ItemsSource = null;
@@ -358,6 +372,7 @@ public partial class Music_Player : ContentPage
         }
     }
 
+    //リストの選択状態が変更されたらサウンドを変更
     private void Music_L_SelectionChanged(ItemTappedEventArgs e, bool bClear = false)
     {
         if (e.Item != null && !bNotMusicChange)
@@ -384,6 +399,7 @@ public partial class Music_Player : ContentPage
                 alreadyPlayedPath.Add(musicList[musicPage][e.ItemIndex]);
             }
 
+            //再生中のサウンドを解放
             Bass.BASS_ChannelStop(stream);
             Bass.BASS_FXReset(streamLPF);
             Bass.BASS_FXReset(streamHPF);
@@ -444,6 +460,7 @@ public partial class Music_Player : ContentPage
         }
     }
 
+    //指定したインデックスのサウンドをリストから削除
     private void List_Remove_Index(int Index)
     {
         Music_L.SelectedItem = null;
@@ -454,6 +471,8 @@ public partial class Music_Player : ContentPage
         alreadyPlayedPath.Clear();
         Music_List_Save();
     }
+
+    //サウンドを名前順にソート
     private void Music_List_Sort()
     {
         bNotMusicChange = true;
@@ -480,6 +499,8 @@ public partial class Music_Player : ContentPage
         }
         bNotMusicChange = false;
     }
+
+    //サウンドのリストを取得
     private void Music_List_Save()
     {
         if (File.Exists(Sub_Code.ExDir + "/Configs/Music_Player_List.conf"))
@@ -510,6 +531,8 @@ public partial class Music_Player : ContentPage
         }
         bw.Close();
     }
+
+    //設定を保存
     private void Configs_Save()
     {
         try
@@ -544,6 +567,8 @@ public partial class Music_Player : ContentPage
             Sub_Code.ErrorLogWrite(e.Message);
         }
     }
+
+    //設定を読み込む
     private void Configs_Load()
     {
         if (File.Exists(Sub_Code.ExDir + "/Configs/Music_Player_List.conf") && Bass.BASS_ChannelIsActive(stream) == BASSActive.BASS_ACTIVE_STOPPED)
@@ -616,6 +641,9 @@ public partial class Music_Player : ContentPage
             Mode_C.IsChecked = true;
         }
     }
+
+    //再生位置を変更
+    //引数 : double 再生位置(秒), bool シークバーだけじゃなくサウンドの位置も変更するか
     private void Music_Pos_Change(double Pos, bool IsBassPosChange)
     {
         if (IsBusy)
@@ -631,11 +659,15 @@ public partial class Music_Player : ContentPage
             Seconds = "0" + Time.Seconds;
         Location_T.Text = Minutes + ":" + Seconds;
     }
+
+    //シークバーの位置を現在の再生時間と同期
     private void Set_Position_Slider()
     {
         long position = Bass.BASS_ChannelGetPosition(stream);
         Location_S.Value = Bass.BASS_ChannelBytes2Seconds(stream, position);
     }
+
+    //音響設定へ
     private void Setting_B_Click(object? sender, EventArgs e)
     {
         if (bPageOpen)
@@ -645,12 +677,19 @@ public partial class Music_Player : ContentPage
         _ = Navigation.PushModalAsync(settingWindow);
     }
 
+    //Youtubeからサウンドを取得
     private void Youtube_B_Clicked(object? sender, EventArgs e)
     {
         if (bPageOpen)
             return;
         bPageOpen = true;
         bIgnorePageChange = true;
+        if (youtubeDownloaderWindow == null)
+        {
+            youtubeDownloaderWindow = new();
+            youtubeDownloaderWindow.Init(this);
+        }
+
         _ = Navigation.PushAsync(youtubeDownloaderWindow);
     }
 
@@ -660,12 +699,14 @@ public partial class Music_Player : ContentPage
             Random_C.IsChecked = !e.Value;
         Configs_Save();
     }
+
     private void Random_C_CheckedChanged(object? sender, CheckedChangedEventArgs e)
     {
         if (e.Value)
             Loop_C.IsChecked = !e.Value;
         Configs_Save();
     }
+
     private void Mode_C_CheckedChanged(object? sender, CheckedChangedEventArgs e)
     {
         bSyncPitch_And_Speed = e.Value;
@@ -695,6 +736,8 @@ public partial class Music_Player : ContentPage
         }
         Configs_Save();
     }
+
+    //サウンドを追加
     private async void Music_Add_B_Click(object? sender, EventArgs e)
     {
         if (bPageOpen)
@@ -755,6 +798,8 @@ public partial class Music_Player : ContentPage
             }
         }
     }
+
+    //選択しているサウンドをリストから削除
     private async void Music_Delete_B_Click(object? sender, EventArgs e)
     {
         if (Music_L.SelectedItem == null)
@@ -783,6 +828,7 @@ public partial class Music_Player : ContentPage
             Music_List_Save();
         }
     }
+
     private void Music_Minus_B_Click(object? sender, EventArgs e)
     {
         if (Location_S.Value <= 5)
@@ -799,6 +845,7 @@ public partial class Music_Player : ContentPage
             Location_S.Value += 5;
         Music_Pos_Change(Location_S.Value, true);
     }
+
     private void Music_Play_B_Click(object? sender, EventArgs e)
     {
         Play_Volume_Animation();
@@ -807,6 +854,7 @@ public partial class Music_Player : ContentPage
     {
         Pause_Volume_Animation(false);
     }
+
     private void Music_Page_Back_B_Click(object? sender, EventArgs e)
     {
         if (musicPage > 0)
@@ -817,12 +865,16 @@ public partial class Music_Player : ContentPage
         if (musicPage < 8)
             Music_List_Change(musicPage + 1);
     }
+
+    //再生速度とピッチを初期化
     private void Reset_B_Clicked(object? sender, EventArgs e)
     {
         Speed_S.Value = 0;
         Pitch_S.Value = 0;
         Pitch_Speed_S.Value = 50;
     }
+
+    //フェードインしながら再生開始
     async void Play_Volume_Animation(float Feed_Time = 30f)
     {
         bPaused = false;
@@ -841,6 +893,8 @@ public partial class Music_Player : ContentPage
             await Task.Delay(1000 / 60);
         }
     }
+
+    //フェードアウトしながら停止
     public async void Pause_Volume_Animation(bool IsStop, float Feed_Time = 30f)
     {
         bPaused = true;
@@ -872,20 +926,23 @@ public partial class Music_Player : ContentPage
                 Bass.BASS_ChannelPause(stream);
         }
     }
+
     private void Volume_S_ValueChanged(object? sender, ValueChangedEventArgs e)
     {
         Volume_T.Text = "音量:" + (int)e.NewValue;
         Bass.BASS_ChannelSetAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, (float)Volume_S.Value / 100);
     }
-    private void Pitch_S_ValueChanged(object? sender, ValueChangedEventArgs e)
-    {
-        Pitch_T.Text = "音程:" + (Math.Floor(Pitch_S.Value * 10) / 10).ToString();
-        Bass.BASS_ChannelSetAttribute(stream, BASSAttribute.BASS_ATTRIB_TEMPO_PITCH, (float)Pitch_S.Value);
-    }
+
     private void Speed_S_ValueChanged(object? sender, ValueChangedEventArgs e)
     {
         Speed_T.Text = "速度:" + (Math.Floor(Speed_S.Value * 10) / 10).ToString();
         Bass.BASS_ChannelSetAttribute(stream, BASSAttribute.BASS_ATTRIB_TEMPO, (float)Speed_S.Value);
+    }
+
+    private void Pitch_S_ValueChanged(object? sender, ValueChangedEventArgs e)
+    {
+        Pitch_T.Text = "音程:" + (Math.Floor(Pitch_S.Value * 10) / 10).ToString();
+        Bass.BASS_ChannelSetAttribute(stream, BASSAttribute.BASS_ATTRIB_TEMPO_PITCH, (float)Pitch_S.Value);
     }
     private void Pitch_Speed_S_ValueChanged(object? sender, ValueChangedEventArgs e)
     {
@@ -893,6 +950,7 @@ public partial class Music_Player : ContentPage
         Bass.BASS_ChannelSetAttribute(stream, BASSAttribute.BASS_ATTRIB_TEMPO_FREQ, musicFrequency * (float)(Pitch_Speed_S.Value / 50));
         Bass.BASS_ChannelUpdate(stream, 50);
     }
+
     private void Location_S_DragStarted(object? sender, EventArgs e)
     {
         bLocationChanging = true;
@@ -918,12 +976,14 @@ public partial class Music_Player : ContentPage
         if (bLocationChanging)
             Music_Pos_Change(Location_S.Value, false);
     }
-    private void Music_List_Change(int Index)
+
+    //ページを変更
+    private void Music_List_Change(int pageIndex)
     {
-        if (musicPage == Index)
+        if (musicPage == pageIndex)
             return;
         alreadyPlayedPath.Clear();
-        musicPage = Index;
+        musicPage = pageIndex;
         PageText.Text = "音楽リスト:" + (musicPage + 1);
         Music_L.SelectedItem = null;
         Pause_Volume_Animation(true, 10f);
@@ -931,6 +991,8 @@ public partial class Music_Player : ContentPage
         Configs_Save();
         playingMusicNameNow = null;
     }
+
+    //ページ内のリストをすべて削除
     private async void Clear_B_Clicked(object? sender, EventArgs e)
     {
         if (musicList[musicPage].Count > 0)
@@ -947,6 +1009,8 @@ public partial class Music_Player : ContentPage
             }
         }
     }
+
+    //オリジナルのファイル選択画面から選択されたファイルを追加 (MainPage.csから呼ばれる)
     public void Selected_Files(List<string> files)
     {
         bAddMode = true;
@@ -981,10 +1045,11 @@ public partial class Music_Player : ContentPage
 
     private void ContentPage_Appearing(object sender, EventArgs e)
     {
+        if (!bPageOpen)
+            Loop();
         bPageOpen = false;
         bShowing = true;
         bIgnorePageChange = false;
-        Position_Change();
     }
 
     private void ContentPage_Disappearing(object sender, EventArgs e)

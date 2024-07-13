@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WoTB_Mod_Creator2.All_Page.Other_Create"
+             Shell.BackgroundColor="Black"
+             Title="その他サウンドModを作成"
+             Shell.TitleColor="White"
+             Appearing="ContentPage_Appearing"
+             Disappearing="ContentPage_Disappearing"
+             Loaded="ContentPage_Loaded"
+             BackgroundColor="{StaticResource BackGround}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ScrollView Grid.Row="1">
+            <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <Picker x:Name="Mod_Selection_Picker" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.01,0.5,0.05"/>
+                <Label Text="ーイベント一覧ー" TextColor="Aqua" FontSize="16" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.075,0.325,0.05"/>
+                <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.155,0.8,0.25">
+                    <ListView x:Name="Other_Type_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" MaximumHeightRequest="200" ItemSelected="ListView_ItemSelected">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell Tapped="Other_Type_Tapped">
+                                    <StackLayout Orientation="Horizontal"  BackgroundColor="{Binding BackColor}">
+                                        <StackLayout>
+                                            <Label Text="{Binding NameText}" TextColor="{Binding NameColor}"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Border>
+                <Label Text="ーサウンド一覧ー" TextColor="Aqua" FontSize="16" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.4,0.325,0.05"/>
+                <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.525,0.8,0.2">
+                    <ListView x:Name="Other_Sound_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" MaximumHeightRequest="200" ItemSelected="ListView_ItemSelected">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell Tapped="Other_Voice_Tapped">
+                                    <StackLayout Orientation="Horizontal"  BackgroundColor="{Binding BackColor}">
+                                        <StackLayout>
+                                            <Label Text="{Binding NameText}"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Border>
+                <Button x:Name="Delete_Sound_B" Text="リストから削除" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.2,0.67,0.35,0.0575" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="Add_Sound_B" Text="サウンドを追加" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.8,0.67,0.35,0.0575" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Label x:Name="All_Volume_T" Text="全体音量:100" TextColor="Aqua" FontSize="16" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.15,0.75,0.3,0.05"/>
+                <Slider x:Name="All_Volume_S" MaximumTrackColor="Gray" Maximum="100" Value="100" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.025,0.775,0.4,0.05"/>
+                <Label x:Name="PlayTime_T" Text="00:00 / 00:00" TextColor="Aqua" FontSize="16" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.78,0.75,0.25,0.05"/>
+                <Slider x:Name="PlayTime_S" MaximumTrackColor="Gray" Value="0"  Maximum="1" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.9,0.775,0.5,0.05"/>
+                <Button x:Name="Play_B" Text="再生" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.9,0.85,0.225,0.0575" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="Pause_B" Text="一時停止" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.6,0.85,0.225,0.0575" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="Minus_B" Text="-5秒" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.025,0.85,0.185,0.0575" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Button x:Name="Plus_B" Text="+5秒" BackgroundColor="Transparent" FontSize="12" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.28,0.85,0.185,0.0575" Pressed="Button_Pressed" Released="Button_Released"/>
+                <Label x:Name="Message_T" Text="" FontSize="14" TextColor="Aqua" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.95,0.8,0.08"/>
+            </AbsoluteLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

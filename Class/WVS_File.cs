@@ -46,22 +46,10 @@ namespace WoTB_Mod_Creator2.Class
             this.bDefaultVoiceMode = bDefaultVoiceMode;
         }
 
-        //サウンド同士を比較し、同じサウンドであればtrueを返す
-        private static bool CompareBytes(byte[] lhs, byte[] rhs)
-        {
-            //MD5ハッシュを取る
-            byte[] hash2 = MD5.HashData(rhs);
-
-            //ハッシュを比較
-            return lhs.SequenceEqual(hash2);
-        }
-
         //.wvsファイルを生成
         public void Create(string toFile, string projectName, bool bIncludeSE, SE_Preset? sePreset = null, bool bUnloadWVSLoad = true)
         {
             //サウンドが存在する階層を保存 (ファイルサイズ削減のため)
-            List<string> dirNames = [];
-
             List<SaveFormat> saveFormats = [];
 
             if (File.Exists(toFile + ".tmp"))
@@ -77,9 +65,9 @@ namespace WoTB_Mod_Creator2.Class
             //WoT用のセーブファイルかどうか (Android版はWoTB用のため常にfalse)
             bw.Write(false);
             //プロジェクト名のバイト配列を保存
-            byte[] Project_Name_Byte = Encoding.UTF8.GetBytes(projectName);
-            bw.Write((byte)Project_Name_Byte.Length);
-            bw.Write(Project_Name_Byte);
+            byte[] projectNameBytes = Encoding.UTF8.GetBytes(projectName);
+            bw.Write((byte)projectNameBytes.Length);
+            bw.Write(projectNameBytes);
             //命名変更が可能かどうか (Android版は常にtrue)
             bw.Write(true);
             //サウンドファイルを内包するかどうか (Android版は常にtrue)
@@ -122,7 +110,7 @@ namespace WoTB_Mod_Creator2.Class
 
                         for (int i = 0; i < saveFormats.Count; i++)
                         {
-                            if (CompareBytes(saveFormats[i].md5, soundBytes))
+                            if (Sub_Code.CompareBytes(saveFormats[i].md5, soundBytes))
                             {
                                 number = i;
                                 bExist = true;
@@ -226,7 +214,7 @@ namespace WoTB_Mod_Creator2.Class
                             soundBytes = File.ReadAllBytes(soundInfo.FilePath);
                         for (int i = 0; i < saveFormats.Count; i++)
                         {
-                            if (CompareBytes(saveFormats[i].md5, soundBytes))
+                            if (Sub_Code.CompareBytes(saveFormats[i].md5, soundBytes))
                             {
                                 number = i;
                                 bExist = true;
@@ -267,7 +255,6 @@ namespace WoTB_Mod_Creator2.Class
             }
 
             bw.Close();
-            dirNames.Clear();
 
             if (bUnloadWVSLoad)
             {
@@ -354,7 +341,7 @@ namespace WoTB_Mod_Creator2.Class
             br = new BinaryReader(File.OpenRead(filePath));
 
             //ヘッダーが異なれば終了
-            if (Encoding.ASCII.GetString(br.ReadBytes(9)) != "WVSFormat")
+            if (Encoding.ASCII.GetString(br.ReadBytes(br.ReadByte())) != WVS_Save.WVSHeader)
             {
                 br.Close();
                 return WVS_Result.Wrong_Header;
