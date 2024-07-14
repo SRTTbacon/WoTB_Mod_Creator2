@@ -7,35 +7,21 @@ namespace WoTB_Mod_Creator2.Class
 {
     public class WMS_Save
     {
-        enum Format
-        {
-            WMSLoad,
-            FilePath
-        }
-
-        class SaveFormat(Format format, string filePath, long streamPosition = 0)
-        {
-            public Format format = format;
-
-            public string filePath = filePath;
-
-            public long streamPosition = streamPosition;
-
-            public byte[] md5 = [];
-        }
-
         public const string WMS_HEADER = "WMS_Format";
         public const byte WMS_VERSION = 0x00;
+
+        double volume = 99.0f;
 
         List<OtherModPage> pages = [];
         WMS_Load? wmsLoad;
 
         bool bDefaultSoundMod = false;
 
-        public void Add_Data(List<OtherModPage> pages, WMS_Load wmsLoad, bool bDefaultSoundMod)
+        public void Add_Data(List<OtherModPage> pages, WMS_Load wmsLoad, double volume, bool bDefaultSoundMod)
         {
             this.pages = pages;
             this.wmsLoad = wmsLoad;
+            this.volume = volume;
             this.bDefaultSoundMod = bDefaultSoundMod;
         }
 
@@ -44,14 +30,16 @@ namespace WoTB_Mod_Creator2.Class
             //サウンドが存在する階層を保存 (ファイルサイズ削減のため)
             List<string> dirNames = [];
 
-            List<SaveFormat> saveFormats = [];
+            List<WVS_Save.SaveFormat> saveFormats = [];
 
             if (File.Exists(toFile + ".tmp"))
                 File.Delete(toFile + ".tmp");
 
             BinaryWriter bw = new(File.OpenWrite(toFile + ".tmp"));
             //ヘッダー
-            bw.Write(Encoding.ASCII.GetBytes(WMS_HEADER));
+            byte[] headerBytes = Encoding.ASCII.GetBytes(WMS_HEADER);
+            bw.Write((byte)headerBytes.Length);
+            bw.Write(headerBytes);
             //謎の4バイト
             bw.Write(new byte[] { 0x00, 0x00, 0x00, 0x00 });
             //WMSファイルのバージョン
@@ -62,7 +50,9 @@ namespace WoTB_Mod_Creator2.Class
             bw.Write(projectNameBytes);
             //セーブ範囲 (-1は全部、またはそのページの内容のみ)
             bw.Write((sbyte)saveRange);
-            //砲撃音Modでサウンドが存在しない場合デフォルトのサウンドを挿入するかどうか (じゃ..入れるね.//)
+            //音量設定
+            bw.Write(volume);
+            //砲撃音Modでサウンドが存在しない場合デフォルトのサウンドを挿入するかどうか (じゃ..入れるね//)
             bw.Write(bDefaultSoundMod);
             //サウンドデータが含まれるかどうか
             bw.Write(bIncludeSoundData);
@@ -92,6 +82,7 @@ namespace WoTB_Mod_Creator2.Class
 
             //ページ数
             bw.Write((byte)pages.Count);
+
             for (int i = 0; i < pages.Count; i++)
             {
                 if (saveRange != -1 && saveRange != i)
@@ -160,10 +151,12 @@ namespace WoTB_Mod_Creator2.Class
                             }
                             if (!bExist)
                             {
-                                if (sound.IsBinarySound && wmsLoad != null)
-                                    saveFormats.Add(new(Format.WMSLoad, "", sound.StreamPosition));
+                                if (sound.IsAndroidResource)
+                                    saveFormats.Add(new(WVS_Save.Format.AndroidResorce, sound.FilePath));
+                                else if (sound.IsBinarySound && wmsLoad != null)
+                                    saveFormats.Add(new(WVS_Save.Format.WVSLoad, "", sound.StreamPosition));
                                 else
-                                    saveFormats.Add(new(Format.FilePath, sound.FilePath));
+                                    saveFormats.Add(new(WVS_Save.Format.FilePath, sound.FilePath));
                                 saveFormats[^1].md5 = MD5.HashData(soundBytes);
                             }
                             bw.Write((ushort)number);       //サウンドデータが入っているインデックス
@@ -179,10 +172,12 @@ namespace WoTB_Mod_Creator2.Class
             if (bIncludeSoundData)
             {
                 bw.Write((ushort)saveFormats.Count);     //サウンド数
-                foreach (SaveFormat saveFormat in saveFormats)
+                foreach (WVS_Save.SaveFormat saveFormat in saveFormats)
                 {
                     byte[] bytes;
-                    if (saveFormat.format == Format.WMSLoad && wmsLoad != null)
+                    if (saveFormat.format == WVS_Save.Format.AndroidResorce)
+                        bytes = Sub_Code.ReadResourceData(saveFormat.filePath);
+                    else if (saveFormat.format == WVS_Save.Format.WVSLoad && wmsLoad != null)
                         bytes = wmsLoad.Load_Sound(saveFormat.streamPosition);
                     else
                         bytes = File.ReadAllBytes(saveFormat.filePath);
@@ -250,7 +245,7 @@ namespace WoTB_Mod_Creator2.Class
                 //4バイトスキップ
                 br.ReadBytes(4);
                 //セーブファイルのバージョン
-                _ = br.ReadUInt16();
+                _ = br.ReadByte();
 
                 projectName = Encoding.UTF8.GetString(br.ReadBytes(br.ReadByte()));
                 int saveRange = br.ReadSByte();
@@ -264,6 +259,7 @@ namespace WoTB_Mod_Creator2.Class
                     foreach (OtherModType type in page.Types)
                         type.Sounds.Clear();
 
+                _ = br.ReadDouble();
                 _ = br.ReadBoolean();
                 bool bIncludeSoundData = br.ReadBoolean();
 

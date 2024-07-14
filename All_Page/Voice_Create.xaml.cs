@@ -34,7 +34,6 @@ public partial class Voice_Create : ContentPage
 
     //イベント設定
     Voice_Create_Sound_Setting? soundSettingWindow;
-    Build_Setting? buildSettingWindow;
 
     //サウンドイベント
     readonly List<CVoiceSoundList> voiceSounds = [];
@@ -517,7 +516,7 @@ public partial class Voice_Create : ContentPage
     }
 
     //サウンドの削除ボタン
-    private void Sound_Delete_B_Click(object? sender, EventArgs e)
+    private async void Sound_Delete_B_Click(object? sender, EventArgs e)
     {
         if (bOtherPageOpened)
             return;
@@ -533,13 +532,19 @@ public partial class Voice_Create : ContentPage
             return;
         }
         int typeIndex = ((CVoiceTypeList)Voice_Type_L.SelectedItem).Index;
-        CVoiceSoundList Temp = (CVoiceSoundList)Sound_File_L.SelectedItem;
-        int removeIndex = voiceSounds.IndexOf(Temp);
+        CVoiceSoundList sound = (CVoiceSoundList)Sound_File_L.SelectedItem;
+
+        bool result = await DisplayAlert("確認", "'" + sound.Name_Text + "'をリストから削除しますか?", "はい", "いいえ");
+        if (!result)
+            return;
+
+        int removeIndex = voiceSounds.IndexOf(sound);
         if (removeIndex == -1)
         {
             Message_Feed_Out("不明なエラーが発生しました。");
             return;
         }
+
         voiceTypes[nowTypePage][typeIndex].TypeSetting.Sounds.RemoveAt(removeIndex);
         Set_Item_Type();
     }
@@ -554,6 +559,7 @@ public partial class Voice_Create : ContentPage
             Set_Item_Type();
             wvsFile.Dispose();
             projectName = "";
+            Sound_File_L.ItemsSource = null;
             Message_Feed_Out("クリアしました。");
         }
     }
@@ -594,9 +600,8 @@ public partial class Voice_Create : ContentPage
         if (bOtherPageOpened)
             return;
 
-        buildSettingWindow ??= new(voiceTypes, wvsFile, SESettingWindow.NowPreset);
-
-        Navigation.PushAsync(buildSettingWindow);
+        Sub_Code.BuildSettingWindow.InitializeWVS(voiceTypes, wvsFile, SESettingWindow.NowPreset);
+        Navigation.PushAsync(Sub_Code.BuildSettingWindow);
         bOtherPageOpened = true;
     }
 

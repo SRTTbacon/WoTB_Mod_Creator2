@@ -124,7 +124,7 @@ public partial class Voice_Create_Sound_Setting : ContentPage
         while (Message_T.Opacity > 0 && bMessageShowing)
         {
             Number++;
-            if (Number >= 120)
+            if (Number >= 200)
                 Message_T.Opacity -= 0.025;
             await Task.Delay(1000 / 60);
         }

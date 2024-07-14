@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Flac;
 using Un4seen.Bass.AddOn.Fx;
@@ -6,7 +7,8 @@ using WoTB_Mod_Creator2.Class;
 
 namespace WoTB_Mod_Creator2.All_Page;
 
-public class OtherModSound(string filePath)
+//サウンド情報
+public class OtherModSound(string filePath, bool bDefaultSound = false, bool bAndroidResource = false)
 {
     public string FilePath = filePath;
 
@@ -15,7 +17,10 @@ public class OtherModSound(string filePath)
     public long StreamPosition = 0;
 
     public bool IsBinarySound => StreamPosition != 0;
+    public bool IsDefaultSound = bDefaultSound;
+    public bool IsAndroidResource = bAndroidResource;
 }
+//タイプ情報
 public class OtherModType(string modTypeName, uint containerID)
 {
     public string ModTypeName = modTypeName;                    //タイプ名
@@ -28,15 +33,18 @@ public class OtherModType(string modTypeName, uint containerID)
     public readonly List<OtherModSound> Sounds = [];
     public int SoundCount => Sounds.Count;
 
-    public bool AddSound(string filePath)
+    public bool AddSound(string filePath, bool bDefaultSound = false, bool bAndroidResource = false)
     {
+        if (Sounds.Count >= 255)
+            return false;
         foreach (OtherModSound sound in Sounds)
-            if (sound.FilePath == filePath)
+            if (sound.FilePath == filePath && sound.IsDefaultSound == bDefaultSound)
                 return false;
-        Sounds.Add(new(filePath));
+        Sounds.Add(new(filePath, bAndroidResource, bDefaultSound));
         return true;
     }
 }
+//ページ情報
 public class OtherModPage(string modPageName, string wwiseProjectName)
 {
     public string ModPageName = modPageName;
@@ -44,42 +52,31 @@ public class OtherModPage(string modPageName, string wwiseProjectName)
     public uint modPageID = WwiseHash.HashString(modPageName);
 
     public List<OtherModType> Types = [];
-
-    public OtherModType? GetModType(string modTypeName)
-    {
-        foreach (OtherModType type in Types)
-            if (type.ModTypeName == modTypeName)
-                return type;
-        return null;
-    }
-    public OtherModType? GetModType(uint modTypeID)
-    {
-        foreach (OtherModType type in Types)
-            if (type.ModTypeID == modTypeID)
-                return type;
-        return null;
-    }
 }
 
 public partial class Other_Create : ContentPage
 {
     readonly List<OtherModPage> modPages = [];
 
-    OtherModPage NowModPage => modPages[Mod_Selection_Picker.SelectedIndex];
-    SYNCPROC? soundEndFunc = null;
+    OtherModPage NowModPage => modPages[Mod_Selection_Picker.SelectedIndex];    //現在選択されているページ
+    SYNCPROC? soundEndFunc = null;                                              //再生終了検知
 
-    WMS_Load wmsLoad = new();
+    readonly WMS_Load wmsLoad = new();           //セーブファイルにサウンドデータが含まれている場合使用
+    GCHandle soundPtr = new();
+    Build_Setting.Build_State state = Build_Setting.Build_State.None;
 
-    string maxTime = "00:00";
+    string projectName = "";
+    string maxTime = "00:00";           //再生中のサウンドの長さ
 
-    int streamHandle = 0;
+    int streamHandle = 0;               //再生中のサウンドのハンドル
 
-    bool bShowing = false;
-    bool bMessageShowing = false;
-    bool bEnded = false;
-    bool bPaused = false;
-    bool bLocationChanging = false;
-    bool bPlayingMouseDown = false;
+    bool bShowing = false;              //ウィンドウ表示中
+    bool bOtherPageOpened = false;      //前面に他のウィンドウを表示中
+    bool bMessageShowing = false;       //下部メッセージ表示中
+    bool bEnded = false;                //再生終了検知
+    bool bPaused = false;               //停止中か
+    bool bLocationChanging = false;     //シークバーをタッチしたらtrue
+    bool bPlayingMouseDown = false;     //シークバーをタッチしたらtrue
 
     public Other_Create()
 	{
@@ -92,13 +89,29 @@ public partial class Other_Create : ContentPage
         PlayTime_S.ValueChanged += PlayTime_S_ValueChanged;
 
         //ボタン設定
+        Add_Sound_B.Clicked += Add_Sound_B_Clicked;
+        Delete_Sound_B.Clicked += Delete_Sound_B_Clicked;
         Pause_B.Clicked += Pause_B_Clicked;
         Play_B.Clicked += Play_B_Clicked;
         Minus_B.Clicked += Minus_B_Clicked;
         Plus_B.Clicked += Plus_B_Clicked;
+        Save_B.Clicked += Save_B_Clicked;
+        Load_B.Clicked += Load_B_Clicked;
+        BuildSetting_B.Clicked += BuildSetting_B_Clicked;
 
+        //ページ変更
         Mod_Selection_Picker.SelectedIndexChanged += Mod_Selection_Picker_SelectedIndexChanged;
 
+        InitializePages();
+
+        foreach (OtherModPage type in modPages)
+            Mod_Selection_Picker.Items.Add(type.ModPageName);
+    }
+
+    void InitializePages()
+    {
+        //ページ初期化
+        modPages.Clear();
         modPages.Add(new("戦闘開始前ロードBGM", "WoTB_Sound_Mod2"));
         modPages[^1].Types.Add(new("ロード1:America_lakville", 205170598));
         modPages[^1].Types.Add(new("ロード2:America_overlord", 148841988));
@@ -139,9 +152,6 @@ public partial class Other_Create : ContentPage
         modPages[^1].Types.Add(new("何か購入-SE", 409835290));
         modPages[^1].Types.Add(new("何か購入-音声", 282116325));
         modPages.Add(new("砲撃音", "WoTB_Gun_Sound_New"));
-
-        foreach (OtherModPage type in modPages)
-            Mod_Selection_Picker.Items.Add(type.ModPageName);
     }
 
     //ループ (主にシークバー用)
@@ -167,6 +177,7 @@ public partial class Other_Create : ContentPage
                 PlayTime_S.Value = 0;
                 PlayTime_T.Text = "00:00 / " + maxTime;
                 bEnded = false;
+                bPaused = true;
             }
 
             if (Environment.TickCount >= nextFrame + (double)period)
@@ -204,7 +215,7 @@ public partial class Other_Create : ContentPage
         while (Message_T.Opacity > 0 && bMessageShowing)
         {
             Number++;
-            if (Number >= 120)
+            if (Number >= 200)
                 Message_T.Opacity -= 0.025;
             await Task.Delay(1000 / 60);
         }
@@ -216,19 +227,24 @@ public partial class Other_Create : ContentPage
     //ページ変更
     private void Mod_Selection_Picker_SelectedIndexChanged(object? sender, EventArgs e)
     {
-        Other_Sound_L.ItemsSource = null;
-        Other_Type_L.ItemsSource = null;
         if (Mod_Selection_Picker.SelectedIndex == -1)
             return;
-        Other_Type_L.ItemsSource = NowModPage.Types;
+        _ = Pause_Volume_Animation(true, 10.0f);
+        PlayTime_S.Value = 0;
+        PlayTime_S.Maximum = 0;
+        PlayTime_T.Text = "00:00 / 00:00";
+        maxTime = "00:00";
+        Set_Item_Type();
     }
 
+    //タイプリストをタップ
     private void Other_Type_Tapped(object sender, EventArgs e)
     {
         Other_Sound_L.ItemsSource = null;
         Other_Sound_L.ItemsSource = ((OtherModType)Other_Type_L.SelectedItem).Sounds;
     }
 
+    //サウンドをタップ
     private async void Other_Voice_Tapped(object sender, EventArgs e)
     {
         OtherModSound sound = (OtherModSound)Other_Sound_L.SelectedItem;
@@ -237,7 +253,8 @@ public partial class Other_Create : ContentPage
         await Pause_Volume_Animation(true, 10);
         Bass.BASS_StreamFree(streamHandle);
 
-        if (!File.Exists(sound.FilePath))
+        //ファイルが存在しない
+        if (!sound.IsBinarySound && !File.Exists(sound.FilePath))
         {
             Message_Feed_Out("ファイルが存在しません。削除されたか、移動されている可能性があります。");
             return;
@@ -248,11 +265,32 @@ public partial class Other_Create : ContentPage
 
         //サウンドをエンジンに読み込む
         int baseHandle = 0;
+        if (sound.IsBinarySound)
+        {
+            //サウンドが.wvsファイルに内包されている場合はバイト配列に読み込んでエンジンにポインタを渡す
+            byte[]? soundBytes = wmsLoad.Load_Sound(sound.StreamPosition);
+            if (soundBytes != null)
+            {
+                if (soundPtr.IsAllocated)
+                    soundPtr.Free();
 
-        if (Path.GetExtension(sound.FilePath) == ".flac")
-            baseHandle = BassFlac.BASS_FLAC_StreamCreateFile(sound.FilePath, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+                //soundBytesが勝手に破棄されないように固定させる
+                soundPtr = GCHandle.Alloc(soundBytes, GCHandleType.Pinned);
+
+                //拡張子が.flacの場合通常の読み込みでは不安定になるため専用の関数を呼ぶ
+                if (Path.GetExtension(sound.FilePath) == ".flac")
+                    baseHandle = BassFlac.BASS_FLAC_StreamCreateFile(soundPtr.AddrOfPinnedObject(), 0L, soundBytes.Length, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+                else
+                    baseHandle = Bass.BASS_StreamCreateFile(soundPtr.AddrOfPinnedObject(), 0L, soundBytes.Length, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+            }
+        }
         else
-            baseHandle = Bass.BASS_StreamCreateFile(sound.FilePath, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+        {
+            if (Path.GetExtension(sound.FilePath) == ".flac")
+                baseHandle = BassFlac.BASS_FLAC_StreamCreateFile(sound.FilePath, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+            else
+                baseHandle = Bass.BASS_StreamCreateFile(sound.FilePath, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+        }
 
         //FXを適応できる形に
         streamHandle = BassFx.BASS_FX_TempoCreate(baseHandle, BASSFlag.BASS_FX_FREESOURCE);
@@ -320,6 +358,144 @@ public partial class Other_Create : ContentPage
         }
     }
 
+    //リストの状態を更新
+    private void Set_Item_Type()
+    {
+        OtherModType? selectedType = Other_Type_L.SelectedItem as OtherModType;
+        Other_Type_L.SelectedItem = null;
+        Other_Type_L.ItemsSource = null;
+        Other_Type_L.ItemsSource = NowModPage.Types;
+        Other_Sound_L.SelectedItem = null;
+        Other_Sound_L.ItemsSource = null;
+
+        //項目が選択された状態であればイベント内のサウンドファイルをリストに表示
+        if (selectedType != null && NowModPage.Types.Contains(selectedType))
+        {
+            Other_Type_L.SelectedItem = selectedType;
+            Other_Sound_L.ItemsSource = selectedType.Sounds;
+        }
+    }
+
+    //サウンドを追加
+    public void Add_Sound(List<string> files)
+    {
+        OtherModType typeList = (OtherModType)Other_Type_L.SelectedItem;
+        int alreadyVoiceCount = 0;
+        int addedVoiceCount = 0;
+        foreach (string filePath in files)
+        {
+            bool bExist = false;
+            //データが全く同じファイルが存在するか調べる
+            foreach (OtherModSound sound in typeList.Sounds)
+            {
+                if (sound.FilePath == filePath)
+                {
+                    bExist = true;
+                    alreadyVoiceCount++;
+                    break;
+                }
+            }
+            if (bExist)
+                continue;
+
+            //イベントにサウンドを追加
+            typeList.Sounds.Add(new(filePath));
+            addedVoiceCount++;
+        }
+        //リストUIを更新
+        Set_Item_Type();
+
+        if (alreadyVoiceCount > 0 && addedVoiceCount == 0)
+            Message_Feed_Out("既に追加されているため" + alreadyVoiceCount + "個のファイルをスキップしました。");
+        else if (alreadyVoiceCount > 0 && addedVoiceCount > 0)
+            Message_Feed_Out("既に追加されているため" + alreadyVoiceCount + "個のファイルをスキップし、" + addedVoiceCount + "個のファイルを追加しました。");
+        else
+            Message_Feed_Out(addedVoiceCount + "個のファイルをイベントに追加しました。");
+    }
+
+    //サウンドを追加
+    private async void Add_Sound_B_Clicked(object? sender, EventArgs e)
+    {
+        //エラー回避
+        if (Other_Type_L.SelectedItem == null)
+        {
+            Message_Feed_Out("イベント名が選択されていません。");
+            return;
+        }
+
+        if (bOtherPageOpened)
+            return;
+
+#if ANDROID
+            if (!AndroidClass.CheckExternalStoragePermission())
+            {
+                Message_Feed_Out("アクセス許可を行ってください。");
+                return;
+            }
+#endif
+
+        //ファイル閲覧の権限を持っているかつ、ホーム画面でオリジナルの選択画面を有効にした場合はその選択画面でファイルを選択
+        if (Sub_Code.IsUseSelectPage)
+        {
+            bOtherPageOpened = true;
+            string extension = ".aac|.mp3|.wav|.ogg|.aiff|.flac|.m4a|.mp4";             //対応している拡張子
+            Sub_Code.Select_Files_Window.Window_Show("Other_Create", "", extension);    //選択画面を初期化
+            await Navigation.PushModalAsync(Sub_Code.Select_Files_Window);              //選択画面を開く
+        }
+        else
+        {
+            FilePickerFileType customFileType = new(new Dictionary<DevicePlatform, IEnumerable<string>>
+            {
+                { DevicePlatform.Android, Sub_Code.AudioExtension }
+            });
+            PickOptions options = new()
+            {
+                FileTypes = customFileType,
+                PickerTitle = "サウンドファイルを選択してください。"
+            };
+            IEnumerable<FileResult> result = await FilePicker.PickMultipleAsync(options);
+            if (result != null)
+            {
+                List<string> files = [];
+                foreach (FileResult fileResult in result)
+                    files.Add(fileResult.FullPath);
+                Add_Sound(files);
+            }
+        }
+    }
+
+    private async void Delete_Sound_B_Clicked(object? sender, EventArgs e)
+    {
+        if (bOtherPageOpened)
+            return;
+
+        if (Other_Type_L.SelectedItem == null)
+        {
+            Message_Feed_Out("イベント名が選択されていません。");
+            return;
+        }
+        if (Other_Sound_L.SelectedItem == null)
+        {
+            Message_Feed_Out("削除したいサウンドを選択してください。");
+            return;
+        }
+        OtherModType type = (OtherModType)Other_Type_L.SelectedItem;
+        OtherModSound sound = (OtherModSound)Other_Sound_L.SelectedItem;
+
+        bool result = await DisplayAlert("確認", "'" + sound.NameText + "'をリストから削除しますか?", "はい", "いいえ");
+        if (!result)
+            return;
+
+        if (!type.Sounds.Contains(sound))
+        {
+            Message_Feed_Out("不明なエラーが発生しました。");
+            return;
+        }
+
+        type.Sounds.Remove(sound);
+        Set_Item_Type();
+    }
+
     //再生
     private void Play_B_Clicked(object? sender, EventArgs e)
     {
@@ -352,6 +528,138 @@ public partial class Other_Create : ContentPage
         Music_Pos_Change(PlayTime_S.Value, true);
     }
 
+    private async void Save_B_Clicked(object? sender, EventArgs e)
+    {
+        string result = await DisplayPromptAsync("セーブ", "プロジェクト名を指定してください。", "決定", "キャンセル", null, -1, null, projectName);
+        if (result != null)
+        {
+            if (!Sub_Code.IsSafePath(result, true))
+            {
+                Message_Feed_Out("エラー:使用できない文字が含まれています。");
+                return;
+            }
+            else if (File.Exists(Sub_Code.ExDir + "/Saves/" + result + ".wms"))
+            {
+                bool result_01 = await DisplayAlert("セーブデータを上書きしますか?", null, "はい", "いいえ");
+                if (!result_01)
+                    return;
+            }
+            if (!Directory.Exists(Sub_Code.ExDir + "/Saves"))
+                _ = Directory.CreateDirectory(Sub_Code.ExDir + "/Saves");
+
+            bMessageShowing = false;
+            Message_T.Text = "セーブしています...";
+            Message_T.Opacity = 1.0;
+
+            state = Build_Setting.Build_State.Building;
+
+            StateLoop(result);
+            SaveProject(result);
+        }
+    }
+
+    private async void Load_B_Clicked(object? sender, EventArgs e)
+    {
+        //他のウィンドウが開かれていたらスルー
+        if (bOtherPageOpened)
+            return;
+
+        //セーブさいている.wvsファイルを列挙
+        List<string> savedNames = [];
+        if (!Directory.Exists(Sub_Code.ExDir + "/Saves"))
+            _ = Directory.CreateDirectory(Sub_Code.ExDir + "/Saves");
+        foreach (string Files in Directory.GetFiles(Sub_Code.ExDir + "/Saves", "*.wms", SearchOption.TopDirectoryOnly))
+            savedNames.Add(Path.GetFileNameWithoutExtension(Files));
+
+        //選択画面を表示
+        if (savedNames.Count == 0)      //セーブファイルが1つも存在しない
+            await DisplayActionSheet("プロジェクトを選択してください。", "キャンセル", null, ["!プロジェクトが存在しません!"]);
+        else
+        {
+            string fileName = await DisplayActionSheet("プロジェクトを選択してください。", "キャンセル", null, [.. savedNames]);
+            int index = savedNames.IndexOf(fileName);
+            if (index != -1)
+            {
+                Other_Load_From_File(Sub_Code.ExDir + "/Saves/" + savedNames[index] + ".wms");
+                Set_Item_Type();
+            }
+        }
+        savedNames.Clear();
+    }
+
+    private void BuildSetting_B_Clicked(object? sender, EventArgs e)
+    {
+        if (bOtherPageOpened)
+            return;
+
+        Sub_Code.BuildSettingWindow.InitializeWMS(modPages, Mod_Selection_Picker.SelectedIndex, wmsLoad);
+        Navigation.PushAsync(Sub_Code.BuildSettingWindow);
+        bOtherPageOpened = true;
+    }
+
+    void SaveProject(string projectName)
+    {
+        Task.Run(() =>
+        {
+            WMS_Save save = new();
+            save.Add_Data(modPages, wmsLoad, 0.0, false);
+            save.Create(Sub_Code.ExDir + "/Saves/" + projectName + ".wms", projectName);
+
+            state = Build_Setting.Build_State.None;
+        });
+    }
+
+    async void StateLoop(string projectName)
+    {
+        while (state == Build_Setting.Build_State.Building)
+            await Task.Delay(100);
+
+        Other_Load_From_File(Sub_Code.ExDir + "/Saves/" + projectName + ".wms");
+
+        Message_Feed_Out("セーブしました。");
+    }
+
+    void Other_Load_From_File(string filePath)
+    {
+        try
+        {
+            //音声を配置
+            InitializePages();
+            WMS_Load.WMS_Result wmsResult = wmsLoad.WMS_Load_File(filePath, modPages, out projectName);
+            if (wmsResult == WMS_Load.WMS_Result.No_Exist_File)
+            {
+                Message_Feed_Out("エラー:ファイルが存在しません。");
+                return;
+            }
+            else if (wmsResult == WMS_Load.WMS_Result.Wrong_Header)
+            {
+                Message_Feed_Out("エラー:ヘッダーが異なります。");
+                return;
+            }
+            else if (wmsResult == WMS_Load.WMS_Result.Wrong_Version)
+            {
+                Message_Feed_Out("エラー:セーブファイルのバージョンが古すぎます。");
+                return;
+            }
+            else if (wmsResult == WMS_Load.WMS_Result.Wrong_Data)
+            {
+                Message_Feed_Out("エラー:ファイルが破損しています。");
+                InitializePages();
+                return;
+            }
+            else
+                Message_Feed_Out(Path.GetFileNameWithoutExtension(filePath) + "をロードしました。");
+            Set_Item_Type();
+        }
+        catch (Exception e)
+        {
+            Message_Feed_Out("エラー:" + e.Message);
+            InitializePages();
+            Set_Item_Type();
+            wmsLoad.Dispose();
+        }
+    }
+
     private void ContentPage_Loaded(object sender, EventArgs e)
     {
         Mod_Selection_Picker.SelectedIndex = 0;
@@ -360,11 +668,14 @@ public partial class Other_Create : ContentPage
     private void ContentPage_Appearing(object sender, EventArgs e)
     {
         bShowing = true;
+        bOtherPageOpened = false;
         Loop();
     }
 
     private void ContentPage_Disappearing(object sender, EventArgs e)
     {
+        _ = Pause_Volume_Animation(false);
+
         bShowing = false;
     }
 
@@ -395,6 +706,8 @@ public partial class Other_Create : ContentPage
                 PlayTime_S.Maximum = 0;
                 PlayTime_T.Text = "00:00 / 00:00";
                 maxTime = "00:00";
+                if (soundPtr.IsAllocated)
+                    soundPtr.Free();
             }
             else if (bPaused)
                 Bass.BASS_ChannelPause(streamHandle);
@@ -423,6 +736,7 @@ public partial class Other_Create : ContentPage
         }
     }
 
+    //選択状態のリストの色を変更
     private void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
     {
         ListView listView = (ListView)sender;

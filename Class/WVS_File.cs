@@ -8,14 +8,14 @@ namespace WoTB_Mod_Creator2.Class
     //このセーブファイルはサウンドデータも一緒に書き込まれるため、別のPC、Android端末でロードしても正常にModの作成が行えます。(バージョン5以降対応していれば)
     public class WVS_Save
     {
-        enum Format
+        public enum Format
         {
             AndroidResorce,
             WVSLoad,
             FilePath
         }
 
-        class SaveFormat(Format format, string filePath, long streamPosition = 0)
+        public class SaveFormat(Format format, string filePath, long streamPosition = 0)
         {
             public Format format = format;
 
@@ -341,7 +341,7 @@ namespace WoTB_Mod_Creator2.Class
             br = new BinaryReader(File.OpenRead(filePath));
 
             //ヘッダーが異なれば終了
-            if (Encoding.ASCII.GetString(br.ReadBytes(br.ReadByte())) != WVS_Save.WVSHeader)
+            if (Encoding.ASCII.GetString(br.ReadBytes(Encoding.ASCII.GetBytes(WVS_Save.WVSHeader).Length)) != WVS_Save.WVSHeader)
             {
                 br.Close();
                 return WVS_Result.Wrong_Header;

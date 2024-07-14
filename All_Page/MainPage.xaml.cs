@@ -40,7 +40,9 @@ namespace WoTB_Mod_Creator2.All_Page
                     voiceCreate_Page.Add_Sound(Sub_Code.Select_Files_Window.Get_Select_Files());
                 else if (pageName == "SE_Setting" && voiceCreate_Page != null && voiceCreate_Page.SESettingWindow != null)
                     voiceCreate_Page.SESettingWindow.Add_Sound(Sub_Code.Select_Files_Window.Get_Select_Files());
-                if (pageName == "Music_Player" && musicPlayer_Page != null)
+                else if (pageName == "Other_Create" && otherCreate_Page != null)
+                    otherCreate_Page.Add_Sound(Sub_Code.Select_Files_Window.Get_Select_Files());
+                else if (pageName == "Music_Player" && musicPlayer_Page != null)
                     musicPlayer_Page.Selected_Files(Sub_Code.Select_Files_Window.Get_Select_Files());
                 Sub_Code.Select_Files_Window.Dispose();
             };

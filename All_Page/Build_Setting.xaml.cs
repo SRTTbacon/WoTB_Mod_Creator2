@@ -12,15 +12,26 @@ public partial class Build_Setting : ContentPage
         Uploaded,
         Failed
     }
-    readonly List<List<CVoiceTypeList>> voiceTypes;
-    readonly WVS_Load wvsData;
-    readonly SE_Preset sePreset;
+    enum Build_Mode
+    {
+        WVS,
+        WMS
+    }
+
+    List<List<CVoiceTypeList>>? voiceTypes = null;
+    WVS_Load? wvsData = null;
+    SE_Preset? sePreset = null;
+
+    List<OtherModPage>? modPages = null;
+    WMS_Load? wmsData = null;
+    int savePage = 0;
 
     readonly Google_Drive drive = new();
 
     readonly string uploadIDFile = Sub_Code.ExDir + "/Temp0101.dat";
 
     Build_State state;
+    Build_Mode mode;
 
     string commandText = "";
     string fileID = "";
@@ -28,13 +39,9 @@ public partial class Build_Setting : ContentPage
     bool bMessageShowing = false;
     bool bUploaded = false;
 
-    public Build_Setting(List<List<CVoiceTypeList>> voiceTypes, WVS_Load wvsData, SE_Preset sePreset)
+    public Build_Setting()
 	{
 		InitializeComponent();
-
-        this.voiceTypes = voiceTypes;
-        this.wvsData = wvsData;
-        this.sePreset = sePreset;
 
         //ボタン処理
         Server_Build_B.Clicked += Server_Build_B_Clicked;
@@ -44,7 +51,25 @@ public partial class Build_Setting : ContentPage
 
         Command_T.Text = "アップロード待ち...";
 
-        ShowVolumeSlider();
+        ShowSettings();
+    }
+
+    public void InitializeWVS(List<List<CVoiceTypeList>> voiceTypes, WVS_Load wvsData, SE_Preset sePreset)
+    {
+        this.voiceTypes = voiceTypes;
+        this.wvsData = wvsData;
+        this.sePreset = sePreset;
+        mode = Build_Mode.WVS;
+        ShowSettings();
+    }
+
+    public void InitializeWMS(List<OtherModPage> modPages, int savePage, WMS_Load wmsData)
+    {
+        this.modPages = modPages;
+        this.savePage = savePage;
+        this.wmsData = wmsData;
+        mode = Build_Mode.WMS;
+        ShowSettings();
     }
 
     //画面右下部にメッセージを表示
@@ -75,15 +100,23 @@ public partial class Build_Setting : ContentPage
     async void Loop()
     {
         Build_State nowState = state;
+
         while (true)
         {
             if (state == Build_State.Uploaded)
                 break;
+
             if (nowState == Build_State.Building && state == Build_State.Uploading)
-                Message_T.Text = ".wvsファイルを作成しました。\nアップロードしています...";
+            {
+                if (mode == Build_Mode.WVS)
+                    Message_T.Text = ".wvsファイルを作成しました。\nアップロードしています...";
+                else if (mode == Build_Mode.WMS)
+                    Message_T.Text = ".wmsファイルを作成しました。\nアップロードしています...";
+            }
+
             nowState = state;
 
-            await Task.Delay(1000 / 10);
+            await Task.Delay(100);
         }
 
         if (state == Build_State.Uploaded)
@@ -163,7 +196,10 @@ public partial class Build_Setting : ContentPage
 
         //.wvsファイルを作成
         bMessageShowing = false;
-        Message_T.Text = ".wvsファイルを作成しています...";
+        if (mode == Build_Mode.WVS)
+            Message_T.Text = ".wvsファイルを作成しています...";
+        else if (mode == Build_Mode.WMS)
+            Message_T.Text = ".wmsファイルを作成しています...";
         Message_T.Opacity = 1.0;
 
         Loop();
@@ -192,24 +228,44 @@ public partial class Build_Setting : ContentPage
 
     void BuildAndUpload()
     {
-        string saveFilePath = Sub_Code.ExDir + "/Generated_Project.wvs";
+        string saveFilePath = Sub_Code.ExDir + "/Generated_Project";
+        string ex = "";
+        if (mode == Build_Mode.WVS)
+            ex = "wvs";
+        else if (mode == Build_Mode.WMS)
+            ex = "wms";
         Task.Run(() =>
         {
-            //SEを含めたプロジェクトを作成
-            WVS_Save save = new();
-            if (Volume_Set_C.IsChecked)
-                save.Add_Sound(voiceTypes, wvsData, Math.Round(Volume_S.Value, 1), Default_Voice_Mode_C.IsChecked);
-            else
-                save.Add_Sound(voiceTypes, wvsData, 0.0, Default_Voice_Mode_C.IsChecked);
-            save.Create(saveFilePath, Project_Name_T.Text, true, sePreset, false);
+            if (mode == Build_Mode.WVS && voiceTypes != null && wvsData != null)
+            {
+                //SEを含めた.wvsプロジェクトを作成
+                WVS_Save save = new();
+                if (Volume_Set_C.IsChecked)
+                    save.Add_Sound(voiceTypes, wvsData, Math.Round(Volume_S.Value, 1), Default_Voice_Mode_C.IsChecked);
+                else
+                    save.Add_Sound(voiceTypes, wvsData, 0.0, Default_Voice_Mode_C.IsChecked);
+                save.Create(saveFilePath + "." + ex, Project_Name_T.Text, true, sePreset, false);
 
-            state = Build_State.Uploading;
+                state = Build_State.Uploading;
+            }
+            else if (mode == Build_Mode.WMS && modPages != null && wmsData != null)
+            {
+                //.wmsプロジェクトを作成
+                WMS_Save save = new();
+                if (Volume_Set_C.IsChecked)
+                    save.Add_Data(modPages, wmsData, Math.Round(Volume_S.Value, 1), Default_Voice_Mode_C.IsChecked);
+                else
+                    save.Add_Data(modPages, wmsData, 0.0, Default_Voice_Mode_C.IsChecked);
+                save.Create(saveFilePath + "." + ex, Project_Name_T.Text, savePage, true, false);
+
+                state = Build_State.Uploading;
+            }
 
             //ドライブにアップロード
             int uploadID = Sub_Code.RandomValue.Next(1000000, int.MaxValue);
-            if (drive.UploadFile(saveFilePath, out string fileID, uploadID + ".wvs"))
+            if (drive.UploadFile(saveFilePath + "." + ex, out string fileID, uploadID + "." + ex))
             {
-                commandText = ".swvs-id " + uploadID;
+                commandText = ".s" + ex + "-id " + uploadID;
                 this.fileID = fileID;
                 state = Build_State.Uploaded;
                 bUploaded = true;
@@ -244,12 +300,15 @@ public partial class Build_Setting : ContentPage
         Volume_Set_T.Text = "音量を均一にする";
         if (e.Value)
             Volume_Set_T.Text += "(デフォルト:99db)";
-        ShowVolumeSlider();
+        ShowSettings();
     }
 
-    void ShowVolumeSlider()
+    void ShowSettings()
     {
         Volume_S.IsVisible = Volume_Set_C.IsChecked;
         Volume_T.IsVisible = Volume_Set_C.IsChecked;
+
+        Default_Voice_Mode_T.IsVisible = mode == Build_Mode.WVS;
+        Default_Voice_Mode_C.IsVisible = mode == Build_Mode.WVS;
     }
 }

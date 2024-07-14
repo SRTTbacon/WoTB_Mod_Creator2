@@ -22,6 +22,7 @@ namespace WoTB_Mod_Creator2.Class
         public const string APP_VERSION = "0.4";
         public const string ANDROID_ROOT = "/storage/emulated/0";
 
+        public static readonly Build_Setting BuildSettingWindow = new();
         public static readonly Random RandomValue = new();
 
         public static readonly string[] AudioExtension = ["audio/*"];
