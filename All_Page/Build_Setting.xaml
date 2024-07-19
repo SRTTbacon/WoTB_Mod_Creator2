@@ -13,6 +13,23 @@
         </Grid.RowDefinitions>
         <ScrollView Grid.Row="1">
             <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <Label x:Name="NowSelectedName_T" Text="選択中のイベント : ガレージSE" TextColor="White" FontSize="15" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.025,0.8,0.05"/>
+                <Label x:Name="BuildBNK_T" Text="生成されるファイル" TextColor="White" FontSize="15" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.1,0.5,0.05"/>
+                <Border x:Name="BuildBNK_Border" Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.175,0.8,0.225">
+                    <ListView x:Name="BuildBNK_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" MaximumHeightRequest="160" ItemSelected="ListView_ItemSelected">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <StackLayout Orientation="Horizontal">
+                                        <StackLayout>
+                                            <Label Text="{Binding Name_Text}" TextColor="Aqua"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Border>
                 <CheckBox x:Name="Volume_Set_C" IsChecked="True" Color="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.24,0.4,0.07,0.03" CheckedChanged="Volume_Set_C_CheckedChanged"/>
                 <Label x:Name="Volume_Set_T" Text="音量を均一にする(デフォルト:99db)" TextColor="White" FontSize="15" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.825,0.41,0.625,0.05"/>
                 <Slider x:Name="Volume_S" Maximum="103" Value="99" Minimum="69" MaximumTrackColor="Gray" MinimumTrackColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.3,0.45,0.6,0.025"/>

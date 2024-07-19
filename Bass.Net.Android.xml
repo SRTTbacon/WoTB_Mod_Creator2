@@ -17,7 +17,7 @@
             <para>The AAC and MP4 formats are used in the same way as any of the built-in BASS stream formats. Simply call <see cref="M:Un4seen.Bass.Bass.BASS_PluginLoad(System.String)"/> to load the add-on into BASS and benefit the usage of the standard sample/stream/URL/user functions, or call the <see cref="M:Un4seen.Bass.AddOn.Aac.BassAac.BASS_AAC_StreamCreateFile(System.String,System.Int64,System.Int64,Un4seen.Bass.BASSFlag)"/> /URL/User functions.</para>
             <para>More information can be found on <a href="http://www.vialicensing.com">www.vialicensing.com</a>.</para>
             <para>BASS_AAC is distributed under the GPL (see LICENSE.TXT).</para>
-            <para>- For commercial use of BASS_AAC, please contact Nero AG at <a href="http://www.nero.com/eng/technologies-nerodigital-licensing.html">Partner with Nero to implement Nero Digital™ technology</a>.</para>
+            <para>- For commercial use of BASS_AAC, please contact Nero AG at <a href="http://www.nero.com/eng/technologies-nerodigital-licensing.html">Partner with Nero to implement Nero Digital邃｢ technology</a>.</para>
             <para>- AAC is a patented technology. To use it in your software, please obtain a license from Via Licensing at <a href="http://www.vialicensing.com">www.vialicensing.com</a>.</para>
             </remarks>
         </member>
@@ -5010,9 +5010,9 @@
             The amount of gain reduction is determined by a ratio. For example, with a ratio of 4:1, when the (time averaged) input level is 4 dB over the threshold, the output signal level will be 1 dB over the threshold. 
             The gain (level) has been reduced by 3 dB. When the input level is 8 dB above the threshold, the output level will be 2 dB; a 6 dB gain reduction.
             A more specific example for a 4:1 ratio:
-            Threshold = −10 dB;
-            Input = −6 dB (4 dB above the threshold);
-            Output = −9 dB (1 dB above the threshold)
+            Threshold = 竏・0 dB;
+            Input = 竏・ dB (4 dB above the threshold);
+            Output = 竏・ dB (1 dB above the threshold)
             </para>
             <para>With any threshold/ratio combination, you could calculate the gain for a 0dB peak like this:
             fGain=fThreshold*(1/fRatio-1)</para>
@@ -5279,20 +5279,20 @@
             A high-pass filter is an LTI filter that passes high frequencies well but attenuates (i.e., reduces the amplitude of) frequencies lower than the fCenter frequency. The actual amount of attenuation for each frequency is a design parameter of the filter. It is sometimes called a low-cut filter; the terms bass-cut filter or rumble filter are also used in audio applications.
             </para>
             <para><b>BASS_BFX_BQF_BANDPASS:</b><br/>
-            A band-pass filter is a device that passes frequencies within a certain range and rejects (attenuates) frequencies outside that range. An example of an analogue electronic band-pass filter is an RLC circuit (a resistor–inductor–capacitor circuit). These filters can also be created by combining a low-pass filter with a high-pass filter.
+            A band-pass filter is a device that passes frequencies within a certain range and rejects (attenuates) frequencies outside that range. An example of an analogue electronic band-pass filter is an RLC circuit (a resistor窶妬nductor窶田apacitor circuit). These filters can also be created by combining a low-pass filter with a high-pass filter.
             </para>
             <para><b>BASS_BFX_BQF_NOTCH:</b><br/>
             In signal processing, a band-stop filter or band-rejection filter is a filter that passes most frequencies unaltered, but attenuates those in a specific range to very low levels. It is the opposite of a band-pass filter. A notch filter is a band-stop filter with a narrow stopband (high Q factor). Notch filters are used in live sound reproduction (Public Address systems, also known as PA systems) and in instrument amplifier (especially amplifiers or preamplifiers for acoustic instruments such as acoustic guitar, mandolin, bass instrument amplifier, etc.) to reduce or prevent feedback, while having little noticeable effect on the rest of the frequency spectrum. Other names include 'band limit filter', 'T-notch filter', 'band-elimination filter', and 'band-reject filter'.
             </para>
             <para><b>BASS_BFX_BQF_ALLPASS:</b><br/>
-            An all-pass filter is a signal processing filter that passes all frequencies equally, but changes the phase relationship between various frequencies. It does this by varying its propagation delay with frequency. Generally, the filter is described by the frequency at which the phase shift crosses 90° (i.e., when the input and output signals go into quadrature — when there is a quarter wavelength of delay between them).
+            An all-pass filter is a signal processing filter that passes all frequencies equally, but changes the phase relationship between various frequencies. It does this by varying its propagation delay with frequency. Generally, the filter is described by the frequency at which the phase shift crosses 90ﾂｰ (i.e., when the input and output signals go into quadrature 窶・when there is a quarter wavelength of delay between them).
             </para>
             <para><b>BASS_BFX_BQF_PEAKINGEQ:</b><br/>
             A peaking equalizer raises or lowers a range of frequencies around a central point in a bell shape. A peaking equalizer with controls to adjust the level (fGain), fBandwidth (fQ) and center frequency (Hz) is called a parametric equalizer.
             Peaking Equalizer in BASS_FX can be achieved directly and efficiently by <see cref="T:Un4seen.Bass.AddOn.Fx.BASS_BFX_PEAKEQ"/>.
             </para>
             <para><b>BASS_BFX_BQF_ALLPASS:</b><br/>
-            An all-pass filter is a signal processing filter that passes all frequencies equally, but changes the phase relationship between various frequencies. It does this by varying its propagation delay with frequency. Generally, the filter is described by the frequency at which the phase shift crosses 90° (i.e., when the input and output signals go into quadrature — when there is a quarter wavelength of delay between them).
+            An all-pass filter is a signal processing filter that passes all frequencies equally, but changes the phase relationship between various frequencies. It does this by varying its propagation delay with frequency. Generally, the filter is described by the frequency at which the phase shift crosses 90ﾂｰ (i.e., when the input and output signals go into quadrature 窶・when there is a quarter wavelength of delay between them).
             </para>
             <para><b>BASS_BFX_BQF_LOWSHELF:</b><br/>
             A low-shelf filter passes all frequencies, but increasing or reducing frequencies below the fCenter frequency by specified amount.
@@ -10379,7 +10379,7 @@
             <para>ID3v2: TIT2, TT2</para>
             <para>OGG: TITLE</para>
             <para>APE: Title</para>
-            <para>MP4: ©nam</para>
+            <para>MP4: ﾂｩnam</para>
             <para>ASF: WM/Title</para>
             <para>RIFF: INAM</para>
             <para>Alternatives: --</para>
@@ -10388,7 +10388,7 @@
             <para>ID3v2: TPE1, TP1</para>
             <para>OGG: ARTIST</para>
             <para>APE: Artist</para>
-            <para>MP4: ©ART</para>
+            <para>MP4: ﾂｩART</para>
             <para>ASF: WM/Author</para>
             <para>RIFF: IART</para>
             <para>Alternatives: ISTR, AUTHOR</para>
@@ -10397,7 +10397,7 @@
             <para>ID3v2: TALB, TAL</para>
             <para>OGG: ALBUM</para>
             <para>APE: Album</para>
-            <para>MP4: ©alb</para>
+            <para>MP4: ﾂｩalb</para>
             <para>ASF: WM/AlbumTitle</para>
             <para>RIFF: IPRD</para>
             <para>Alternatives: --</para>
@@ -10433,7 +10433,7 @@
             <para>ID3v2: TYER, TYE</para>
             <para>OGG: DATE</para>
             <para>APE: Year</para>
-            <para>MP4: ©day</para>
+            <para>MP4: ﾂｩday</para>
             <para>ASF: WM/Year</para>
             <para>RIFF: ICRD</para>
             <para>Alternatives: TDRC, RELEASEDATE, RELEASE DATE</para>
@@ -10442,7 +10442,7 @@
             <para>ID3v2: TCON, TCO</para>
             <para>OGG: GENRE</para>
             <para>APE: Genre</para>
-            <para>MP4: ©gen</para>
+            <para>MP4: ﾂｩgen</para>
             <para>ASF: WM/Genre</para>
             <para>RIFF: IGNR</para>
             <para>Alternatives: --</para>
@@ -10460,7 +10460,7 @@
             <para>ID3v2: TENC, TEN</para>
             <para>OGG: ENCODEDBY</para>
             <para>APE: EncodedBy</para>
-            <para>MP4: ©too</para>
+            <para>MP4: ﾂｩtoo</para>
             <para>ASF: WM/EncodedBy</para>
             <para>RIFF: ISFT</para>
             <para>Alternatives: VERSION, ENCODED BY, ENCODED-BY, ENCODER, SOFTWARE, TOOL</para>
@@ -10478,7 +10478,7 @@
             <para>ID3v2: TCOM, TCM</para>
             <para>OGG: COMPOSER</para>
             <para>APE: Composer</para>
-            <para>MP4: ©wrt</para>
+            <para>MP4: ﾂｩwrt</para>
             <para>ASF: WM/Composer</para>
             <para>RIFF: IENG</para>
             <para>Alternatives: ORGANIZATION, WRITER, IMUS</para>
@@ -10523,7 +10523,7 @@
             <para>ID3v2: COMM, COM</para>
             <para>OGG: COMMENT</para>
             <para>APE: Comment</para>
-            <para>MP4: ©cmt</para>
+            <para>MP4: ﾂｩcmt</para>
             <para>ASF: WM/Description</para>
             <para>RIFF: ICMT</para>
             <para>Alternatives: DESCRIPTION</para>
@@ -10532,7 +10532,7 @@
             <para>ID3v2: TIT1, TT1</para>
             <para>OGG: GROUPING</para>
             <para>APE: Grouping</para>
-            <para>MP4: ©grp</para>
+            <para>MP4: ﾂｩgrp</para>
             <para>ASF: WM/ContentGroupDescription</para>
             <para>RIFF: ISRF</para>
             <para>Alternatives: GROUP</para>
@@ -11489,7 +11489,7 @@
             <remarks>
             <para>BASSWV is an extension to the BASS audio library, enabling the playback of WavPack files.</para>
             <para>WavPack is a completely open audio compression format providing lossless, high quality lossy, and an unique hybrid compression mode.
-            In the default lossless mode WavPack acts just like a WinZip® compressor for audio files. Unlike MP3 or WMA encoding which can affect the sound quality,
+            In the default lossless mode WavPack acts just like a WinZipﾂｮ compressor for audio files. Unlike MP3 or WMA encoding which can affect the sound quality,
             not a single bit of the original information is lost. The hybrid mode provides all the advantages of lossless compression with an additional bonus: instead of creating a single file, this mode creates both a
             relatively small, high quality lossy file that can be used all by itself, and a correction file that, when combined with the lossy file, provides full lossless restoration.</para>
             <para>The WavPack format is used in the same way as any of the built-in BASS stream formats. Simply call <see cref="M:Un4seen.Bass.Bass.BASS_PluginLoad(System.String)"/> to load the add-on into BASS and benefit the usage of the standard sample/stream/user functions, or call the <see cref="M:Un4seen.Bass.AddOn.Wv.BassWv.BASS_WV_StreamCreateFile(System.String,System.Int64,System.Int64,Un4seen.Bass.BASSFlag)"/> / User functions.</para>
@@ -26156,7 +26156,7 @@
             Sample value for 0 dB reference (signed Int32).
             </summary>
             <remarks>
-            A 32-bit signed (2’s complement) integer word that shall hold the sample value
+            A 32-bit signed (2窶冱 complement) integer word that shall hold the sample value
             of the 0-dB reference level for the originating system. This reference can
             facilitate scaling and metering consistency across disparate systems. As an
             example, a 16-bit linear PCM system that has its meters calibrated as 0
@@ -26164,7 +26164,7 @@
             32768 (800016).
             <para>
             The peak value shall be the absolute value of the largest sample value possible
-            before saturation. In the example given, that of a 16-bit linear system using 2’s
+            before saturation. In the example given, that of a 16-bit linear system using 2窶冱
             complement notation, the range of allowable values is -32768 to 32767, thus the
             maximum peak value is 32768 in the example given.
             </para>

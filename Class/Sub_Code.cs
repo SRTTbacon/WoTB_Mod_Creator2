@@ -200,7 +200,7 @@ namespace WoTB_Mod_Creator2.Class
             if (!text.Contains('.'))
                 return 0;
             string Decim = text[(text.IndexOf('.') + 1)..];
-            return double.Parse("0." + Decim);
+            return double.Parse("0." + Decim, CultureInfo.InvariantCulture);
         }
 
         public static double Get_Random_Double(double Minimum, double Maximum)

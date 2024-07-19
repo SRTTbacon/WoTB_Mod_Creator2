@@ -40,7 +40,7 @@ public class OtherModType(string modTypeName, uint containerID)
         foreach (OtherModSound sound in Sounds)
             if (sound.FilePath == filePath && sound.IsDefaultSound == bDefaultSound)
                 return false;
-        Sounds.Add(new(filePath, bAndroidResource, bDefaultSound));
+        Sounds.Add(new(filePath, bDefaultSound, bAndroidResource));
         return true;
     }
 }
@@ -52,6 +52,7 @@ public class OtherModPage(string modPageName, string wwiseProjectName)
     public uint modPageID = WwiseHash.HashString(modPageName);
 
     public List<OtherModType> Types = [];
+    public List<string> BuildList = [];
 }
 
 public partial class Other_Create : ContentPage
@@ -111,47 +112,222 @@ public partial class Other_Create : ContentPage
     void InitializePages()
     {
         //ページ初期化
+        //デフォルトのサウンド入れるか迷ったけど、上級者以外はイベント名だけだとどんな音か分からないと思ったから20MBくらい容量増えるけど入れた！えらい！
         modPages.Clear();
         modPages.Add(new("戦闘開始前ロードBGM", "WoTB_Sound_Mod2"));
         modPages[^1].Types.Add(new("ロード1:America_lakville", 205170598));
+        modPages[^1].Types[^1].AddSound("Music_Map_America_Lakville.ogg", true, true);
         modPages[^1].Types.Add(new("ロード2:America_overlord", 148841988));
+        modPages[^1].Types[^1].AddSound("Music_Map_America_Overlord.ogg", true, true);
         modPages[^1].Types.Add(new("ロード3:Chinese", 1067185674));
+        modPages[^1].Types[^1].AddSound("Music_Map_Chinese.ogg", true, true);
         modPages[^1].Types.Add(new("ロード4:Desert_airfield", 99202684));
+        modPages[^1].Types[^1].AddSound("Music_Map_Desert_Airfield.ogg", true, true);
         modPages[^1].Types.Add(new("ロード5:Desert_sand_river", 493356780));
+        modPages[^1].Types[^1].AddSound("Music_Map_Desert_Sand_River.ogg", true, true);
         modPages[^1].Types.Add(new("ロード6:Europe_himmelsdorf", 277287194));
+        modPages[^1].Types[^1].AddSound("Music_Map_Europe_Himmelsdorf.ogg", true, true);
         modPages[^1].Types.Add(new("ロード7:Europe_mannerheim", 321403539));
+        modPages[^1].Types[^1].AddSound("Music_Map_Europe_Mannerheim.ogg", true, true);
         modPages[^1].Types.Add(new("ロード8:Europe_ruinberg", 603412881));
+        modPages[^1].Types[^1].AddSound("Music_Map_Europe_Ruinberg.ogg", true, true);
         modPages[^1].Types.Add(new("ロード9:Japan", 256533957));
+        modPages[^1].Types[^1].AddSound("Music_Map_Japan.ogg", true, true);
         modPages[^1].Types.Add(new("ロード10:Russian_malinovka", 520751345));
+        modPages[^1].Types[^1].AddSound("Music_Map_Russian_Malinovka.ogg", true, true);
         modPages[^1].Types.Add(new("ロード11:Russian_prokhorovka", 307041675));
+        modPages[^1].Types[^1].AddSound("Music_Map_Russian_Prokhorovka.ogg", true, true);
+        //ビルドリスト (*.bnkの名前部分)
+        modPages[^1].BuildList.Add("music_maps_america_lakville");
+        modPages[^1].BuildList.Add("music_maps_america_overlord");
+        modPages[^1].BuildList.Add("music_maps_chinese");
+        modPages[^1].BuildList.Add("music_maps_desert_airfield");
+        modPages[^1].BuildList.Add("music_maps_desert_sand_river");
+        modPages[^1].BuildList.Add("music_maps_europe_himmelsdorf");
+        modPages[^1].BuildList.Add("music_maps_europe_mannerheim");
+        modPages[^1].BuildList.Add("music_maps_europe_ruinberg");
+        modPages[^1].BuildList.Add("music_maps_japan");
+        modPages[^1].BuildList.Add("music_maps_russian_malinovka");
+        modPages[^1].BuildList.Add("music_maps_russian_prokhorovka");
+
         modPages.Add(new("リザルトBGM", "WoTB_Sound_Mod2"));
         modPages[^1].Types.Add(new("リザルト:勝利-BGM", 960016609));
+        modPages[^1].Types[^1].AddSound("Music_Result_Victory.ogg", true, true);
         modPages[^1].Types.Add(new("リザルト:勝利-音声", 737229060));
         modPages[^1].Types.Add(new("リザルト:引き分け-BGM", 404033224));
+        modPages[^1].Types[^1].AddSound("Music_Result_Draw.ogg", true, true);
         modPages[^1].Types.Add(new("リザルト:引き分け-音声", 480862388));
-        modPages[^1].Types.Add(new("リザルト:引き分け-BGM", 797792182));
-        modPages[^1].Types.Add(new("リザルト:引き分け-音声", 761638380));
+        modPages[^1].Types.Add(new("リザルト:敗北-BGM", 797792182));
+        modPages[^1].Types[^1].AddSound("Music_Result_Defeat.ogg", true, true);
+        modPages[^1].Types.Add(new("リザルト:敗北-音声", 761638380));
+        //ビルドリスト
+        modPages[^1].BuildList.Add("music_result_screen");
+        modPages[^1].BuildList.Add("music_result_screen_basic");
+
         modPages.Add(new("戦闘中の優勢BGM", "WoTB_Sound_Mod2"));
         modPages[^1].Types.Add(new("優勢-味方", 434309394));
+        modPages[^1].Types[^1].AddSound("Music_Battle_Will_Win.ogg", true, true);
+        modPages[^1].Types.Add(new("優勢-味方-音声", 1057587120));
         modPages[^1].Types.Add(new("優勢-敵", 868083406));
+        modPages[^1].Types[^1].AddSound("Music_Battle_Will_Defeat.ogg", true, true);
+        modPages[^1].Types.Add(new("優勢-敵-音声", 611060765));
+        modPages[^1].Types.Add(new("優勢-サイレン", 971715704));
+        modPages[^1].Types[^1].AddSound("danger.ogg", true, true);
+        //ビルドリスト
+        modPages[^1].BuildList.Add("music_battle");
+
         modPages.Add(new("ガレージSE", "WoTB_UI_Button_Sound"));
         modPages[^1].Types.Add(new("売却-SE", 432722439));
+        modPages[^1].Types[^1].AddSound("Sell_SE_01.ogg", true, true);
         modPages[^1].Types.Add(new("売却-音声", 26462958));
         modPages[^1].Types.Add(new("チェックボックス-SE", 278676259));
+        modPages[^1].Types[^1].AddSound("CheckBox_SE_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("CheckBox_SE_02.ogg", true, true);
         modPages[^1].Types.Add(new("チェックボックス-音声", 1015843643));
         modPages[^1].Types.Add(new("小隊受信-SE", 123366428));
+        modPages[^1].Types[^1].AddSound("Squad_Request_SE_01.ogg", true, true);
         modPages[^1].Types.Add(new("小隊受信-音声", 1034987615));
         modPages[^1].Types.Add(new("モジュールの切り替え-SE", 1001742020));
+        modPages[^1].Types[^1].AddSound("Module_Install_SE_01.ogg", true, true);
         modPages[^1].Types.Add(new("モジュールの切り替え-音声", 537387720));
         modPages[^1].Types.Add(new("戦闘開始ボタン-SE", 251988040));
+        modPages[^1].Types[^1].AddSound("Start_Battle_SE_01.ogg", true, true);
         modPages[^1].Types.Add(new("戦闘開始ボタン-音声", 56850118));
         modPages[^1].Types.Add(new("ニュース-SE", 530790297));
+        modPages[^1].Types[^1].AddSound("News_SE_01.ogg", true, true);
         modPages[^1].Types.Add(new("ニュース-音声", 1036212148));
         modPages[^1].Types.Add(new("車両納車-SE", 660827574));
+        modPages[^1].Types[^1].AddSound("Tank_Buy_SE_01.ogg", true, true);
         modPages[^1].Types.Add(new("車両納車-音声", 192152217));
         modPages[^1].Types.Add(new("何か購入-SE", 409835290));
+        modPages[^1].Types[^1].AddSound("Buy_SE_01.ogg", true, true);
         modPages[^1].Types.Add(new("何か購入-音声", 282116325));
-        modPages.Add(new("砲撃音", "WoTB_Gun_Sound_New"));
+        //ビルドリスト
+        modPages[^1].BuildList.Add("ui_buttons_tasks");
+
+        modPages.Add(new("砲撃音", "WoTB_Gun_Sound"));
+        modPages[^1].Types.Add(new("12～23mm:自車両-通常", 634610718));
+        modPages[^1].Types[^1].AddSound("Gun_Outside_auto_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_auto_1p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_auto_1p_03.ogg", true, true);
+        modPages[^1].Types.Add(new("12～23mm:自車両-ズーム時", 142135010));
+        modPages[^1].Types[^1].AddSound("Gun_Inside_auto_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_auto_1p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_auto_1p_03.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_auto_1p_04.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_auto_1p_05.ogg", true, true);
+        modPages[^1].Types.Add(new("12～23mm:他車両", 611442385));
+        modPages[^1].Types[^1].AddSound("Gun_NPC_auto_3p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_auto_3p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_auto_3p_03.ogg", true, true);
+        modPages[^1].Types.Add(new("12～23mm:自車両-音声", 245911224));
+        modPages[^1].Types.Add(new("12～23mm:他車両-音声", 403248155));
+        modPages[^1].Types.Add(new("20～45mm:自車両-通常", 220137673));
+        modPages[^1].Types[^1].AddSound("Gun_Outside_small_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_small_1p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_small_1p_03.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_small_1p_04.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_small_1p_05.ogg", true, true);
+        modPages[^1].Types.Add(new("20～45mm:自車両-ズーム時", 891043773));
+        modPages[^1].Types[^1].AddSound("Gun_Inside_small_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_small_1p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_small_1p_03.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_small_1p_04.ogg", true, true);
+        modPages[^1].Types.Add(new("20～45mm:他車両", 983327549));
+        modPages[^1].Types[^1].AddSound("Gun_NPC_small_3p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_small_3p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_small_3p_03.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_small_3p_04.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_small_3p_05.ogg", true, true);
+        modPages[^1].Types.Add(new("20～45mm:自車両-音声", 391540681));
+        modPages[^1].Types.Add(new("20～45mm:他車両-音声", 388036628));
+        modPages[^1].Types.Add(new("50～75mm:自車両-通常", 342549628));
+        modPages[^1].Types[^1].AddSound("Gun_Outside_mid_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_mid_1p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_mid_1p_03.ogg", true, true);
+        modPages[^1].Types.Add(new("50～75mm:自車両-ズーム時", 76784519));
+        modPages[^1].Types[^1].AddSound("Gun_Inside_mid_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_mid_1p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_mid_1p_03.ogg", true, true);
+        modPages[^1].Types.Add(new("50～75mm:他車両", 670420603));
+        modPages[^1].Types[^1].AddSound("Gun_NPC_mid_3p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_mid_3p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_mid_3p_03.ogg", true, true);
+        modPages[^1].Types.Add(new("50～75mm:自車両-音声", 309167407));
+        modPages[^1].Types.Add(new("50～75mm:他車両-音声", 161542186));
+        modPages[^1].Types.Add(new("85～107mm:自車両-通常", 488206709));
+        modPages[^1].Types[^1].AddSound("Gun_Outside_main_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_main_1p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_main_1p_03.ogg", true, true);
+        modPages[^1].Types.Add(new("85～107mm:自車両-ズーム時", 91221195));
+        modPages[^1].Types[^1].AddSound("Gun_Inside_main_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_main_1p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_main_1p_03.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_main_1p_04.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_main_1p_05.ogg", true, true);
+        modPages[^1].Types.Add(new("85～107mm:他車両", 1023399622));
+        modPages[^1].Types[^1].AddSound("Gun_NPC_main_3p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_main_3p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_main_3p_03.ogg", true, true);
+        modPages[^1].Types.Add(new("85～107mm:自車両-音声", 965612953));
+        modPages[^1].Types.Add(new("85～107mm:他車両-音声", 513231767));
+        modPages[^1].Types.Add(new("115～152mm:自車両-通常", 547631281));
+        modPages[^1].Types[^1].AddSound("Gun_Outside_large_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_large_1p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_large_1p_03.ogg", true, true);
+        modPages[^1].Types.Add(new("115～152mm:自車両-ズーム時", 61886891));
+        modPages[^1].Types[^1].AddSound("Gun_Inside_large_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_large_1p_02.ogg", true, true);
+        modPages[^1].Types.Add(new("115～152mm:他車両", 619459354));
+        modPages[^1].Types[^1].AddSound("Gun_NPC_large_3p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_large_3p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_large_3p_03.ogg", true, true);
+        modPages[^1].Types.Add(new("115～152mm:自車両-音声", 452295751));
+        modPages[^1].Types.Add(new("115～152mm:他車両-音声", 1032101855));
+        modPages[^1].Types.Add(new("152mm以上:自車両-通常", 890327147));
+        modPages[^1].Types[^1].AddSound("Gun_Outside_huge_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_huge_1p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_huge_1p_03.ogg", true, true);
+        modPages[^1].Types.Add(new("152mm以上:自車両-ズーム時", 697334890));
+        modPages[^1].Types[^1].AddSound("Gun_Inside_huge_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_huge_1p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_huge_1p_03.ogg", true, true);
+        modPages[^1].Types.Add(new("152mm以上:他車両", 950138696));
+        modPages[^1].Types[^1].AddSound("Gun_NPC_huge_3p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_huge_3p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_huge_3p_03.ogg", true, true);
+        modPages[^1].Types.Add(new("152mm以上:自車両-音声", 809907207));
+        modPages[^1].Types.Add(new("152mm以上:他車両-音声", 985913513));
+        modPages[^1].Types.Add(new("152mm以上_Extra:自車両-通常", 361462963));
+        modPages[^1].Types[^1].AddSound("Gun_Outside_huge_extra_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_huge_extra_1p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_huge_extra_1p_03.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_huge_extra_1p_04.ogg", true, true);
+        modPages[^1].Types.Add(new("152mm以上_Extra:自車両-ズーム時", 5188110));
+        modPages[^1].Types[^1].AddSound("Gun_Inside_huge_extra_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_huge_extra_1p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_huge_extra_1p_03.ogg", true, true);
+        modPages[^1].Types.Add(new("152mm以上_Extra:他車両", 349435285));
+        modPages[^1].Types[^1].AddSound("Gun_NPC_huge_extra_3p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_huge_extra_3p_02.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_huge_extra_3p_03.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_huge_extra_3p_04.ogg", true, true);
+        modPages[^1].Types.Add(new("152mm以上_Extra:自車両-音声", 483942445));
+        modPages[^1].Types.Add(new("152mm以上_Extra:他車両-音声", 632064110));
+        modPages[^1].Types.Add(new("ロケット:自車両-通常", 580241268));
+        modPages[^1].Types[^1].AddSound("Gun_Outside_Rocket_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Outside_Rocket_1p_02.ogg", true, true);
+        modPages[^1].Types.Add(new("ロケット:自車両-ズーム時", 787886846));
+        modPages[^1].Types[^1].AddSound("Gun_Inside_Rocket_1p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_Inside_Rocket_1p_02.ogg", true, true);
+        modPages[^1].Types.Add(new("ロケット:他車両", 872967597));
+        modPages[^1].Types[^1].AddSound("Gun_NPC_Rocket_3p_01.ogg", true, true);
+        modPages[^1].Types[^1].AddSound("Gun_NPC_Rocket_3p_02.ogg", true, true);
+        modPages[^1].Types.Add(new("ロケット:自車両-音声", 385813932));
+        modPages[^1].Types.Add(new("ロケット:他車両-音声", 410506553));
+        //ビルドリスト
+        modPages[^1].BuildList.Add("weapon");
+        modPages[^1].BuildList.Add("weapon_basic");
     }
 
     //ループ (主にシークバー用)
@@ -168,6 +344,16 @@ public partial class Other_Create : ContentPage
                 if (nextFrame - tickCount > 1)
                     await Task.Delay((int)(nextFrame - tickCount));
                 continue;
+            }
+
+            //再生中かどうか
+            bool bPlaying = Bass.BASS_ChannelIsActive(streamHandle) == BASSActive.BASS_ACTIVE_PLAYING && !bLocationChanging;
+            if (bPlaying)
+            {
+                //現在の再生時間を表示
+                long position = Bass.BASS_ChannelGetPosition(streamHandle);
+                PlayTime_S.Value = Bass.BASS_ChannelBytes2Seconds(streamHandle, position);
+                PlayTime_T.Text = Sub_Code.Get_Time_String(PlayTime_S.Value) + " / " + maxTime;
             }
 
             //再生が終わったらシークバーを0に戻す
@@ -229,7 +415,7 @@ public partial class Other_Create : ContentPage
     {
         if (Mod_Selection_Picker.SelectedIndex == -1)
             return;
-        _ = Pause_Volume_Animation(true, 10.0f);
+        _ = Pause_Volume_Animation(true, 5.0f);
         PlayTime_S.Value = 0;
         PlayTime_S.Maximum = 0;
         PlayTime_T.Text = "00:00 / 00:00";
@@ -240,6 +426,7 @@ public partial class Other_Create : ContentPage
     //タイプリストをタップ
     private void Other_Type_Tapped(object sender, EventArgs e)
     {
+        _ = Pause_Volume_Animation(true, 10.0f);
         Other_Sound_L.ItemsSource = null;
         Other_Sound_L.ItemsSource = ((OtherModType)Other_Type_L.SelectedItem).Sounds;
     }
@@ -254,7 +441,7 @@ public partial class Other_Create : ContentPage
         Bass.BASS_StreamFree(streamHandle);
 
         //ファイルが存在しない
-        if (!sound.IsBinarySound && !File.Exists(sound.FilePath))
+        if (!sound.IsAndroidResource && !sound.IsBinarySound && !File.Exists(sound.FilePath))
         {
             Message_Feed_Out("ファイルが存在しません。削除されたか、移動されている可能性があります。");
             return;
@@ -265,15 +452,22 @@ public partial class Other_Create : ContentPage
 
         //サウンドをエンジンに読み込む
         int baseHandle = 0;
-        if (sound.IsBinarySound)
+        if (soundPtr.IsAllocated)
+            soundPtr.Free();
+
+        if (sound.IsAndroidResource)
+        {
+            byte[] soundBytes = Sub_Code.ReadResourceData(sound.FilePath);
+            soundPtr = GCHandle.Alloc(soundBytes, GCHandleType.Pinned);
+            IntPtr pin = soundPtr.AddrOfPinnedObject();
+            baseHandle = Bass.BASS_StreamCreateFile(pin, 0L, soundBytes.Length, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_LOOP);
+        }
+        else if (sound.IsBinarySound)
         {
             //サウンドが.wvsファイルに内包されている場合はバイト配列に読み込んでエンジンにポインタを渡す
             byte[]? soundBytes = wmsLoad.Load_Sound(sound.StreamPosition);
             if (soundBytes != null)
             {
-                if (soundPtr.IsAllocated)
-                    soundPtr.Free();
-
                 //soundBytesが勝手に破棄されないように固定させる
                 soundPtr = GCHandle.Alloc(soundBytes, GCHandleType.Pinned);
 
@@ -294,6 +488,7 @@ public partial class Other_Create : ContentPage
 
         //FXを適応できる形に
         streamHandle = BassFx.BASS_FX_TempoCreate(baseHandle, BASSFlag.BASS_FX_FREESOURCE);
+
         //エフェクトを適応
         Bass.BASS_ChannelSetAttribute(streamHandle, BASSAttribute.BASS_ATTRIB_VOL, (float)All_Volume_S.Value / 100);
 
@@ -492,6 +687,8 @@ public partial class Other_Create : ContentPage
             return;
         }
 
+        _ = Pause_Volume_Animation(true, 15.0f);
+
         type.Sounds.Remove(sound);
         Set_Item_Type();
     }
@@ -593,6 +790,7 @@ public partial class Other_Create : ContentPage
             return;
 
         Sub_Code.BuildSettingWindow.InitializeWMS(modPages, Mod_Selection_Picker.SelectedIndex, wmsLoad);
+        Console.Out.WriteLine("Mod_Selection_Picker.SelectedIndex = " + Mod_Selection_Picker.SelectedIndex);
         Navigation.PushAsync(Sub_Code.BuildSettingWindow);
         bOtherPageOpened = true;
     }

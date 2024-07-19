@@ -21,7 +21,7 @@
                 <Button x:Name="Voice_Type_Next_B" Text="→" BackgroundColor="Transparent" FontSize="10" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.8275,0.078,0.2,0.05" Pressed="Button_Pressed" Released="Button_Released"/>
                 <Label x:Name="Voice_Type_Page_T" Text="イベントリスト1" TextColor="Aqua" FontSize="14" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.09,0.3,0.05"/>
                 <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.19,0.8,0.3">
-                    <ListView x:Name="Voice_Type_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" MaximumHeightRequest="225" ItemSelected="ListView_ItemSelected">
+                    <ListView x:Name="Voice_Type_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" MaximumHeightRequest="215" ItemSelected="ListView_ItemSelected">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ViewCell Tapped="VoiceTypeViewCell_Tapped">
@@ -39,7 +39,7 @@
                 <Button x:Name="Sound_Delete_B" Text="サウンドを取消" BackgroundColor="Transparent" BorderWidth="1" BorderColor="Aqua" TextColor="Aqua" FontSize="10" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.27,0.47,0.3,0.06" Pressed="Button_Pressed" Released="Button_Released"/>
                 <Label Text="サウンドリスト" TextColor="Aqua" FontSize="16" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.525,0.625,0.325,0.05"/>
                 <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.825,0.8,0.225">
-                    <ListView x:Name="Sound_File_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" MaximumHeightRequest="170" ItemSelected="ListView_ItemSelected">
+                    <ListView x:Name="Sound_File_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" MaximumHeightRequest="160" ItemSelected="ListView_ItemSelected">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ViewCell>

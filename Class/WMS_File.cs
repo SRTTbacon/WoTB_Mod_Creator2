@@ -1,5 +1,4 @@
-﻿using AngleSharp.Io;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using WoTB_Mod_Creator2.All_Page;
 
@@ -7,12 +6,12 @@ namespace WoTB_Mod_Creator2.Class
 {
     public class WMS_Save
     {
-        public const string WMS_HEADER = "WMS_Format";
-        public const byte WMS_VERSION = 0x00;
+        public const string WMS_HEADER = "WMSFormat";
+        public const byte WMS_VERSION = 0x05;
 
         double volume = 99.0f;
 
-        List<OtherModPage> pages = [];
+        List<OtherModPage>? pages;
         WMS_Load? wmsLoad;
 
         bool bDefaultSoundMod = false;
@@ -27,176 +26,202 @@ namespace WoTB_Mod_Creator2.Class
 
         public void Create(string toFile, string projectName, int saveRange = -1, bool bIncludeSoundData = false, bool bUnloadWMSLoad = true)
         {
-            //サウンドが存在する階層を保存 (ファイルサイズ削減のため)
-            List<string> dirNames = [];
-
-            List<WVS_Save.SaveFormat> saveFormats = [];
-
-            if (File.Exists(toFile + ".tmp"))
-                File.Delete(toFile + ".tmp");
-
-            BinaryWriter bw = new(File.OpenWrite(toFile + ".tmp"));
-            //ヘッダー
-            byte[] headerBytes = Encoding.ASCII.GetBytes(WMS_HEADER);
-            bw.Write((byte)headerBytes.Length);
-            bw.Write(headerBytes);
-            //謎の4バイト
-            bw.Write(new byte[] { 0x00, 0x00, 0x00, 0x00 });
-            //WMSファイルのバージョン
-            bw.Write(WMS_VERSION);
-            //プロジェクト名のバイト配列を保存
-            byte[] projectNameBytes = Encoding.UTF8.GetBytes(projectName);
-            bw.Write((byte)projectNameBytes.Length);
-            bw.Write(projectNameBytes);
-            //セーブ範囲 (-1は全部、またはそのページの内容のみ)
-            bw.Write((sbyte)saveRange);
-            //音量設定
-            bw.Write(volume);
-            //砲撃音Modでサウンドが存在しない場合デフォルトのサウンドを挿入するかどうか (じゃ..入れるね//)
-            bw.Write(bDefaultSoundMod);
-            //サウンドデータが含まれるかどうか
-            bw.Write(bIncludeSoundData);
-
-            //親フォルダを事前に保存
-            for (int i = 0; i < pages.Count; i++)
+            if (pages == null)
+                return;
+            try
             {
-                if (saveRange != -1 && saveRange != i)
-                    continue;
-                foreach (OtherModType type in pages[i].Types)
+                //サウンドが存在する階層を保存 (ファイルサイズ削減のため)
+                List<string> dirNames = [];
+
+                List<WVS_Save.SaveFormat> saveFormats = [];
+
+                if (File.Exists(toFile + ".tmp"))
+                    File.Delete(toFile + ".tmp");
+
+                BinaryWriter bw = new(File.OpenWrite(toFile + ".tmp"));
+                //ヘッダー
+                byte[] headerBytes = Encoding.ASCII.GetBytes(WMS_HEADER);
+                bw.Write((byte)headerBytes.Length);
+                bw.Write(headerBytes);
+                //謎の4バイト
+                bw.Write(new byte[] { 0x00, 0x00, 0x00, 0x00 });
+                //WMSファイルのバージョン
+                bw.Write(WMS_VERSION);
+                //プロジェクト名のバイト配列を保存
+                byte[] projectNameBytes = Encoding.UTF8.GetBytes(projectName);
+                bw.Write((byte)projectNameBytes.Length);
+                bw.Write(projectNameBytes);
+                //セーブ範囲 (-1は全部、またはそのページの内容のみ)
+                bw.Write((sbyte)saveRange);
+                //音量設定
+                bw.Write(volume);
+                //砲撃音Modでサウンドが存在しない場合デフォルトのサウンドを挿入するかどうか (じゃ..入れるね//)
+                bw.Write(bDefaultSoundMod);
+                //サウンドデータが含まれるかどうか
+                bw.Write(bIncludeSoundData);
+
+                //親フォルダを事前に保存
+                for (int i = 0; i < pages.Count; i++)
                 {
-                    foreach (OtherModSound sound in type.Sounds)
+                    if (saveRange != -1 && saveRange != i)
+                        continue;
+                    foreach (OtherModType type in pages[i].Types)
                     {
-                        string? parentDir = Path.GetDirectoryName(sound.FilePath);
-                        if (parentDir != null && !dirNames.Contains(parentDir))
-                            dirNames.Add(parentDir);
+                        foreach (OtherModSound sound in type.Sounds)
+                        {
+                            string? parentDir = Path.GetDirectoryName(sound.FilePath);
+                            if (parentDir != null && !dirNames.Contains(parentDir))
+                                dirNames.Add(parentDir);
+                        }
                     }
                 }
-            }
-            bw.Write((ushort)dirNames.Count);
-            foreach(string dirName in dirNames)
-            {
-                byte[] dirNameBytes = Encoding.UTF8.GetBytes(dirName);
-                bw.Write((byte)dirNameBytes.Length);
-                bw.Write(dirNameBytes);
-            }
-
-            //ページ数
-            bw.Write((byte)pages.Count);
-
-            for (int i = 0; i < pages.Count; i++)
-            {
-                if (saveRange != -1 && saveRange != i)
-                    continue;
-                OtherModPage page = pages[i];
-                //ページ名
-                byte[] pageNameBytes = Encoding.UTF8.GetBytes(page.ModPageName);
-                bw.Write((byte)pageNameBytes.Length);
-                bw.Write(pageNameBytes);
-                //Wwiseのプロジェクト名 (ページによって異なる)
-                byte[] wwiseProjectNameBytes = Encoding.UTF8.GetBytes(page.WwiseProjectName);
-                bw.Write((byte)wwiseProjectNameBytes.Length);
-                bw.Write(wwiseProjectNameBytes);
-                bw.Write(page.modPageID);           //ページID
-                bw.Write((byte)page.Types.Count);   //タイプ数
-                foreach (OtherModType type in page.Types)
+                bw.Write((ushort)dirNames.Count);
+                foreach (string dirName in dirNames)
                 {
-                    //タイプ名
-                    byte[] typeNameBytes = Encoding.UTF8.GetBytes(type.ModTypeName);
-                    bw.Write((byte)typeNameBytes.Length);
-                    bw.Write(typeNameBytes);
-                    bw.Write(type.ModTypeID);   //タイプID
-                    bw.Write(type.ContainerID); //サウンドの配置場所
-                    bw.Write((byte)type.SoundCount);
-                    for (int j = 0; j < type.SoundCount; j++)
+                    byte[] dirNameBytes = Encoding.UTF8.GetBytes(dirName);
+                    bw.Write((byte)dirNameBytes.Length);
+                    bw.Write(dirNameBytes);
+                }
+
+                //ページ数
+                if (saveRange == -1)
+                    bw.Write((byte)pages.Count);
+
+                for (int i = 0; i < pages.Count; i++)
+                {
+                    if (saveRange != -1 && saveRange != i)
+                        continue;
+                    OtherModPage page = pages[i];
+                    //ページ名
+                    byte[] pageNameBytes = Encoding.UTF8.GetBytes(page.ModPageName);
+                    bw.Write((byte)pageNameBytes.Length);
+                    bw.Write(pageNameBytes);
+                    //Wwiseのプロジェクト名 (ページによって異なる)
+                    byte[] wwiseProjectNameBytes = Encoding.UTF8.GetBytes(page.WwiseProjectName);
+                    bw.Write((byte)wwiseProjectNameBytes.Length);
+                    bw.Write(wwiseProjectNameBytes);
+                    bw.Write(page.modPageID);           //ページID
+
+                    //ビルドリスト
+                    bw.Write((byte)page.BuildList.Count);
+                    foreach (string buildName in page.BuildList)
                     {
-                        OtherModSound sound = type.Sounds[j];
-                        //ファイルパスを保存
-                        //親フォルダが存在するインデックスを取得 (親フォルダが存在しない場合-1)
-                        string? parentDir = Path.GetDirectoryName(sound.FilePath);
-                        int dirIndex = -1;
-                        if (parentDir != null)
+                        byte[] wwiseBuildNameBytes = Encoding.ASCII.GetBytes(buildName);
+                        bw.Write((byte)wwiseBuildNameBytes.Length);
+                        bw.Write(wwiseBuildNameBytes);
+                    }
+                    bw.Write((byte)page.Types.Count);   //タイプ数
+                    foreach (OtherModType type in page.Types)
+                    {
+                        //タイプ名
+                        byte[] typeNameBytes = Encoding.UTF8.GetBytes(type.ModTypeName);
+                        bw.Write((byte)typeNameBytes.Length);
+                        bw.Write(typeNameBytes);
+                        bw.Write(type.ModTypeID);   //タイプID
+                        bw.Write(type.ContainerID); //サウンドの配置場所
+                        bw.Write((byte)type.SoundCount);
+                        for (int j = 0; j < type.SoundCount; j++)
                         {
-                            if (dirNames.Contains(parentDir))
-                                dirIndex = dirNames.IndexOf(parentDir);
-                            else
+                            OtherModSound sound = type.Sounds[j];
+                            //ファイルパスを保存
+                            //親フォルダが存在するインデックスを取得 (親フォルダが存在しない場合-1)
+                            string? parentDir = Path.GetDirectoryName(sound.FilePath);
+                            int dirIndex = -1;
+                            if (parentDir != null)
                             {
-                                dirNames.Add(parentDir);
-                                dirIndex = dirNames.Count - 1;
-                            }
-                        }
-                        bw.Write((short)dirIndex);
-                        //ファイル名を保存
-                        byte[] fileNameBytes = Encoding.UTF8.GetBytes(Path.GetFileName(sound.FilePath));
-                        bw.Write((byte)fileNameBytes.Length);
-                        bw.Write(fileNameBytes);
-                        if (bIncludeSoundData)
-                        {
-                            //既に同じサウンドが設定されていればそのインデックスを取得。なければCount
-                            //貫通と致命弾は同じサウンドを使用する可能性があるため容量削減のため同じサウンドの場合はまとめる
-                            int number = saveFormats.Count;
-                            bool bExist = false;
-                            byte[] soundBytes;
-                            if (sound.IsBinarySound && wmsLoad != null)
-                                soundBytes = wmsLoad.Load_Sound(sound.StreamPosition);
-                            else
-                                soundBytes = File.ReadAllBytes(sound.FilePath);
-                            for (int k = 0; k < saveFormats.Count; k++)
-                            {
-                                if (Sub_Code.CompareBytes(saveFormats[k].md5, soundBytes))
+                                if (dirNames.Contains(parentDir))
+                                    dirIndex = dirNames.IndexOf(parentDir);
+                                else
                                 {
-                                    number = i;
-                                    bExist = true;
-                                    break;
+                                    dirNames.Add(parentDir);
+                                    dirIndex = dirNames.Count - 1;
                                 }
                             }
-                            if (!bExist)
+                            bw.Write((short)dirIndex);
+                            //ファイル名を保存
+                            byte[] fileNameBytes = Encoding.UTF8.GetBytes(Path.GetFileName(sound.FilePath));
+                            bw.Write((byte)fileNameBytes.Length);
+                            bw.Write(fileNameBytes);
+                            bw.Write(sound.IsAndroidResource);
+                            bw.Write(sound.IsDefaultSound);
+                            if (bIncludeSoundData)
                             {
-                                if (sound.IsAndroidResource)
-                                    saveFormats.Add(new(WVS_Save.Format.AndroidResorce, sound.FilePath));
-                                else if (sound.IsBinarySound && wmsLoad != null)
-                                    saveFormats.Add(new(WVS_Save.Format.WVSLoad, "", sound.StreamPosition));
+                                //既に同じサウンドが設定されていればそのインデックスを取得。なければCount
+                                //貫通と致命弾は同じサウンドを使用する可能性があるため容量削減のため同じサウンドの場合はまとめる
+                                int number = saveFormats.Count;
+                                bool bExist = false;
+                                byte[] soundBytes;
+                                if (sound.IsBinarySound && wmsLoad != null)
+                                    soundBytes = wmsLoad.Load_Sound(sound.StreamPosition);
+                                else if (sound.IsAndroidResource)
+                                    soundBytes = Sub_Code.ReadResourceData(sound.FilePath);
                                 else
-                                    saveFormats.Add(new(WVS_Save.Format.FilePath, sound.FilePath));
-                                saveFormats[^1].md5 = MD5.HashData(soundBytes);
+                                    soundBytes = File.ReadAllBytes(sound.FilePath);
+                                for (int k = 0; k < saveFormats.Count; k++)
+                                {
+                                    if (Sub_Code.CompareBytes(saveFormats[k].md5, soundBytes))
+                                    {
+                                        number = i;
+                                        bExist = true;
+                                        break;
+                                    }
+                                }
+                                if (!bExist)
+                                {
+                                    if (sound.IsAndroidResource)
+                                        saveFormats.Add(new(WVS_Save.Format.AndroidResorce, sound.FilePath));
+                                    else if (sound.IsBinarySound && wmsLoad != null)
+                                        saveFormats.Add(new(WVS_Save.Format.WVSLoad, "", sound.StreamPosition));
+                                    else
+                                        saveFormats.Add(new(WVS_Save.Format.FilePath, sound.FilePath));
+                                    saveFormats[^1].md5 = MD5.HashData(soundBytes);
+                                }
+                                bw.Write((ushort)number);       //サウンドデータが入っているインデックス
                             }
-                            bw.Write((ushort)number);       //サウンドデータが入っているインデックス
+                            //横長になるため3個イベントが進むたびに改行
+                            if (j % 5 == 3)
+                                bw.Write((byte)0x0a);
                         }
-                        //横長になるため3個イベントが進むたびに改行
-                        if (j % 5 == 3)
-                            bw.Write((byte)0x0a);
+                    }
+                    bw.Write((byte)0x0a);
+                }
+
+                if (bIncludeSoundData)
+                {
+                    bw.Write((ushort)saveFormats.Count);     //サウンド数
+                    foreach (WVS_Save.SaveFormat saveFormat in saveFormats)
+                    {
+                        byte[] bytes;
+                        if (saveFormat.format == WVS_Save.Format.AndroidResorce)
+                            bytes = Sub_Code.ReadResourceData(saveFormat.filePath);
+                        else if (saveFormat.format == WVS_Save.Format.WVSLoad && wmsLoad != null)
+                            bytes = wmsLoad.Load_Sound(saveFormat.streamPosition);
+                        else
+                            bytes = File.ReadAllBytes(saveFormat.filePath);
+
+                        bw.Write(bytes.Length);     //サウンドデータのサイズ(65535バイト超えるデータがあったらやばいからint型)
+                        bw.Write(bytes);            //サウンドデータ
                     }
                 }
-                bw.Write((byte)0x0a);
-            }
 
-            if (bIncludeSoundData)
-            {
-                bw.Write((ushort)saveFormats.Count);     //サウンド数
-                foreach (WVS_Save.SaveFormat saveFormat in saveFormats)
+                bw.Close();
+
+                if (bUnloadWMSLoad)
                 {
-                    byte[] bytes;
-                    if (saveFormat.format == WVS_Save.Format.AndroidResorce)
-                        bytes = Sub_Code.ReadResourceData(saveFormat.filePath);
-                    else if (saveFormat.format == WVS_Save.Format.WVSLoad && wmsLoad != null)
-                        bytes = wmsLoad.Load_Sound(saveFormat.streamPosition);
-                    else
-                        bytes = File.ReadAllBytes(saveFormat.filePath);
-
-                    bw.Write(bytes.Length);     //サウンドデータのサイズ(65535バイト超えるデータがあったらやばいからint型)
-                    bw.Write(bytes);            //サウンドデータ
+                    //WVS_Loadを使用してセーブファイルを作成している場合アンロードする
+                    wmsLoad?.Dispose();
                 }
+                if (File.Exists(toFile))
+                    File.Delete(toFile);
+                File.Move(toFile + ".tmp", toFile);
             }
-
-            bw.Close();
-
-            if (bUnloadWMSLoad)
+            catch (Exception e)
             {
-                //WVS_Loadを使用してセーブファイルを作成している場合アンロードする
-                wmsLoad?.Dispose();
+                Sub_Code.ErrorLogWrite(e.Message);
+                Console.Out.WriteLine("---------aaaaaaaaaa-----------");
+                Console.Out.WriteLine(e.Message);
+                Console.Out.WriteLine(e.StackTrace);
             }
-            if (File.Exists(toFile))
-                File.Delete(toFile);
-            File.Move(toFile + ".tmp", toFile);
         }
     }
 
@@ -247,6 +272,7 @@ namespace WoTB_Mod_Creator2.Class
                 //セーブファイルのバージョン
                 _ = br.ReadByte();
 
+                //ヘッダー
                 projectName = Encoding.UTF8.GetString(br.ReadBytes(br.ReadByte()));
                 int saveRange = br.ReadSByte();
                 if (saveRange != -1)
@@ -255,14 +281,16 @@ namespace WoTB_Mod_Creator2.Class
                     return WMS_Result.Wrong_Data;
                 }
 
+                //イベント内のサウンド情報を初期化
                 foreach (OtherModPage page in pages)
                     foreach (OtherModType type in page.Types)
                         type.Sounds.Clear();
 
-                _ = br.ReadDouble();
-                _ = br.ReadBoolean();
-                bool bIncludeSoundData = br.ReadBoolean();
+                _ = br.ReadDouble();    //音量設定(サーバーに送る用。アプリ内では使用しない)
+                _ = br.ReadBoolean();   //使用しない
+                bool bIncludeSoundData = br.ReadBoolean();      //データにサウンドも含まれているか (サーバー送るときはtrue。アプリ内では基本false)
 
+                //フォルダ情報 (ファイル位置をフルパスで保存していたらサイズが大きくなるためまとめる)
                 ushort dirs = br.ReadUInt16();
                 for (int i = 0; i < dirs; i++)
                     dirNames.Add(Encoding.UTF8.GetString(br.ReadBytes(br.ReadByte())));
@@ -288,8 +316,17 @@ namespace WoTB_Mod_Creator2.Class
                         if (pages[nowPage].modPageID == pageID)
                         {
                             pageIndex = nowPage;
+                            page.BuildList = new(pages[nowPage].BuildList);
                             break;
                         }
+                    }
+
+                    byte buildListCount = br.ReadByte();
+                    for (int j = 0; j < buildListCount; j++)
+                    {
+                        string buildName = Encoding.ASCII.GetString(br.ReadBytes(br.ReadByte()));
+                        if (pageIndex == -1)
+                            page.BuildList.Add(buildName);
                     }
 
                     byte typeCount = br.ReadByte();
@@ -327,10 +364,14 @@ namespace WoTB_Mod_Creator2.Class
                         {
                             short dirIndex = br.ReadInt16();
                             string fileName = Encoding.UTF8.GetString(br.ReadBytes(br.ReadByte()));
-                            if (dirIndex != -1)
+                            if (dirIndex != -1 && !string.IsNullOrWhiteSpace(dirNames[dirIndex]))
                                 fileName = dirNames[dirIndex] + "/" + fileName;
 
-                            OtherModSound sound = new(fileName);
+                            OtherModSound sound = new(fileName)
+                            {
+                                IsAndroidResource = br.ReadBoolean(),
+                                IsDefaultSound = br.ReadBoolean()
+                            };
 
                             type.Sounds.Add(sound);
 

@@ -1,6 +1,13 @@
+using System.Collections.ObjectModel;
+using System.Reflection;
 using WoTB_Mod_Creator2.Class;
 
 namespace WoTB_Mod_Creator2.All_Page;
+
+public class CBuildList(string bnkName)
+{
+    public string Name_Text { get; private set; } = bnkName;
+}
 
 public partial class Build_Setting : ContentPage
 {
@@ -17,6 +24,8 @@ public partial class Build_Setting : ContentPage
         WVS,
         WMS
     }
+
+    readonly List<CBuildList> buildList = [];
 
     List<List<CVoiceTypeList>>? voiceTypes = null;
     WVS_Load? wvsData = null;
@@ -65,11 +74,19 @@ public partial class Build_Setting : ContentPage
 
     public void InitializeWMS(List<OtherModPage> modPages, int savePage, WMS_Load wmsData)
     {
+        buildList.Clear();
+        BuildBNK_L.ItemsSource = null;
+
         this.modPages = modPages;
         this.savePage = savePage;
         this.wmsData = wmsData;
         mode = Build_Mode.WMS;
         ShowSettings();
+
+        foreach (string bnkName in modPages[savePage].BuildList)
+            buildList.Add(new(bnkName + ".bnk"));
+
+        BuildBNK_L.ItemsSource = buildList;
     }
 
     //画面右下部にメッセージを表示
@@ -99,22 +116,18 @@ public partial class Build_Setting : ContentPage
 
     async void Loop()
     {
-        Build_State nowState = state;
-
         while (true)
         {
             if (state == Build_State.Uploaded)
                 break;
 
-            if (nowState == Build_State.Building && state == Build_State.Uploading)
+            if (state == Build_State.Uploading)
             {
                 if (mode == Build_Mode.WVS)
                     Message_T.Text = ".wvsファイルを作成しました。\nアップロードしています...";
                 else if (mode == Build_Mode.WMS)
                     Message_T.Text = ".wmsファイルを作成しました。\nアップロードしています...";
             }
-
-            nowState = state;
 
             await Task.Delay(100);
         }
@@ -141,8 +154,14 @@ public partial class Build_Setting : ContentPage
         if (state != Build_State.None)
             return;
 
-        if (voiceTypes == null || wvsData == null || sePreset == null)
-            return;
+        if (mode == Build_Mode.WVS)
+        {
+            if (voiceTypes == null || wvsData == null || sePreset == null)
+                return;
+        }
+        else if (mode == Build_Mode.WMS)
+            if (modPages == null || wmsData == null)
+                return;
 
         if (string.IsNullOrWhiteSpace(Project_Name_T.Text))
         {
@@ -236,43 +255,52 @@ public partial class Build_Setting : ContentPage
             ex = "wms";
         Task.Run(() =>
         {
-            if (mode == Build_Mode.WVS && voiceTypes != null && wvsData != null)
+            try
             {
-                //SEを含めた.wvsプロジェクトを作成
-                WVS_Save save = new();
-                if (Volume_Set_C.IsChecked)
-                    save.Add_Sound(voiceTypes, wvsData, Math.Round(Volume_S.Value, 1), Default_Voice_Mode_C.IsChecked);
+                if (mode == Build_Mode.WVS && voiceTypes != null && wvsData != null)
+                {
+                    //SEを含めた.wvsプロジェクトを作成
+                    WVS_Save save = new();
+                    if (Volume_Set_C.IsChecked)
+                        save.Add_Sound(voiceTypes, wvsData, Math.Round(Volume_S.Value, 1), Default_Voice_Mode_C.IsChecked);
+                    else
+                        save.Add_Sound(voiceTypes, wvsData, 0.0, Default_Voice_Mode_C.IsChecked);
+                    save.Create(saveFilePath + "." + ex, Project_Name_T.Text, true, sePreset, false);
+
+                    state = Build_State.Uploading;
+                }
+                else if (mode == Build_Mode.WMS && modPages != null && wmsData != null)
+                {
+                    //.wmsプロジェクトを作成
+                    WMS_Save save = new();
+                    if (Volume_Set_C.IsChecked)
+                        save.Add_Data(modPages, wmsData, Math.Round(Volume_S.Value, 1), Default_Voice_Mode_C.IsChecked);
+                    else
+                        save.Add_Data(modPages, wmsData, 0.0, Default_Voice_Mode_C.IsChecked);
+                    save.Create(saveFilePath + "." + ex, Project_Name_T.Text, savePage, true, false);
+
+                    state = Build_State.Uploading;
+                }
+
+                //ドライブにアップロード
+                int uploadID = Sub_Code.RandomValue.Next(1000000, int.MaxValue);
+                if (drive.UploadFile(saveFilePath + "." + ex, out string fileID, uploadID + "." + ex))
+                {
+                    commandText = ".s" + ex + "-id " + uploadID;
+                    this.fileID = fileID;
+                    state = Build_State.Uploaded;
+                    bUploaded = true;
+                }
                 else
-                    save.Add_Sound(voiceTypes, wvsData, 0.0, Default_Voice_Mode_C.IsChecked);
-                save.Create(saveFilePath + "." + ex, Project_Name_T.Text, true, sePreset, false);
-
-                state = Build_State.Uploading;
+                {
+                    state = Build_State.Failed;
+                }
             }
-            else if (mode == Build_Mode.WMS && modPages != null && wmsData != null)
+            catch (Exception e)
             {
-                //.wmsプロジェクトを作成
-                WMS_Save save = new();
-                if (Volume_Set_C.IsChecked)
-                    save.Add_Data(modPages, wmsData, Math.Round(Volume_S.Value, 1), Default_Voice_Mode_C.IsChecked);
-                else
-                    save.Add_Data(modPages, wmsData, 0.0, Default_Voice_Mode_C.IsChecked);
-                save.Create(saveFilePath + "." + ex, Project_Name_T.Text, savePage, true, false);
-
-                state = Build_State.Uploading;
-            }
-
-            //ドライブにアップロード
-            int uploadID = Sub_Code.RandomValue.Next(1000000, int.MaxValue);
-            if (drive.UploadFile(saveFilePath + "." + ex, out string fileID, uploadID + "." + ex))
-            {
-                commandText = ".s" + ex + "-id " + uploadID;
-                this.fileID = fileID;
-                state = Build_State.Uploaded;
-                bUploaded = true;
-            }
-            else
-            {
-                state = Build_State.Failed;
+                Sub_Code.ErrorLogWrite(e.Message);
+                Console.Out.WriteLine(e.Message);
+                Console.Out.WriteLine(e.StackTrace);
             }
         });
     }
@@ -310,5 +338,32 @@ public partial class Build_Setting : ContentPage
 
         Default_Voice_Mode_T.IsVisible = mode == Build_Mode.WVS;
         Default_Voice_Mode_C.IsVisible = mode == Build_Mode.WVS;
+
+        NowSelectedName_T.IsVisible = mode == Build_Mode.WMS;
+        BuildBNK_T.IsVisible = mode == Build_Mode.WMS;
+        BuildBNK_T.IsVisible = mode == Build_Mode.WMS;
+        BuildBNK_Border.IsVisible = mode == Build_Mode.WMS;
+    }
+
+    private void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+    {
+        ListView listView = (ListView)sender;
+        IEnumerable<PropertyInfo> pInfos = listView.GetType().GetRuntimeProperties();
+        PropertyInfo? templatedItems = pInfos.FirstOrDefault(info => info.Name == "TemplatedItems");
+        if (templatedItems != null)
+        {
+            object? cells = templatedItems.GetValue(listView);
+            if (cells == null)
+                return;
+            int index = 0;
+            foreach (ViewCell cell in ((ITemplatedItemsList<Cell>)cells).Cast<ViewCell>())
+            {
+                if (index == e.SelectedItemIndex)
+                    cell.View.BackgroundColor = Color.FromArgb("#82bfc8");
+                else
+                    cell.View.BackgroundColor = Colors.Transparent;
+                index++;
+            }
+        }
     }
 }
