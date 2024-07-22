@@ -272,7 +272,7 @@ namespace WoTB_Mod_Creator2.Class
                 //セーブファイルのバージョン
                 _ = br.ReadByte();
 
-                //ヘッダー
+                //プロジェクト名
                 projectName = Encoding.UTF8.GetString(br.ReadBytes(br.ReadByte()));
                 int saveRange = br.ReadSByte();
                 if (saveRange != -1)

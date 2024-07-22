@@ -790,7 +790,6 @@ public partial class Other_Create : ContentPage
             return;
 
         Sub_Code.BuildSettingWindow.InitializeWMS(modPages, Mod_Selection_Picker.SelectedIndex, wmsLoad);
-        Console.Out.WriteLine("Mod_Selection_Picker.SelectedIndex = " + Mod_Selection_Picker.SelectedIndex);
         Navigation.PushAsync(Sub_Code.BuildSettingWindow);
         bOtherPageOpened = true;
     }
