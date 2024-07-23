@@ -2,7 +2,11 @@
  Android版Mod Creatorのリメイクです。<br>
 ギリまともに動きます。<br>
 <br>
-# V0.4<br>
+# V0.5<br>
+・起動時にクラッシュする場合がある問題を修正<br>
+・リストの表示を修正<br>
+<br>
+V0.4<br>
 ・作成できるサウンドModを追加<br>
 -戦闘開始前のロードBGM (music_map_*.bnk)<br>
 -リザルトBGM (music_result_*.bnk)<br>
