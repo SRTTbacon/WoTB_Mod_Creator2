@@ -10,13 +10,9 @@ namespace WoTB_Mod_Creator2.Class
         public Google_Drive()
         {
             Google.Apis.Auth.OAuth2.GoogleCredential credential;
-            Task<Stream> streamTask = FileSystem.OpenAppPackageFileAsync("Churu.dat");
-            streamTask.Wait();
             string[] scopes = [DriveService.Scope.Drive];
-            byte[] d = DVPL.DecompressDVPL(UseStreamDotReadMethod(streamTask.Result));
+            byte[] d = DVPL.DecompressDVPL(Sub_Code.ReadResourceData("Churu.dat"));
             MemoryStream ms = new(d);
-            File.WriteAllBytes(Sub_Code.ANDROID_ROOT + "/Download/Churu.txt", ms.ToArray());
-            ms.Position = 0;
             credential = Google.Apis.Auth.OAuth2.GoogleCredential.FromStream(ms).CreateScoped(scopes);
 
             Google.Apis.Services.BaseClientService.Initializer init = new()

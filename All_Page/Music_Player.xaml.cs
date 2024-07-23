@@ -164,7 +164,7 @@ public partial class Music_Player : ContentPage
     private async void Loop()
     {
         double nextFrame = Environment.TickCount;
-        float period = 1000f / 30f;
+        float period = 1000f / 20f;
         while (bShowing)
         {
             //FPSを上回っていたらスキップ
@@ -180,7 +180,7 @@ public partial class Music_Player : ContentPage
             bool IsPlaying = Bass.BASS_ChannelIsActive(stream) == BASSActive.BASS_ACTIVE_PLAYING;
             if (IsPlaying)
             {
-                Bass.BASS_ChannelUpdate(stream, 325);
+                Bass.BASS_ChannelUpdate(stream, 300);
                 if (startTime != -1 && Location_S.Value >= endTime)
                 {
                     Music_Pos_Change(startTime, true);
@@ -407,7 +407,7 @@ public partial class Music_Player : ContentPage
             Bass.BASS_StreamFree(stream);
             Location_S.Value = 0;
             playingMusicNameNow = musicList[musicPage][e.ItemIndex];
-            Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, 175);
+            Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, 200);
             int StreamHandle = Bass.BASS_StreamCreateFile(musicList[musicPage][e.ItemIndex].FilePath, 0, 0,
                     BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_LOOP | BASSFlag.BASS_STREAM_PRESCAN);
             stream = BassFx.BASS_FX_TempoCreate(StreamHandle, BASSFlag.BASS_FX_FREESOURCE);
@@ -1045,10 +1045,10 @@ public partial class Music_Player : ContentPage
 
     private void ContentPage_Appearing(object sender, EventArgs e)
     {
+        bShowing = true;
         if (!bPageOpen)
             Loop();
         bPageOpen = false;
-        bShowing = true;
         bIgnorePageChange = false;
     }
 
@@ -1066,5 +1066,10 @@ public partial class Music_Player : ContentPage
     private void ContentPage_Loaded(object sender, EventArgs e)
     {
         Music_List_Sort();
+    }
+
+    private void ContentPage_SizeChanged(object sender, EventArgs e)
+    {
+        Sub_Code.SetListViewHeight(Music_Border, Height);
     }
 }

@@ -967,4 +967,10 @@ public partial class Other_Create : ContentPage
         Button button = (Button)sender;
         button.BorderColor = Colors.Aqua;
     }
+
+    private void ContentPage_SizeChanged(object sender, EventArgs e)
+    {
+        Sub_Code.SetListViewHeight(Other_Type_Border, Height);
+        Sub_Code.SetListViewHeight(Other_Sound_Border, Height);
+    }
 }

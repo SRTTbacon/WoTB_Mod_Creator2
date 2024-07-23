@@ -5,6 +5,7 @@
              Shell.BackgroundColor="Black"
              Title="ビルド設定"
              Shell.TitleColor="White"
+             SizeChanged="ContentPage_SizeChanged"
              BackgroundColor="{StaticResource BackGround}">
     <Grid>
         <Grid.RowDefinitions>
@@ -15,8 +16,8 @@
             <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
                 <Label x:Name="NowSelectedName_T" Text="選択中のイベント : ガレージSE" TextColor="White" FontSize="15" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.025,0.8,0.05"/>
                 <Label x:Name="BuildBNK_T" Text="生成されるファイル" TextColor="White" FontSize="15" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.1,0.5,0.05"/>
-                <Border x:Name="BuildBNK_Border" Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.175,0.8,0.225">
-                    <ListView x:Name="BuildBNK_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" MaximumHeightRequest="160" ItemSelected="ListView_ItemSelected">
+                <Border x:Name="BuildBNK_Border" Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" AbsoluteLayout.LayoutBounds="0.5,0.175,0.8,0.225">
+                    <ListView x:Name="BuildBNK_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" ItemSelected="ListView_ItemSelected">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ViewCell>

@@ -366,4 +366,9 @@ public partial class Build_Setting : ContentPage
             }
         }
     }
+
+    private void ContentPage_SizeChanged(object sender, EventArgs e)
+    {
+        Sub_Code.SetListViewHeight(BuildBNK_Border, Height);
+    }
 }

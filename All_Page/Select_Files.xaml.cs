@@ -384,4 +384,9 @@ public partial class Select_Files : ContentPage
         Button button = (Button)sender;
         button.BorderColor = Colors.Aqua;
     }
+
+    private void ContentPage_SizeChanged(object sender, EventArgs e)
+    {
+        Sub_Code.SetListViewHeight(Files_L, Height);
+    }
 }

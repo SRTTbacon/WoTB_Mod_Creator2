@@ -644,4 +644,10 @@ public partial class Voice_Create : ContentPage
         Init_Voice_Type();
         Set_Item_Type();
     }
+
+    private void ContentPage_SizeChanged(object sender, EventArgs e)
+    {
+        Sub_Code.SetListViewHeight(Voice_Type_Border, Height);
+        Sub_Code.SetListViewHeight(Sound_File_Border, Height);
+    }
 }

@@ -787,4 +787,10 @@ public partial class SE_Setting : ContentPage
     {
         UpdateList();
     }
+
+    private void ContentPage_SizeChanged(object sender, EventArgs e)
+    {
+        Sub_Code.SetListViewHeight(SE_Type_Border, Height);
+        Sub_Code.SetListViewHeight(SE_Sound_Border, Height);
+    }
 }

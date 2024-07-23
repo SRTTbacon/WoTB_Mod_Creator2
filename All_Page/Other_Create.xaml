@@ -8,6 +8,7 @@
              Appearing="ContentPage_Appearing"
              Disappearing="ContentPage_Disappearing"
              Loaded="ContentPage_Loaded"
+             SizeChanged="ContentPage_SizeChanged"
              BackgroundColor="{StaticResource BackGround}">
     <Grid>
         <Grid.RowDefinitions>
@@ -16,10 +17,10 @@
         </Grid.RowDefinitions>
         <ScrollView Grid.Row="1">
             <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                <Picker x:Name="Mod_Selection_Picker" HorizontalTextAlignment="Center" TextColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.01,0.5,0.05"/>
+                <Picker x:Name="Mod_Selection_Picker" HorizontalTextAlignment="Center" TextColor="White" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.01,0.5,0.06"/>
                 <Label Text="ーイベント一覧ー" TextColor="Aqua" FontSize="16" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.075,0.325,0.05"/>
-                <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.155,0.8,0.25">
-                    <ListView x:Name="Other_Type_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" MaximumHeightRequest="180" ItemSelected="ListView_ItemSelected">
+                <Border x:Name="Other_Type_Border" Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" AbsoluteLayout.LayoutBounds="0.5,0.155,0.8,0.25">
+                    <ListView x:Name="Other_Type_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" ItemSelected="ListView_ItemSelected">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ViewCell Tapped="Other_Type_Tapped">
@@ -34,8 +35,8 @@
                     </ListView>
                 </Border>
                 <Label Text="ーサウンド一覧ー" TextColor="Aqua" FontSize="16" HorizontalTextAlignment="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.4,0.325,0.05"/>
-                <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.525,0.8,0.2">
-                    <ListView x:Name="Other_Sound_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" MaximumHeightRequest="140" ItemSelected="ListView_ItemSelected">
+                <Border x:Name="Other_Sound_Border" Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" AbsoluteLayout.LayoutBounds="0.5,0.525,0.8,0.2">
+                    <ListView x:Name="Other_Sound_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" ItemSelected="ListView_ItemSelected">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ViewCell Tapped="Other_Voice_Tapped">

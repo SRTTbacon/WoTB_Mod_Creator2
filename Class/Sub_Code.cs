@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using Microsoft.Maui.Controls;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -19,7 +20,7 @@ namespace WoTB_Mod_Creator2.Class
         public static readonly Dictionary<int, int> HPFValues = [];
         public static readonly Dictionary<int, int> PitchValues = [];
 
-        public const string APP_VERSION = "0.4";
+        public const string APP_VERSION = "0.5";
         public const string ANDROID_ROOT = "/storage/emulated/0";
 
         public static readonly Build_Setting BuildSettingWindow = new();
@@ -262,6 +263,15 @@ namespace WoTB_Mod_Creator2.Class
 
             //ハッシュを比較
             return lhs.SequenceEqual(hash2);
+        }
+
+        //ListViewの高さを設定 (端末によって最後まで表示されない問題を解消)
+        public static void SetListViewHeight(BindableObject list, double height)
+        {
+            Rect rect = AbsoluteLayout.GetLayoutBounds(list);
+            double layoutHeight = height * rect.Height;
+            rect.Height = layoutHeight;
+            AbsoluteLayout.SetLayoutBounds(list, rect);
         }
     }
     public partial class WwiseHash

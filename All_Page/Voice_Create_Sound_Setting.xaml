@@ -7,6 +7,7 @@
              Shell.TitleColor="White"
              Appearing="ContentPage_Appearing"
              Disappearing="ContentPage_Disappearing"
+             SizeChanged="ContentPage_SizeChanged"
              BackgroundColor="{StaticResource BackGround}">
     <Grid>
         <Grid.RowDefinitions>
@@ -15,8 +16,8 @@
         </Grid.RowDefinitions>
         <ScrollView Grid.Row="1">
             <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                <Border Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.005,0.8,0.3">
-                    <ListView x:Name="Voice_Sound_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25" HeightRequest="220">
+                <Border x:Name="Voice_Sound_Border" Stroke="Aqua" StrokeThickness="1" StrokeShape="RoundRectangle 10,10,10,10" Padding="2,8" AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" AbsoluteLayout.LayoutBounds="0.5,0.005,0.8,0.3">
+                    <ListView x:Name="Voice_Sound_L" BackgroundColor="Transparent" SeparatorColor="Aqua" RowHeight="25">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ViewCell Tapped="Sound_List_Tapped">
